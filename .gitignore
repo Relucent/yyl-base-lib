@@ -1,0 +1,51 @@
+# Compile files
+*.class
+
+# Package Files
+*.jar
+*.war
+*.ear
+*.nar
+*.zip
+*.tar
+*.tar.gz
+*.rar
+
+# Maven
+target/
+*.ser
+*.ec
+
+# J2ME
+.mtj.tmp/
+
+# Eclipse
+.classpath
+.project
+.settings/
+.metadata/
+.factorypath
+.springBeans
+
+# IntelliJ Idea
+.idea/
+out/
+*.ipr
+*.iws
+*.iml
+
+# BlueJ Files
+*.ctxt
+
+# OS X
+.DS_Store
+
+# Window
+Thumbs.db
+
+# Virtual Machine Crash Logs
+hs_err_pid*
+
+# Log File
+*.log
+*.log.*
