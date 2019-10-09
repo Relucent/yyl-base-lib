@@ -1,4 +1,4 @@
-package com.github.relucent.base.util.lang;
+package com.github.relucent.base.util.collection;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -7,6 +7,8 @@ import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
+
+import com.github.relucent.base.util.collection.CollectionUtil;
 
 public class CollectionUtilTest {
 

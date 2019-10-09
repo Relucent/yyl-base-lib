@@ -8,8 +8,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
+import com.github.relucent.base.util.collection.CollectionUtil;
 import com.github.relucent.base.util.jdbc.Dialect;
-import com.github.relucent.base.util.lang.CollectionUtil;
 import com.github.relucent.base.util.page.Page;
 import com.github.relucent.base.util.page.Pagination;
 import com.github.relucent.base.util.page.SimplePage;
