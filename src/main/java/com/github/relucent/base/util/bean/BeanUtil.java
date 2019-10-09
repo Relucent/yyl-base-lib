@@ -18,7 +18,7 @@ import com.github.relucent.base.util.bean.mapping.BeanMapper;
 
 /**
  * BEAN操作工具类，扩展Apache Commons BeanUtils，提供一些反射方面缺失的封装。
- * @author _yyl
+ * @author YYL
  */
 public class BeanUtil {
 

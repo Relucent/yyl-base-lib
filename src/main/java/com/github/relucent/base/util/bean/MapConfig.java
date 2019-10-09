@@ -12,7 +12,7 @@ import com.github.relucent.base.util.bean.mapping.BeanMapAdapterProcessor;
 /**
  * JavaObject JSON 映射配置(Bean转Map解析器的配置项)
  * @version 0.02-20091211
- * @author YaoYiLang
+ * @author YYL
  */
 public class MapConfig {
 
