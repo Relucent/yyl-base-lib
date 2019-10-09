@@ -1,4 +1,4 @@
-package com.github.relucent.base.util.lang;
+package com.github.relucent.base.util.collection;
 
 import java.lang.reflect.Array;
 import java.util.Collection;
