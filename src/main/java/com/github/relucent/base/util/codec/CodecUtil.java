@@ -4,6 +4,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 
+/**
+ * 编码解码工具类
+ */
 public class CodecUtil {
 
     private static final String DEFAULT_URI_ENCODING = "UTF-8";

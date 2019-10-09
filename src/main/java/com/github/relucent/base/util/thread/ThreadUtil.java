@@ -1,5 +1,8 @@
 package com.github.relucent.base.util.thread;
 
+/**
+ * 线程工具类，提供一些线程方法
+ */
 public class ThreadUtil {
     /**
      * 在指定的毫秒数内让当前正在执行的线程休眠（暂停执行），此操作受到系统计时器和调度程序精度和准确性的影响。<br>

@@ -18,6 +18,10 @@ public class DateUtil {
     public static final Long MIN_MILLIS = -62135798400000L;
     /** 9999-12-31T23:59:59 */
     public static final Long MAX_MILLIS = 253402271999000L;
+    /** 0001-01-01T00:00:00 */
+    public static final Date MIN_DATE = new Date(MIN_MILLIS);
+    /** 9999-12-31T23:59:59 */
+    public static final Date MAX_DATE = new Date(MAX_MILLIS);
 
     /** 可解析的日期格式列表 */
     private final static String[] PARSE_DATE_PATTERNS = Arrays.asList(//
