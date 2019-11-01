@@ -1,4 +1,4 @@
-package com.github.relucent.base.plug.jackson.handler;
+package com.github.relucent.base.plug.json.jackson;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -6,8 +6,6 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.relucent.base.plug.jackson.MyObjectMapper;
-import com.github.relucent.base.plug.jackson.databind.TreeNodeConverts;
 import com.github.relucent.base.util.collection.Listx;
 import com.github.relucent.base.util.collection.Mapx;
 import com.github.relucent.base.util.json.JsonHandler;
@@ -74,7 +72,7 @@ public class JacksonHandler implements JsonHandler {
     @Override
     public Mapx toMap(String json) {
         try {
-            return TreeNodeConverts.toMapx(getObjectMapper().readTree(json));
+            return JacksonConvertUtil.toMap(getObjectMapper().readTree(json));
         } catch (Exception e) {
             logger.error("#", e);
             return null;
@@ -83,14 +81,14 @@ public class JacksonHandler implements JsonHandler {
 
 
     /**
-     * 将JSON字符串，解码为List对象(该方法依赖于JACKSON类库)
+     * 将JSON字符串，解码为List对象
      * @param json JSON字符串
      * @return JSON对应的List对象，如果无法解析将返回NULL.
      */
     @Override
     public Listx toList(String json) {
         try {
-            return TreeNodeConverts.toListx(getObjectMapper().readTree(json));
+            return JacksonConvertUtil.toList(getObjectMapper().readTree(json));
         } catch (Exception e) {
             logger.error("#", e);
             return null;
@@ -99,7 +97,7 @@ public class JacksonHandler implements JsonHandler {
 
 
     /**
-     * 将JSON字符串，解码为JAVA对象(该方法依赖于JACKSON类库)
+     * 将JSON字符串，解码为JAVA对象
      * @param <T> 对象泛型
      * @param json JSON字符串
      * @param token 类型标记
@@ -110,7 +108,7 @@ public class JacksonHandler implements JsonHandler {
     }
 
     /**
-     * 将JSON字符串，解码为JAVA对象(该方法依赖于JACKSON类库)
+     * 将JSON字符串，解码为JAVA对象
      * @param <T> 对象泛型
      * @param json JSON字符串
      * @param token 类型标记

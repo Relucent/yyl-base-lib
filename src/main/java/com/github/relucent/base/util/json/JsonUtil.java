@@ -1,6 +1,8 @@
 package com.github.relucent.base.util.json;
 
 
+import com.github.relucent.base.plug.json.gson.GsonHandler;
+import com.github.relucent.base.plug.json.jackson.JacksonHandler;
 import com.github.relucent.base.util.collection.Listx;
 import com.github.relucent.base.util.collection.Mapx;
 
@@ -15,7 +17,12 @@ public class JsonUtil {
     static {
         JsonHandler handler = null;
         try {
-            handler = com.github.relucent.base.plug.jackson.handler.JacksonHandler.INSTANCE;
+            handler = JacksonHandler.INSTANCE;
+        } catch (Throwable e) {
+            /* Ignore */
+        }
+        try {
+            handler = GsonHandler.INSTANCE;
         } catch (Throwable e) {
             /* Ignore */
         }
