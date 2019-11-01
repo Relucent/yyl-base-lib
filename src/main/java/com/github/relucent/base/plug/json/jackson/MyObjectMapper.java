@@ -1,4 +1,4 @@
-package com.github.relucent.base.plug.jackson;
+package com.github.relucent.base.plug.json.jackson;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -10,11 +10,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import com.github.relucent.base.plug.jackson.databind.BigDecimalPowerDeserializer;
-import com.github.relucent.base.plug.jackson.databind.BigDecimalPowerSerializer;
-import com.github.relucent.base.plug.jackson.databind.DatePowerDeserializer;
-import com.github.relucent.base.plug.jackson.databind.DatePowerSerializer;
-import com.github.relucent.base.plug.jackson.databind.TreeNodeConverts;
+import com.github.relucent.base.plug.json.jackson.databind.BigDecimalPowerDeserializer;
+import com.github.relucent.base.plug.json.jackson.databind.BigDecimalPowerSerializer;
+import com.github.relucent.base.plug.json.jackson.databind.DatePowerDeserializer;
+import com.github.relucent.base.plug.json.jackson.databind.DatePowerSerializer;
 import com.github.relucent.base.util.collection.Listx;
 import com.github.relucent.base.util.collection.Mapx;
 import com.github.relucent.base.util.time.DateUtil;
@@ -56,8 +55,8 @@ public class MyObjectMapper extends ObjectMapper {
         module.addDeserializer(Date.class, DatePowerDeserializer.INSTANCE);
 
         // 扩展集合类反序列化
-        module.addDeserializer(Mapx.class, TreeNodeConverts.MAP_DESERIALIZER);
-        module.addDeserializer(Listx.class, TreeNodeConverts.LIST_DESERIALIZER);
+        module.addDeserializer(Mapx.class, JacksonConvertUtil.MAP_DESERIALIZER);
+        module.addDeserializer(Listx.class, JacksonConvertUtil.LIST_DESERIALIZER);
 
         this.registerModule(module);
     }
