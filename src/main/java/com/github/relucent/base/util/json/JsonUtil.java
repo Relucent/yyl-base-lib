@@ -16,15 +16,19 @@ public class JsonUtil {
 
     static {
         JsonHandler handler = null;
-        try {
-            handler = JacksonHandler.INSTANCE;
-        } catch (Throwable e) {
-            /* Ignore */
+        if (handler == null) {
+            try {
+                handler = JacksonHandler.INSTANCE;
+            } catch (Throwable e) {
+                /* Ignore */
+            }
         }
-        try {
-            handler = GsonHandler.INSTANCE;
-        } catch (Throwable e) {
-            /* Ignore */
+        if (handler == null) {
+            try {
+                handler = GsonHandler.INSTANCE;
+            } catch (Throwable e) {
+                /* Ignore */
+            }
         }
         if (handler == null) {
             handler = new com.github.relucent.base.util.json.impl.JsonHandler();
