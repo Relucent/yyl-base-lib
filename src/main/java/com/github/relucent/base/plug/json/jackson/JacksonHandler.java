@@ -15,11 +15,26 @@ public class JacksonHandler implements JsonHandler {
     // ===================================Fields==============================================
     public static final JacksonHandler INSTANCE = new JacksonHandler();
     private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final ObjectMapper objectMapper;
+
+    // ===================================Constructors========================================
+    /**
+     * 构造函数(使用指定 {@link ObjectMapper})
+     * @param objectMapper 对象映射
+     */
+    public JacksonHandler(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
+
+    /**
+     * 构造函数(默认)
+     */
+    public JacksonHandler() {
+        this(MyObjectMapper.INSTANCE);
+    }
 
     // ===================================Methods=============================================
-    protected ObjectMapper getObjectMapper() {
-        return MyObjectMapper.INSTANCE;
-    }
+
 
     /**
      * 将JAVA对象编码为JSON字符串
@@ -28,7 +43,7 @@ public class JacksonHandler implements JsonHandler {
      */
     public String encode(Object src) {
         try {
-            return getObjectMapper().writeValueAsString(src);
+            return objectMapper.writeValueAsString(src);
         } catch (JsonProcessingException e) {
             logger.warn("#", e);
             return null;
@@ -56,7 +71,7 @@ public class JacksonHandler implements JsonHandler {
      */
     public <T> T decode(String json, Class<T> type, T defaultValue) {
         try {
-            return getObjectMapper().readValue(json, type);
+            return objectMapper.readValue(json, type);
         } catch (Exception e) {
             logger.warn("#", e);
             return defaultValue;
@@ -72,7 +87,7 @@ public class JacksonHandler implements JsonHandler {
     @Override
     public Mapx toMap(String json) {
         try {
-            return JacksonConvertUtil.toMap(getObjectMapper().readTree(json));
+            return JacksonConvertUtil.toMap(objectMapper.readTree(json));
         } catch (Exception e) {
             logger.error("#", e);
             return null;
@@ -88,7 +103,7 @@ public class JacksonHandler implements JsonHandler {
     @Override
     public Listx toList(String json) {
         try {
-            return JacksonConvertUtil.toList(getObjectMapper().readTree(json));
+            return JacksonConvertUtil.toList(objectMapper.readTree(json));
         } catch (Exception e) {
             logger.error("#", e);
             return null;
@@ -117,7 +132,7 @@ public class JacksonHandler implements JsonHandler {
      */
     public <T> T decode(String json, TypeReference<T> token, T defaultValue) {
         try {
-            return getObjectMapper().readValue(json, token);
+            return objectMapper.readValue(json, token);
         } catch (Exception e) {
             logger.error("#", e);
             return defaultValue;
