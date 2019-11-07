@@ -1,8 +1,8 @@
 package com.github.relucent.base.util.json;
 
 
-import com.github.relucent.base.plug.json.gson.GsonHandler;
-import com.github.relucent.base.plug.json.jackson.JacksonHandler;
+import com.github.relucent.base.plug.gson.GsonHandler;
+import com.github.relucent.base.plug.jackson.JacksonHandler;
 import com.github.relucent.base.util.collection.Listx;
 import com.github.relucent.base.util.collection.Mapx;
 

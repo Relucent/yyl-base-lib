@@ -1,4 +1,4 @@
-package com.github.relucent.base.plug.json.jackson;
+package com.github.relucent.base.plug.jackson;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

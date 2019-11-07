@@ -1,4 +1,4 @@
-package com.github.relucent.base.plug.json.jackson;
+package com.github.relucent.base.plug.jackson;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -10,10 +10,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import com.github.relucent.base.plug.json.jackson.databind.BigDecimalPowerDeserializer;
-import com.github.relucent.base.plug.json.jackson.databind.BigDecimalPowerSerializer;
-import com.github.relucent.base.plug.json.jackson.databind.DatePowerDeserializer;
-import com.github.relucent.base.plug.json.jackson.databind.DatePowerSerializer;
+import com.github.relucent.base.plug.jackson.databind.BigDecimalPowerDeserializer;
+import com.github.relucent.base.plug.jackson.databind.BigDecimalPowerSerializer;
+import com.github.relucent.base.plug.jackson.databind.DatePowerDeserializer;
+import com.github.relucent.base.plug.jackson.databind.DatePowerSerializer;
 import com.github.relucent.base.util.collection.Listx;
 import com.github.relucent.base.util.collection.Mapx;
 import com.github.relucent.base.util.time.DateUtil;

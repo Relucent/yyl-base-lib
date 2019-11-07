@@ -1,4 +1,4 @@
-package com.github.relucent.base.plug.json.jackson.databind;
+package com.github.relucent.base.plug.jackson.databind;
 
 import java.io.IOException;
 import java.math.BigDecimal;

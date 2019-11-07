@@ -1,4 +1,4 @@
-package com.github.relucent.base.plug.json.gson;
+package com.github.relucent.base.plug.gson;
 
 import java.util.Map;
 

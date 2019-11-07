@@ -1,4 +1,4 @@
-package com.github.relucent.base.plug.json.gson;
+package com.github.relucent.base.plug.gson;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,8 +21,20 @@ public class GsonHandler implements JsonHandler {
     private final Gson gson;
 
     // ===================================Constructors========================================
+
+    /**
+     * 构造函数
+     */
     public GsonHandler() {
-        gson = new GsonBuilder().create();
+        this(new GsonBuilder().create());
+    }
+
+    /**
+     * 构造函数使用指定 {@link Gson}
+     * @param gson {@link Gson}
+     */
+    public GsonHandler(Gson gson) {
+        this.gson = gson;
     }
 
     // ===================================Methods=============================================
