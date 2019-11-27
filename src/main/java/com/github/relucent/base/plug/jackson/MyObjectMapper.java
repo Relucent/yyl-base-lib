@@ -9,7 +9,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.github.relucent.base.plug.jackson.databind.BigDecimalPowerDeserializer;
 import com.github.relucent.base.plug.jackson.databind.BigDecimalPowerSerializer;
 import com.github.relucent.base.plug.jackson.databind.DatePowerDeserializer;
@@ -42,11 +41,7 @@ public class MyObjectMapper extends ObjectMapper {
 
         SimpleModule module = new SimpleModule();
 
-        // 将 Long 转换为 String 类型
-        module.addSerializer(Long.class, ToStringSerializer.instance);
-        module.addSerializer(Long.TYPE, ToStringSerializer.instance);
-
-        // 将 Long 转换为 String 类型
+        // 将大数字转换为 String 类型
         module.addSerializer(BigDecimal.class, BigDecimalPowerSerializer.INSTANCE);
         module.addDeserializer(BigDecimal.class, BigDecimalPowerDeserializer.INSTANCE);
 
