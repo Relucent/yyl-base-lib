@@ -19,11 +19,15 @@ public class NetworkHelper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NetworkHelper.class);
 
-    /** 回送地址(本机) */
-    public static final String LOCALHOST = "127.0.0.1";
+    /** 回送地址(本机地址 ) */
+    public static final String LOCALHOST_IPV4 = "127.0.0.1";
 
     /** 通配地址(所有主机) */
-    public static final String ANYHOST = "0.0.0.0";
+    public static final String ANYHOST_IPV4 = "0.0.0.0";
+
+    /** 限制广播地址(所有主机) */
+    public static final String BROADCAST_IPV4 = "255.255.255.255";
+
 
     /** 最小端口号 */
     public static final int MIN_PORT = 0;
@@ -66,7 +70,7 @@ public class NetworkHelper {
                 NetworkInterface networkInterface = en.nextElement();
                 for (Enumeration<InetAddress> addrs = networkInterface.getInetAddresses(); addrs.hasMoreElements();) {
                     String ip = addrs.nextElement().getHostAddress();
-                    if (isValidIp(ip)) {
+                    if (isValidIPv4(ip)) {
                         return ip;
                     }
                 }
@@ -88,7 +92,7 @@ public class NetworkHelper {
                 NetworkInterface networkInterface = en.nextElement();
                 for (Enumeration<InetAddress> addrs = networkInterface.getInetAddresses(); addrs.hasMoreElements();) {
                     String ip = addrs.nextElement().getHostAddress();
-                    if (isValidIp(ip)) {
+                    if (isValidIPv4(ip)) {
                         return networkInterface.getHardwareAddress();
                     }
                 }
@@ -127,12 +131,16 @@ public class NetworkHelper {
     }
 
     /**
-     * 判断是否是有效IP地址
+     * 判断是否是有效IPv4地址
      * @param ip IP地址
-     * @return 如果是有效IP返回true,否则返回false
+     * @return 如果是有效IPv4地址返回true,否则返回false
      */
-    public static boolean isValidIp(String ip) {
-        return (ip != null && !ANYHOST.equals(ip) && !LOCALHOST.equals(ip) && IPV4_PATTERN.matcher(ip).matches());
+    public static boolean isValidIPv4(String ip) {
+        return (ip != null //
+                && !ANYHOST_IPV4.equals(ip) //
+                && !LOCALHOST_IPV4.equals(ip) //
+                && !BROADCAST_IPV4.equals(ip) //
+                && IPV4_PATTERN.matcher(ip).matches());
     }
 
     /**
