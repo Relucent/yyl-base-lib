@@ -114,9 +114,11 @@ public class NetworkHelper {
             String hex = Integer.toHexString(mac[i]);
             switch (hex.length()) {
                 case 0:
-                    builder.append("0");// 00
+                    builder.append("00");// 00
+                    break;
                 case 1:
                     builder.append("0");// 0+
+                    break;
                 default:
                     builder.append(hex.substring(Math.max(hex.length() - 2, 0)));// ++
             }
@@ -139,6 +141,6 @@ public class NetworkHelper {
      * @return 如果是有效端口号返回true,否则返回false
      */
     public static boolean isValidPort(int port) {
-        return MIN_PORT < port || port <= MAX_PORT;
+        return MIN_PORT < port && port <= MAX_PORT;
     }
 }
