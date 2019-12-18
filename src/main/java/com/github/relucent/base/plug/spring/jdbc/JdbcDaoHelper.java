@@ -46,8 +46,8 @@ public class JdbcDaoHelper {
      * @param dialect 数据方言
      * @return 分页查询結果
      */
-    public static <T> Page<T> pagedQuery(String sql, Object[] args, long offset, long limit, RowMapper<T> rowMapper,
-            JdbcTemplate jdbcTemplate, Dialect dialect) {
+    public static <T> Page<T> pagedQuery(String sql, Object[] args, long offset, long limit, RowMapper<T> rowMapper, JdbcTemplate jdbcTemplate,
+            Dialect dialect) {
         long count = queryCount(sql, args, jdbcTemplate, dialect);
         if (count == 0L) {
             return new SimplePage<T>(offset, limit, new ArrayList<T>(), 0);
@@ -67,10 +67,9 @@ public class JdbcDaoHelper {
      * @param dialect 数据方言
      * @return 分页查询結果
      */
-    public static <T> Page<T> pagedQuery(CharSequence sql, List<Object> args, Pagination pagination,
-            RowMapper<T> rowMapper, JdbcTemplate jdbcTemplate, Dialect dialect) {
-        return pagedQuery(sql.toString(), args.toArray(), pagination.getOffset(), pagination.getLimit(), rowMapper,
-                jdbcTemplate, dialect);
+    public static <T> Page<T> pagedQuery(CharSequence sql, List<Object> args, Pagination pagination, RowMapper<T> rowMapper,
+            JdbcTemplate jdbcTemplate, Dialect dialect) {
+        return pagedQuery(sql.toString(), args.toArray(), pagination.getOffset(), pagination.getLimit(), rowMapper, jdbcTemplate, dialect);
     }
 
     /**
@@ -86,9 +85,8 @@ public class JdbcDaoHelper {
      * @param parallel 是否采用并行查询模式
      * @return 分页查询結果
      */
-    public static <T> Page<T> pagedQuery(final String sql, final Object[] args, final long offset, final long limit,
-            final RowMapper<T> rowMapper, final JdbcTemplate jdbcTemplate, final Dialect dialect,
-            final boolean parallel) {
+    public static <T> Page<T> pagedQuery(final String sql, final Object[] args, final long offset, final long limit, final RowMapper<T> rowMapper,
+            final JdbcTemplate jdbcTemplate, final Dialect dialect, final boolean parallel) {
         if (!parallel) {
             return pagedQuery(sql, args, offset, limit, rowMapper, jdbcTemplate, dialect);
         }
@@ -120,27 +118,26 @@ public class JdbcDaoHelper {
      * @param parallel 是否采用并行查询模式
      * @return 分页查询結果
      */
-    public static <T> Page<T> pagedQuery(CharSequence sql, List<Object> args, Pagination pagination,
-            RowMapper<T> rowMapper, JdbcTemplate jdbcTemplate, Dialect dialect, boolean parallel) {
-        return pagedQuery(sql.toString(), args.toArray(), pagination.getOffset(), pagination.getLimit(), rowMapper,
-                jdbcTemplate, dialect, parallel);
+    public static <T> Page<T> pagedQuery(CharSequence sql, List<Object> args, Pagination pagination, RowMapper<T> rowMapper,
+            JdbcTemplate jdbcTemplate, Dialect dialect, boolean parallel) {
+        return pagedQuery(sql.toString(), args.toArray(), pagination.getOffset(), pagination.getLimit(), rowMapper, jdbcTemplate, dialect, parallel);
     }
 
     /**
-     * 查询SQL能查询到的记录总数
+     * 查询记录总数
      * @param sql 查询语句
      * @param args 查询参数
      * @param rowMapper 行映射
      * @param jdbcTemplate JDBC模板
      * @param dialect 数据方言
-     * @return 能查询到的记录总数
+     * @return 记录总数
      */
     private static long queryCount(String sql, Object[] args, JdbcTemplate jdbcTemplate, Dialect dialect) {
         return jdbcTemplate.queryForObject(dialect.getCountSql(sql), args, Long.class).longValue();
     }
 
     /**
-     * 查询SQL能查询到的记录总数
+     * 分页查询
      * @param <T> 查询的结果泛型
      * @param sql 查询语句
      * @param args 查询参数
@@ -149,10 +146,10 @@ public class JdbcDaoHelper {
      * @param rowMapper 行映射
      * @param jdbcTemplate JDBC模板
      * @param dialect 数据方言
-     * @return 能查询到的记录总数
+     * @return 记录列表
      */
-    private static <T> List<T> queryLimit(String sql, Object[] args, long offset, long limit, RowMapper<T> rowMapper,
-            JdbcTemplate jdbcTemplate, Dialect dialect) {
+    private static <T> List<T> queryLimit(String sql, Object[] args, long offset, long limit, RowMapper<T> rowMapper, JdbcTemplate jdbcTemplate,
+            Dialect dialect) {
         return jdbcTemplate.query(dialect.getLimitSql(sql, offset, limit), args, rowMapper);
     }
 }
