@@ -17,7 +17,7 @@ public class CodecUtil {
      * @return Base64字符串
      */
     public static String encodeBase64(byte[] data) {
-        return javax.xml.bind.DatatypeConverter.printBase64Binary(data);
+        return Base64.encode(data);
     }
 
     /**
@@ -26,7 +26,7 @@ public class CodecUtil {
      * @return 字节数组
      */
     public static byte[] decodeBase64(String base64) {
-        return javax.xml.bind.DatatypeConverter.parseBase64Binary(base64);
+        return Base64.decode(base64);
     }
 
     /**
