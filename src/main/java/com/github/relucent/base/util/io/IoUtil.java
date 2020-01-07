@@ -1,5 +1,6 @@
 package com.github.relucent.base.util.io;
 
+import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
@@ -177,5 +178,17 @@ public class IoUtil {
                 // ignore
             }
         }
+    }
+
+    /**
+     * 获取数据流数据。该方法不会{@code close}数据流。
+     * @param input 流数据
+     * @return 流数据的字节数组
+     * @throws IOException 出现IO异常时抛出
+     */
+    public static byte[] toByteArray(InputStream input) throws IOException {
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        copy(input, output);
+        return output.toByteArray();
     }
 }
