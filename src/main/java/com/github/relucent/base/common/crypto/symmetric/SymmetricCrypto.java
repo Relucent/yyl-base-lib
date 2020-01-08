@@ -14,6 +14,7 @@ import javax.crypto.spec.PBEParameterSpec;
 
 import com.github.relucent.base.common.codec.Base64;
 import com.github.relucent.base.common.codec.Hex;
+import com.github.relucent.base.common.crypto.CipherUtil;
 import com.github.relucent.base.common.crypto.CryptoException;
 import com.github.relucent.base.common.io.IoUtil;
 
@@ -50,7 +51,7 @@ public class SymmetricCrypto {
      * @param key 密钥数据
      */
     public SymmetricCrypto(SymmetricAlgorithm algorithm, byte[] key) {
-        this(algorithm, SecretKeyUtil.generateKey(algorithm.getValue(), key), null);
+        this(algorithm, SecretKeyUtil.generateSecretKey(algorithm.getValue(), key), null);
     }
 
     /**
@@ -79,9 +80,20 @@ public class SymmetricCrypto {
      * @param params 算法参数
      */
     protected SymmetricCrypto(String algorithm, SecretKey secretKey, AlgorithmParameterSpec params) {
+        initialize(algorithm, secretKey, params);
+    }
+
+    // =================================InitializeMethods======================================
+    /**
+     * 初始化
+     * @param algorithm 算法
+     * @param secretKey 秘密(对称)密钥
+     * @param params 算法参数
+     */
+    protected void initialize(String algorithm, SecretKey secretKey, AlgorithmParameterSpec params) {
         // 如果密钥为null，那么生成一个随机密钥
         if (secretKey == null) {
-            secretKey = SecretKeyUtil.generateRandomKey(algorithm);
+            secretKey = generateKey(algorithm);
         }
         this.secretKey = secretKey;
         // 对于PBE算法使用随机数加盐
@@ -91,11 +103,25 @@ public class SymmetricCrypto {
             params = new PBEParameterSpec(bytes, 100);
         }
         this.params = params;
-        try {
-            this.cipher = Cipher.getInstance(algorithm);
-        } catch (GeneralSecurityException e) {
-            throw new CryptoException(e);
-        }
+        this.cipher = createCipher(algorithm);
+    }
+
+    /**
+     * 生成用于秘密(对称)秘钥<br>
+     * @param algorithm 算法名称
+     * @return 秘密(对称)秘钥
+     */
+    protected SecretKey generateKey(String algorithm) {
+        return SecretKeyUtil.generateSecretKey(algorithm);
+    }
+
+    /**
+     * 初始化加密解密器 {@link Cipher}
+     * @param algorithm 算法名称
+     * @return 加密解密器
+     */
+    protected Cipher createCipher(String algorithm) {
+        return CipherUtil.createCipher(algorithm);
     }
 
     // =================================Methods================================================
@@ -254,7 +280,7 @@ public class SymmetricCrypto {
     /**
      * 解密数据为字符串
      * @param input 被解密的数据，格式为16进制字符串
-     * @param charset 解密后的字符串编码
+     * @param charset 加密前的字符串编码
      * @return 解密后的数据
      */
     public String decryptHexString(String input, Charset charset) {
@@ -273,7 +299,7 @@ public class SymmetricCrypto {
     /**
      * 解密数据为字符串
      * @param input 被解密的数据，格式为Base64字符串
-     * @param charset 解密后的字符串编码
+     * @param charset 加密前的字符串编码
      * @return 解密后的数据
      */
     public String decryptBase64String(String input, Charset charset) {
@@ -295,7 +321,7 @@ public class SymmetricCrypto {
      * @return 解密后的数据
      * @throws IOException 出现IO异常
      */
-    public byte[] decryptStr(InputStream input) throws IOException {
+    public byte[] decrypt(InputStream input) throws IOException {
         return decrypt(IoUtil.toByteArray(input));
     }
 
@@ -312,7 +338,7 @@ public class SymmetricCrypto {
         }
     }
 
-    // =================================GetSetMethods==========================================
+    // =================================SetMethods=============================================
     /**
      * 设置算法参数
      * @param params 算法参数
@@ -333,6 +359,7 @@ public class SymmetricCrypto {
         return this;
     }
 
+    // =================================GetMethods=============================================
     /**
      * 获得秘密(对称)密钥
      * @return 秘密(对称)密钥

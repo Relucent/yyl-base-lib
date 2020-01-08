@@ -5,10 +5,13 @@ import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
 import java.security.Provider;
+import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.ECGenParameterSpec;
+import java.security.spec.KeySpec;
 
 import com.github.relucent.base.common.constants.CharConstants;
 import com.github.relucent.base.common.crypto.CryptoException;
@@ -177,6 +180,43 @@ public class KeyUtil {
         SecureRandom random = (null == seed) ? new SecureRandom() : new SecureRandom(seed);
         return generateKeyPair(algorithm, keySize, random, params);
     }
+
+    /**
+     * 生成私钥<br>
+     * @param algorithm 算法
+     * @param keySpec 组成加密密钥的密钥内容的（透明）规范
+     * @return 私钥 {@link PrivateKey}
+     */
+    public static PrivateKey generatePrivateKey(String algorithm, KeySpec keySpec) {
+        if (null == keySpec) {
+            return null;
+        }
+        algorithm = getMainAlgorithm(algorithm);
+        try {
+            return getKeyFactory(algorithm).generatePrivate(keySpec);
+        } catch (Exception e) {
+            throw new CryptoException(e);
+        }
+    }
+
+    /**
+     * 生成公钥<br>
+     * @param algorithm 算法
+     * @param keySpec 组成加密密钥的密钥内容的（透明）规范
+     * @return 公钥 {@link PublicKey}
+     */
+    public static PublicKey generatePublicKey(String algorithm, KeySpec keySpec) {
+        if (null == keySpec) {
+            return null;
+        }
+        algorithm = getMainAlgorithm(algorithm);
+        try {
+            return getKeyFactory(algorithm).generatePublic(keySpec);
+        } catch (Exception e) {
+            throw new CryptoException(e);
+        }
+    }
+
 
     /**
      * 获取主体算法名<br>

@@ -98,7 +98,7 @@ public class Aes extends SymmetricCrypto {
      * @return AES实例
      */
     public static Aes create(Mode mode, Padding padding, byte[] key, byte[] iv) {
-        SecretKey secretKey = key == null ? null : SecretKeyUtil.generateKey(ALGORITHM_PREFIX, key);
+        SecretKey secretKey = key == null ? null : SecretKeyUtil.generateSecretKey(ALGORITHM_PREFIX, key);
         IvParameterSpec paramsSpec = iv == null ? null : new IvParameterSpec(iv);
         return create(mode, padding, secretKey, paramsSpec);
     }

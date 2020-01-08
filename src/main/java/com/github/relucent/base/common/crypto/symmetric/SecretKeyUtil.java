@@ -92,7 +92,7 @@ public class SecretKeyUtil {
      * @param keySpec 密钥内容规范 {@link KeySpec}
      * @return 秘密（对称）密钥
      */
-    public static SecretKey generateKey(String algorithm, KeySpec keySpec) {
+    public static SecretKey generateSecretKey(String algorithm, KeySpec keySpec) {
         final SecretKeyFactory secretKeyFactory = getSecretKeyFactory(algorithm);
         try {
             return secretKeyFactory.generateSecret(keySpec);
@@ -117,7 +117,7 @@ public class SecretKeyUtil {
             password = randomString(32).toCharArray();
         }
         PBEKeySpec keySpec = new PBEKeySpec(password);
-        return generateKey(algorithm, keySpec);
+        return generateSecretKey(algorithm, keySpec);
     }
 
     /**
@@ -144,7 +144,7 @@ public class SecretKeyUtil {
         } catch (InvalidKeyException e) {
             throw new CryptoException(e);
         }
-        return generateKey(algorithm, keySpec);
+        return generateSecretKey(algorithm, keySpec);
     }
 
     /**
@@ -152,8 +152,8 @@ public class SecretKeyUtil {
      * @param algorithm 对称加密算法
      * @return 秘密（对称）密钥
      */
-    public static SecretKey generateRandomKey(String algorithm) {
-        return generateRandomKey(algorithm, -1);
+    public static SecretKey generateSecretKey(String algorithm) {
+        return generateSecretKey(algorithm, -1);
     }
 
     /**
@@ -162,7 +162,7 @@ public class SecretKeyUtil {
      * @param keySize 密钥长度，-1表示不指定
      * @return 秘密（对称）密钥
      */
-    public static SecretKey generateRandomKey(String algorithm, int keySize) {
+    public static SecretKey generateSecretKey(String algorithm, int keySize) {
         KeyGenerator keyGenerator;
         try {
             keyGenerator = KeyGenerator.getInstance(algorithm);
@@ -184,7 +184,7 @@ public class SecretKeyUtil {
      * @param key 密钥内容
      * @return 秘密（对称）密钥
      */
-    public static SecretKey generateKey(String algorithm, byte[] key) {
+    public static SecretKey generateSecretKey(String algorithm, byte[] key) {
         algorithm = getMainAlgorithm(algorithm);
         // PBE密钥
         if (algorithm.startsWith(PrefixNames.PBE)) {
@@ -198,7 +198,7 @@ public class SecretKeyUtil {
         }
         // 其它算法密钥，随机秘钥
         if (key == null) {
-            return generateRandomKey(algorithm);
+            return generateSecretKey(algorithm);
         }
         // 其它算法密钥，使用密钥内容生成密钥
         return new SecretKeySpec(key, algorithm);

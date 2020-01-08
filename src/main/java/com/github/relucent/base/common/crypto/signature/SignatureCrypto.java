@@ -11,8 +11,6 @@ import java.security.cert.X509Certificate;
 import java.security.spec.AlgorithmParameterSpec;
 import java.util.Set;
 
-import javax.crypto.Cipher;
-
 import com.github.relucent.base.common.crypto.CryptoException;
 import com.github.relucent.base.common.crypto.asymmetric.KeyUtil;
 
@@ -30,8 +28,6 @@ public class SignatureCrypto {
     protected PublicKey publicKey;
     /** 私钥 */
     protected PrivateKey privateKey;
-    /** 提供加密和解密功能 */
-    protected Cipher cipher;
     /** 算法名称 */
     protected String algorithm;
     /** 签名，提供数字签名算法功能(签名和验证) */
@@ -88,31 +84,42 @@ public class SignatureCrypto {
      * @param publicKey 公钥
      */
     protected SignatureCrypto(String algorithm, PrivateKey privateKey, PublicKey publicKey) {
+        initialize(algorithm, privateKey, publicKey);
+    }
+
+    // =================================InitializeMethods======================================
+    /**
+     * 初始化
+     * @param algorithm 算法
+     * @param privateKey 私钥
+     * @param publicKey 公钥
+     */
+    protected void initialize(String algorithm, PrivateKey privateKey, PublicKey publicKey) {
         this.algorithm = algorithm;
         try {
             this.signature = Signature.getInstance(algorithm);
         } catch (NoSuchAlgorithmException e) {
             throw new CryptoException(e);
         }
-        if (null == privateKey && null == publicKey) {
-            KeyPair keyPair = KeyUtil.generateKeyPair(algorithm);
-            publicKey = keyPair.getPublic();
-            privateKey = keyPair.getPrivate();
+        if (privateKey == null && publicKey == null) {
+            KeyPair keyPair = generateKeyPair();
+            this.privateKey = keyPair.getPrivate();
+            this.publicKey = keyPair.getPublic();
+        } else {
+            this.privateKey = privateKey;
+            this.publicKey = publicKey;
         }
-        this.privateKey = privateKey;
-        this.publicKey = publicKey;
+    }
+
+    /**
+     * 生成用于密钥对(非对称加密的公钥和私钥)<br>
+     * @return 密钥对
+     */
+    protected KeyPair generateKeyPair() {
+        return KeyUtil.generateKeyPair(algorithm);
     }
 
     // =================================Methods================================================
-    /**
-     * 生成密钥对(公钥和私钥)
-     */
-    protected void initializeKeys() {
-        KeyPair keyPair = KeyUtil.generateKeyPair(algorithm);
-        this.publicKey = keyPair.getPublic();
-        this.privateKey = keyPair.getPrivate();
-    }
-
     /**
      * 用私钥对信息生成数字签名
      * @param data 加密数据
