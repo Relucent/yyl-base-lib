@@ -122,7 +122,7 @@ public class Des extends SymmetricCrypto {
      * @return this
      */
     public Des setIvParameter(byte[] iv) {
-        setParameterSpec(new IvParameterSpec(iv));
+        setParameter(new IvParameterSpec(iv));
         return this;
     }
 }

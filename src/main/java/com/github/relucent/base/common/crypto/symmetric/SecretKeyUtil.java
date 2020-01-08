@@ -20,21 +20,22 @@ import com.github.relucent.base.common.crypto.CryptoException;
 import com.github.relucent.base.common.crypto.ProviderFactory;
 
 /**
- * 秘密(对称)密钥工具类
+ * 秘密(秘钥)密钥工具类
  */
 public class SecretKeyUtil {
 
     // =================================Fields================================================
-    /** Java密钥库(Java Key Store，JKS)存储名 */
-    public static final String KEY_STORE = "JKS";
-    /** X509证书名 */
-    public static final String X509 = "X.509";
-
-    /** 默认密钥字节数 */
-    public static final int DEFAULT_KEY_SIZE = 1024;
-
-    /** SM2默认曲线 */
-    public static final String SM2_DEFAULT_CURVE = "sm2p256v1";
+    /** 主算法名称 */
+    private static class PrefixNames {
+        /** AES算法名称 */
+        private static final String AES = "AES";
+        /** DESede算法名称 */
+        private static final String DES = "DES";
+        /** DESede算法名称 */
+        private static final String DESEDE = "DESede";
+        /** PBE算法名称 */
+        private static final String PBE = "PBE";
+    }
 
     /** 随机字符串可选字符 */
     private static final char[] RANDOM_CHARS = {//
@@ -46,9 +47,9 @@ public class SecretKeyUtil {
 
     // =================================Methods================================================
     /**
-     * 获取（对称）密钥生成器{@link KeyGenerator}
+     * 获取秘密（对称）密钥生成器{@link KeyGenerator}
      * @param algorithm 对称加密算法
-     * @return （对称）密钥生成器
+     * @return 秘密（对称）密钥生成器
      */
     public static KeyGenerator getKeyGenerator(String algorithm) {
         KeyGenerator keyGenerator;
@@ -108,7 +109,7 @@ public class SecretKeyUtil {
      */
     public static SecretKey generatePBEKey(String algorithm, char[] password) {
         // 如果不是PBE算法，则抛出异常
-        if (algorithm == null || !algorithm.startsWith("PBE")) {
+        if (algorithm == null || !algorithm.startsWith(PrefixNames.PBE)) {
             throw new CryptoException("Algorithm [" + algorithm + "] is not a PBE algorithm!");
         }
         // 密码为空，生成随机密码
@@ -126,7 +127,7 @@ public class SecretKeyUtil {
      * @return 秘密（对称）密钥
      */
     public static SecretKey generateDESKey(String algorithm, byte[] key) {
-        if (algorithm == null || !algorithm.startsWith("DES")) {
+        if (algorithm == null || !algorithm.startsWith(PrefixNames.DES)) {
             throw new CryptoException("Algorithm [" + algorithm + "] is not a DES algorithm!");
         }
         if (key == null) {
@@ -135,7 +136,7 @@ public class SecretKeyUtil {
         }
         KeySpec keySpec;
         try {
-            if (algorithm.startsWith("DESede")) {
+            if (algorithm.startsWith(PrefixNames.DESEDE)) {
                 keySpec = new DESedeKeySpec(key);
             } else {
                 keySpec = new DESKeySpec(key);
@@ -170,7 +171,7 @@ public class SecretKeyUtil {
         }
         if (keySize > 0) {
             keyGenerator.init(keySize);
-        } else if (algorithm.startsWith("AES")) {
+        } else if (algorithm.startsWith(PrefixNames.AES)) {
             // AES算法，默认使用128位
             keyGenerator.init(128);
         }
@@ -186,13 +187,13 @@ public class SecretKeyUtil {
     public static SecretKey generateKey(String algorithm, byte[] key) {
         algorithm = getMainAlgorithm(algorithm);
         // PBE密钥
-        if (algorithm.startsWith("PBE")) {
+        if (algorithm.startsWith(PrefixNames.PBE)) {
             char[] password = key == null ? null : new String(key, StandardCharsets.UTF_8).toCharArray();
             return generatePBEKey(algorithm, password);
         }
 
         // DES密钥
-        if (algorithm.startsWith("DES")) {
+        if (algorithm.startsWith(PrefixNames.DES)) {
             return generateDESKey(algorithm, key);
         }
         // 其它算法密钥，随机秘钥
@@ -205,7 +206,7 @@ public class SecretKeyUtil {
 
     /**
      * 获取主体算法名，例如AES/CBC/PKCS5Padding的主体算法是AES
-     * @param algorithm 加密算法名称
+     * @param algorithm 对称加密算法名称
      * @return 主体算法名
      */
     private static String getMainAlgorithm(String algorithm) {

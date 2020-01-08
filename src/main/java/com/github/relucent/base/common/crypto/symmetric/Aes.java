@@ -122,7 +122,7 @@ public class Aes extends SymmetricCrypto {
      * @return this
      */
     public Aes setIvParameter(byte[] iv) {
-        setParameterSpec(new IvParameterSpec(iv));
+        setParameter(new IvParameterSpec(iv));
         return this;
     }
 }

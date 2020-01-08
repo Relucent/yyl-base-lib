@@ -2,7 +2,7 @@ package com.github.relucent.base.common.crypto.symmetric;
 
 /**
  * 对称算法类型<br>
- * see: https://docs.oracle.com/javase/7/docs/technotes/guides/security/StandardNames.html#KeyGenerator
+ * @see https://docs.oracle.com/javase/7/docs/technotes/guides/security/StandardNames.html#KeyGenerator
  */
 public enum SymmetricAlgorithm {
     /** 默认的AES加密方式：AES/CBC/PKCS5Padding */

@@ -124,7 +124,7 @@ public class Desede extends SymmetricCrypto {
      * @return this
      */
     public Desede setIvParameter(byte[] iv) {
-        setParameterSpec(new IvParameterSpec(iv));
+        setParameter(new IvParameterSpec(iv));
         return this;
     }
 }
