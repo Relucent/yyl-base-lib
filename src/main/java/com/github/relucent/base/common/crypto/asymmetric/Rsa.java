@@ -2,7 +2,6 @@ package com.github.relucent.base.common.crypto.asymmetric;
 
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.interfaces.RSAKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 
@@ -49,26 +48,4 @@ public class Rsa extends AsymmetricCrypto {
     public static Rsa create(PrivateKey privateKey, PublicKey publicKey) {
         return new Rsa(privateKey, publicKey);
     }
-
-
-    // =================================OverrideMethods========================================
-    @Override
-    public byte[] encrypt(byte[] data, KeyType keyType) {
-        if (encryptBlockSize <= 0) {
-            // RSA 待加密的字节数不能超过密钥的长度值除以8再减去 11(KeySize/8 - 11)
-            encryptBlockSize = (((RSAKey) getKey(keyType)).getModulus().bitLength() / 8) - 11;
-        }
-        return super.encrypt(data, keyType);
-    }
-
-    @Override
-    public byte[] decrypt(byte[] bytes, KeyType keyType) {
-        if (decryptBlockSize <= 0) {
-            // RSA 加密后得到密文的字节数，正好是密钥的长度值除以 8
-            decryptBlockSize = (((RSAKey) getKey(keyType)).getModulus().bitLength() / 8);
-        }
-        return super.decrypt(bytes, keyType);
-    }
-
-    // =================================Methods================================================
 }

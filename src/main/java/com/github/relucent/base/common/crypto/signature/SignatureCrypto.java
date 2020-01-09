@@ -15,7 +15,7 @@ import com.github.relucent.base.common.crypto.CryptoException;
 import com.github.relucent.base.common.crypto.asymmetric.KeyUtil;
 
 /**
- * 数字签名算法类，提供数据的签名与验证方法<br>
+ * 数字签名算法类，提供数据的签名与验证方法(私钥数字签名，公钥验证)<br>
  * 注意：该类的实例不保证线程安全，应当避免多线程同时调用同一个实例(每个线程使用独立的实例，或者在调用时候增加同步锁)。<br>
  * @see java.security.Signature
  */

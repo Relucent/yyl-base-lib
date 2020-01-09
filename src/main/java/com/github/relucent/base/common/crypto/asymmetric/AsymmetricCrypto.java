@@ -23,10 +23,6 @@ public class AsymmetricCrypto extends AbstractAsymmetricCrypto<AsymmetricCrypto>
     // =================================Fields================================================
     /** 提供加密和解密功能 */
     protected Cipher cipher;
-    /** 加密的块大小 */
-    protected int encryptBlockSize = -1;
-    /** 解密的块大小 */
-    protected int decryptBlockSize = -1;
 
     // =================================Constructors===========================================
     /**
@@ -109,7 +105,7 @@ public class AsymmetricCrypto extends AbstractAsymmetricCrypto<AsymmetricCrypto>
      */
     public byte[] encrypt(byte[] input, KeyType keyType) {
         try {
-            return doFinal(input, Cipher.ENCRYPT_MODE, keyType, encryptBlockSize);
+            return doFinal(input, Cipher.ENCRYPT_MODE, keyType);
         } catch (Exception e) {
             throw new CryptoException(e);
         }
@@ -123,7 +119,7 @@ public class AsymmetricCrypto extends AbstractAsymmetricCrypto<AsymmetricCrypto>
      */
     public byte[] decrypt(byte[] input, KeyType keyType) {
         try {
-            return doFinal(input, Cipher.DECRYPT_MODE, keyType, encryptBlockSize);
+            return doFinal(input, Cipher.DECRYPT_MODE, keyType);
         } catch (Exception e) {
             throw new CryptoException(e);
         }
@@ -134,36 +130,31 @@ public class AsymmetricCrypto extends AbstractAsymmetricCrypto<AsymmetricCrypto>
      * @param input 需要加密或解密的数据
      * @param opmode 模式(Cipher.ENCRYPT_MODE或者Cipher.DECRYPT_MODE)
      * @param keyType 密钥类型(私钥或公钥)
-     * @param maxBlockSize 最大分段的段大小(大于1)
      * @return 加密或解密后的数据
      * @throws Exception 出现异常时候抛出
      */
-    private byte[] doFinal(byte[] input, int opmode, KeyType keyType, int maxBlockSize) throws Exception {
-
-        // 分段大小
-        if (maxBlockSize <= 0) {
-            maxBlockSize = cipher.getBlockSize();
-        }
-        if (maxBlockSize <= 0) {
-            maxBlockSize = input.length;
-        }
+    private byte[] doFinal(byte[] input, int opmode, KeyType keyType) throws Exception {
 
         // 根据密钥类型获得相应密钥
         Key key = getKey(keyType);
         cipher.init(opmode, key);
 
+        // 分段大小
+        int blockSize = cipher.getBlockSize();
+
         // 不足分段，直接进行加密或解密
-        if (input.length <= maxBlockSize) {
+        if (input.length <= blockSize) {
             try {
                 return this.cipher.doFinal(input, 0, input.length);
             } catch (Exception e) {
                 throw new CryptoException(e);
             }
         }
+
         // 分段加密或解密数据
         try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
-            for (int offset = 0, length = input.length; offset > 0; offset += maxBlockSize) {
-                output.write(cipher.doFinal(input, offset, Math.min(length - offset, maxBlockSize)));
+            for (int offset = 0, length = input.length; offset < length; offset += blockSize) {
+                output.write(cipher.doFinal(input, offset, Math.min(length - offset, blockSize)));
             }
             return output.toByteArray();
         }
