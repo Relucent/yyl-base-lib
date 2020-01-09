@@ -7,6 +7,6 @@ Project Common Base Library
 <dependency>
 	<groupId>com.github.relucent</groupId>
 	<artifactId>yyl-base-lib</artifactId>
-	<version>0.0.2-SNAPSHOT</version>
+	<version>0.0.4-SNAPSHOT</version>
 </dependency>
 ```
