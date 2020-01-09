@@ -198,33 +198,15 @@ public class Digester {
      * @throws IOException 出现IO异常时抛出
      */
     public byte[] digest(InputStream input) throws IOException {
-        byte[] buffer = new byte[IoConstants.DEFAULT_BUFFER_SIZE];
-        long count = 0;
-        int n = 0;
-        // 加盐在开头
-        if (salt != null && saltPosition <= 0) {
-            messageDigest.update(salt);
-        }
-        while (IoConstants.EOF != (n = input.read(buffer))) {
-            // 加盐在中间
-            if (salt != null && count <= saltPosition && saltPosition < count + n) {
-                int len = (int) (saltPosition - count);
-                if (len != 0) {
-                    messageDigest.update(buffer, 0, len);
-                }
-                messageDigest.update(salt);
-                messageDigest.update(buffer, len, n);
-            } else {
-                messageDigest.update(buffer, 0, n);
-            }
-            count += n;
-        }
-        // 加盐在末尾
-        if (salt != null && count < saltPosition) {
-            messageDigest.update(salt);
-        }
-        return messageDigest.digest();
+        // 使用指定的输入数据流更新摘要
+        doUpdate(input);
+        // 来完成哈希计算。
+        byte[] hash = digestAndReset();
+        // 重复计算
+        return doRepeatDigest(hash);
     }
+
+
 
     /**
      * 使用指定的字节数组更新摘要
@@ -232,7 +214,7 @@ public class Digester {
      */
     private void doUpdate(byte[] input) {
         // 无加盐
-        if (salt == null) {
+        if (salt == null || salt.length == 0) {
             messageDigest.update(input);
         }
         // 加盐在开头
@@ -254,14 +236,60 @@ public class Digester {
     }
 
     /**
+     * 使用指定输入数据流更新摘要
+     * @param input {@link InputStream} 输入数据流
+     * @return 摘要字节数组
+     * @throws IOException 出现IO异常时抛出
+     */
+    private void doUpdate(InputStream input) throws IOException {
+        byte[] buffer = new byte[IoConstants.DEFAULT_BUFFER_SIZE];
+        // 无加盐
+        if (salt == null || salt.length == 0) {
+            int n = 0;
+            while (IoConstants.EOF != (n = input.read(buffer))) {
+                messageDigest.update(buffer, 0, n);
+            }
+        }
+        // 有加盐
+        else {
+            long count = 0;
+            int n = 0;
+
+            // 加盐在开头
+            if (saltPosition < 0) {
+                messageDigest.update(salt);
+            }
+
+            // 加盐在中间
+            while (IoConstants.EOF != (n = input.read(buffer))) {
+                if (count <= saltPosition && saltPosition < count + n) {
+                    int offset = (int) (saltPosition - count);
+                    if (offset != 0) {
+                        messageDigest.update(buffer, 0, offset);
+                    }
+                    messageDigest.update(salt);
+                    messageDigest.update(buffer, offset, n - offset);
+                } else {
+                    messageDigest.update(buffer, 0, n);
+                }
+                count += n;
+            }
+
+            // 加盐在末尾
+            if (count < saltPosition) {
+                messageDigest.update(salt);
+            }
+        }
+    }
+
+    /**
      * 重复计算摘要，取决于{@link #digestCount} 值<br>
      * 每次计算摘要前都会重置{@link #messageDigest}
      * @param input 第一次的摘要数据
      * @return 摘要字节数组
      */
     private byte[] doRepeatDigest(byte[] input) {
-        int count = Math.max(1, digestCount);
-        for (int i = 1; i < count; i++) {
+        for (int i = 1; i < digestCount; i++) {
             messageDigest.update(input);
             input = digestAndReset();
         }

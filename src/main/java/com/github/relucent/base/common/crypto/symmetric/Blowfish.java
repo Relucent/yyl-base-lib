@@ -28,7 +28,7 @@ public class Blowfish {
      * Creates a new Blowfish object using the specified key (oversized password will be cut).
      * @param password the password (treated as a real unicode array)
      */
-    public Blowfish(String password) {
+    protected Blowfish(String password) {
         // hash down the password to a 160bit key
         MessageDigest digest = null;
         try {
@@ -41,6 +41,15 @@ public class Blowfish {
         // setup the encryptor (use a dummy IV)
         m_bfish = new BlowfishCBC(digest.digest(), 0);
         digest.reset();
+    }
+
+    /**
+     * Create Blowfish instance
+     * @param password the password (treated as a real unicode array)
+     * @return Blowfish instance
+     */
+    public static Blowfish create(String password) {
+        return new Blowfish(password);
     }
 
     /**
