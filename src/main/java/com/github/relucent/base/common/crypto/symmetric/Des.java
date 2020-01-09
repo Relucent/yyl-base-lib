@@ -34,10 +34,10 @@ public class Des extends SymmetricCrypto {
      * @param mode 模式{@link Mode}
      * @param padding {@link Padding}补码方式
      * @param secretKey 秘密(对称)密钥
-     * @param parameterSpec 算法参数(偏移向量,加盐)
+     * @param iv 算法参数(偏移向量,加盐)
      */
-    protected Des(Mode mode, Padding padding, SecretKey key, IvParameterSpec iv) {
-        super(ALGORITHM_PREFIX + "/" + mode.name() + "/" + padding.name(), key, iv);
+    protected Des(Mode mode, Padding padding, SecretKey secretKey, IvParameterSpec iv) {
+        super(ALGORITHM_PREFIX + "/" + mode.name() + "/" + padding.name(), secretKey, iv);
     }
 
     // =================================CreateMethods==========================================
@@ -60,7 +60,7 @@ public class Des extends SymmetricCrypto {
 
     /**
      * 创建DES实例，使用默认的DES/CBC/PKCS5Padding算法
-     * @param 密钥数据，长度为8个字节；如果为null，表示使用随机密钥
+     * @param key 密钥数据，长度为8个字节；如果为null，表示使用随机密钥
      * @return DES实例
      */
     public static Des create(byte[] key) {

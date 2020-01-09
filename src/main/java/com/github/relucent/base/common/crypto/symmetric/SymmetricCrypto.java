@@ -181,7 +181,7 @@ public class SymmetricCrypto {
 
     /**
      * 加密数据(使用UTF-8编码)，返回十六进制字符串
-     * @param data 被加密的字符串
+     * @param input 被加密的字符串
      * @return 加密后的Hex
      */
     public String encryptHex(String input) {

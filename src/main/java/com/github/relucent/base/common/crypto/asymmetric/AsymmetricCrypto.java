@@ -107,9 +107,9 @@ public class AsymmetricCrypto extends AbstractAsymmetricCrypto<AsymmetricCrypto>
      * @param keyType 密钥类型(私钥或公钥)
      * @return 加密后的数据
      */
-    public byte[] encrypt(byte[] data, KeyType keyType) {
+    public byte[] encrypt(byte[] input, KeyType keyType) {
         try {
-            return doFinal(data, Cipher.ENCRYPT_MODE, keyType, encryptBlockSize);
+            return doFinal(input, Cipher.ENCRYPT_MODE, keyType, encryptBlockSize);
         } catch (Exception e) {
             throw new CryptoException(e);
         }
@@ -121,9 +121,9 @@ public class AsymmetricCrypto extends AbstractAsymmetricCrypto<AsymmetricCrypto>
      * @param keyType 密钥类型(私钥或公钥)
      * @return 解密后的数据
      */
-    public byte[] decrypt(byte[] data, KeyType keyType) {
+    public byte[] decrypt(byte[] input, KeyType keyType) {
         try {
-            return doFinal(data, Cipher.DECRYPT_MODE, keyType, encryptBlockSize);
+            return doFinal(input, Cipher.DECRYPT_MODE, keyType, encryptBlockSize);
         } catch (Exception e) {
             throw new CryptoException(e);
         }

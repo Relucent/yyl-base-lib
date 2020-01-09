@@ -2,7 +2,7 @@ package com.github.relucent.base.common.crypto.signature;
 
 /**
  * 签名算法类型<br>
- * @see https://docs.oracle.com/javase/7/docs/technotes/guides/security/StandardNames.html#Signature
+ * @see <a href="https://docs.oracle.com/javase/7/docs/technotes/guides/security/StandardNames.html#Signature">Signature</a>
  */
 public enum SignatureAlgorithm {
 

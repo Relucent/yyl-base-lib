@@ -36,10 +36,10 @@ public class Desede extends SymmetricCrypto {
      * @param mode 模式{@link Mode}
      * @param padding {@link Padding}补码方式
      * @param secretKey 秘密(对称)密钥
-     * @param parameterSpec 算法参数(偏移向量,加盐)
+     * @param iv 算法参数(偏移向量,加盐)
      */
-    protected Desede(Mode mode, Padding padding, SecretKey key, IvParameterSpec iv) {
-        super(ALGORITHM_PREFIX + "/" + mode.name() + "/" + padding.name(), key, iv);
+    protected Desede(Mode mode, Padding padding, SecretKey secretKey, IvParameterSpec iv) {
+        super(ALGORITHM_PREFIX + "/" + mode.name() + "/" + padding.name(), secretKey, iv);
     }
 
     // =================================CreateMethods==========================================
@@ -62,7 +62,7 @@ public class Desede extends SymmetricCrypto {
 
     /**
      * 创建DESede实例，使用默认的DESede/ECB/PKCS5Padding算法
-     * @param 密钥数据，长度24个字节；如果为null，表示使用随机密钥
+     * @param key 密钥数据，长度24个字节；如果为null，表示使用随机密钥
      * @return DESede实例
      */
     public static Desede create(byte[] key) {

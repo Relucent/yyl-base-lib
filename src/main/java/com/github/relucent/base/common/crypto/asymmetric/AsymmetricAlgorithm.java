@@ -2,7 +2,7 @@ package com.github.relucent.base.common.crypto.asymmetric;
 
 /**
  * 非对称算法类型<br>
- * see: https://docs.oracle.com/javase/7/docs/technotes/guides/security/StandardNames.html#KeyPairGenerator
+ * @see <a href="https://docs.oracle.com/javase/7/docs/technotes/guides/security/StandardNames.html#KeyPairGenerator">KeyPairGenerator</a>
  */
 public enum AsymmetricAlgorithm {
 

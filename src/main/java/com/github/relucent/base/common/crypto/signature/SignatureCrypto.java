@@ -154,7 +154,7 @@ public class SignatureCrypto {
     // =================================SetMethods=============================================
     /**
      * 设置身份证书{@link Certificate} 为PublicKey<br>
-     * @param certificate身份证{@link Certificate}
+     * @param certificate 身份证{@link Certificate}
      * @return this
      */
     public SignatureCrypto setCertificate(Certificate certificate) {

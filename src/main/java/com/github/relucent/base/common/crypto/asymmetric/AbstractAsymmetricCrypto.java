@@ -107,7 +107,6 @@ public abstract class AbstractAsymmetricCrypto<T extends AbstractAsymmetricCrypt
     /**
      * 加密字符串
      * @param input 被加密的字符串
-     * @param charset 字符串编码
      * @param keyType 密钥类型(私钥或公钥)
      * @return 加密后的数据
      */
@@ -175,7 +174,7 @@ public abstract class AbstractAsymmetricCrypto<T extends AbstractAsymmetricCrypt
      * @param keyType 密钥类型(私钥或公钥)
      * @return 解密后的数据
      */
-    public abstract byte[] decrypt(byte[] bytes, KeyType keyType);
+    public abstract byte[] decrypt(byte[] input, KeyType keyType);
 
     /**
      * 解密数据，密文为16进制字符串
