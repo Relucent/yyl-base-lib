@@ -15,9 +15,9 @@ import org.slf4j.LoggerFactory;
 /**
  * 网络信息工具类
  */
-public class NetworkHelper {
+public class NetworkUtil {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(NetworkHelper.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(NetworkUtil.class);
 
     /** 回送地址(本机地址 ) */
     public static final String LOCALHOST_IPV4 = "127.0.0.1";

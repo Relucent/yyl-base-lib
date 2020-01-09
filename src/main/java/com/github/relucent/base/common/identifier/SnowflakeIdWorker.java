@@ -2,7 +2,7 @@ package com.github.relucent.base.common.identifier;
 
 import java.lang.management.ManagementFactory;
 
-import com.github.relucent.base.common.net.NetworkHelper;
+import com.github.relucent.base.common.net.NetworkUtil;
 
 /**
  * Twitter_Snowflake<br>
@@ -152,7 +152,7 @@ public class SnowflakeIdWorker {
     protected static long getDatacenterId(long maxDatacenterId) {
         long id = 0L;
         try {
-            byte[] mac = NetworkHelper.getHardwareAddress();
+            byte[] mac = NetworkUtil.getHardwareAddress();
             if (mac != null && mac.length != 0) {
                 id = (((0x000000FF & (long) mac[mac.length - 1])//
                         | (0x0000FF00 & (((long) mac[mac.length - 2]) << 8)) //
