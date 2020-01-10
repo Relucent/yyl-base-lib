@@ -6,9 +6,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.github.relucent.base.common.bean.mapping.BeanMapAdapterProcessor;
-
-
 /**
  * JavaObject JSON 映射配置(Bean转Map解析器的配置项)
  * @version 0.02-20091211
@@ -18,11 +15,7 @@ public class MapConfig {
 
     // ========================================Fields=========================================
     /** 默认的解析器配置 */
-    public static final MapConfig _DEFAULT = new MapConfig();
-
-    /** 某个Object转换Map时所需要的解析器 */
-    private Map<Class<?>, BeanMapAdapterProcessor> typeBeanAdapterProcessorMap = new HashMap<Class<?>, BeanMapAdapterProcessor>();
-
+    public static final MapConfig DEFAULT = new MapConfig();
     /** 将Object转换Map时需要转换的字段 */
     private Set<String> includeFields = new HashSet<String>();// Properties
     /** 将Object转换Map时需要排除的字段 */
@@ -59,30 +52,6 @@ public class MapConfig {
     }
 
     // ========================================Methods========================================
-    public MapConfig createInstance() {
-        return new MapConfig();
-    }
-
-    public void registerBeanMapAdapterProcessor(Class<?> propertyType, BeanMapAdapterProcessor beanAdapterProcessor) {
-        if (propertyType != null && beanAdapterProcessor != null) {
-            typeBeanAdapterProcessorMap.put(propertyType, beanAdapterProcessor);
-        }
-    }
-
-    public void unregisterBeanMapAdapterProcessor(Class<?> propertyType) {
-        if (propertyType != null) {
-            typeBeanAdapterProcessorMap.remove(propertyType);
-        }
-    }
-
-    public BeanMapAdapterProcessor findBeanMapAdapterProcessor(Class<?> propertyType) {
-        if (!typeBeanAdapterProcessorMap.isEmpty()) {
-            return typeBeanAdapterProcessorMap.get(propertyType);
-        } else {
-            return null;
-        }
-    }
-
     /**
      * 转换时需要序列化的字段
      * @param includes 设置需要包含的字段

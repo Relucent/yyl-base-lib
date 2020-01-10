@@ -25,7 +25,7 @@ public class BeanUtil {
     private static final Logger LOG = LoggerFactory.getLogger(BeanUtil.class);
 
     public static Map<String, Object> describe(Object bean) {
-        return describe(bean, MapConfig._DEFAULT);
+        return describe(bean, MapConfig.DEFAULT);
     }
 
     public static Map<String, Object> describe(Object bean, MapConfig config) {
@@ -33,7 +33,7 @@ public class BeanUtil {
     }
 
     public static void populate(Object bean, Map<String, Object> map) {
-        populate(bean, map, MapConfig._DEFAULT);
+        populate(bean, map, MapConfig.DEFAULT);
     }
 
     public static void populate(Object bean, Map<String, Object> map, MapConfig config) {
@@ -41,7 +41,7 @@ public class BeanUtil {
     }
 
     public static <T> T newBean(Class<T> beanClass, Map<String, Object> properties) {
-        return newBean(beanClass, properties, MapConfig._DEFAULT);
+        return newBean(beanClass, properties, MapConfig.DEFAULT);
     }
 
     public static <T> T newBean(Class<T> beanClass, Map<String, Object> properties, MapConfig config) {

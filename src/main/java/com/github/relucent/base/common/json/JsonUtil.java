@@ -12,29 +12,7 @@ import com.github.relucent.base.plugin.jackson.JacksonHandler;
 public class JsonUtil {
 
     // ===================================Fields==============================================
-    private static volatile JsonHandler HANDLER;
-
-    static {
-        JsonHandler handler = null;
-        if (handler == null) {
-            try {
-                handler = JacksonHandler.INSTANCE;
-            } catch (Throwable e) {
-                /* Ignore */
-            }
-        }
-        if (handler == null) {
-            try {
-                handler = GsonHandler.INSTANCE;
-            } catch (Throwable e) {
-                /* Ignore */
-            }
-        }
-        if (handler == null) {
-            handler = new com.github.relucent.base.common.json.impl.JsonHandler();
-        }
-        HANDLER = handler;
-    }
+    private static volatile JsonHandler HANDLER = getDefaultHandler();
 
     // ===================================Methods=============================================
     /**
@@ -104,5 +82,31 @@ public class JsonUtil {
      */
     public static JsonHandler getHandler() {
         return HANDLER;
+    }
+
+    /**
+     * 获得可用的 {@link JsonHandler}
+     * @return 可用的 {@link JsonHandler}
+     */
+    private static JsonHandler getDefaultHandler() {
+        JsonHandler handler = null;
+        if (handler == null) {
+            try {
+                handler = JacksonHandler.INSTANCE;
+            } catch (Throwable e) {
+                /* Ignore */
+            }
+        }
+        if (handler == null) {
+            try {
+                handler = GsonHandler.INSTANCE;
+            } catch (Throwable e) {
+                /* Ignore */
+            }
+        }
+        if (handler == null) {
+            handler = new com.github.relucent.base.common.json.impl.JsonHandler();
+        }
+        return handler;
     }
 }
