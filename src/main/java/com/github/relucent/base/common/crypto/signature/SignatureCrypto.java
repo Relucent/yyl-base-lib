@@ -24,12 +24,12 @@ public class SignatureCrypto {
     /** KeyUsage扩展的对象标识符 (Object Identifier，OID) */
     private static final String KEY_USAGE_OID = "2.5.29.15";
 
+    /** 算法名称 */
+    protected String algorithm;
     /** 公钥 */
     protected PublicKey publicKey;
     /** 私钥 */
     protected PrivateKey privateKey;
-    /** 算法名称 */
-    protected String algorithm;
     /** 签名，提供数字签名算法功能(签名和验证) */
     protected Signature signature;
 
@@ -218,6 +218,14 @@ public class SignatureCrypto {
     }
 
     // =================================GetMethods=============================================
+    /**
+     * 返回算法名称(字符串表示)
+     * @return 算法名称
+     */
+    public String getAlgorithm() {
+        return algorithm;
+    }
+
     /**
      * 获得签名对象 {@link Signature}
      * @return 签名对象

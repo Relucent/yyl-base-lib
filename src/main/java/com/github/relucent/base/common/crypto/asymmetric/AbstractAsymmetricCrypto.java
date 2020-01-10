@@ -18,12 +18,12 @@ import com.github.relucent.base.common.io.IoUtil;
  */
 public abstract class AbstractAsymmetricCrypto<T extends AbstractAsymmetricCrypto<T>> {
     // =================================Fields================================================
+    /** 算法名称 */
+    protected String algorithm;
     /** 公钥 */
     protected PublicKey publicKey;
     /** 私钥 */
     protected PrivateKey privateKey;
-    /** 算法名称 */
-    protected String algorithm;
 
     // =================================Constructors===========================================
     /**
@@ -273,6 +273,14 @@ public abstract class AbstractAsymmetricCrypto<T extends AbstractAsymmetricCrypt
     }
 
     // =================================GetMethods=============================================
+    /**
+     * 返回算法名称(字符串表示)
+     * @return 算法名称
+     */
+    public String getAlgorithm() {
+        return algorithm;
+    }
+
     /**
      * 获得公钥
      * @return 获得公钥

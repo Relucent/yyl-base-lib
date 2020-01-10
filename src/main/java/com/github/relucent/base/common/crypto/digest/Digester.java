@@ -20,6 +20,8 @@ import com.github.relucent.base.common.crypto.CryptoException;
 public class Digester {
 
     // =================================Fields================================================
+    /** 算法名称 */
+    protected String algorithm;
     /** 摘要算法的功能类(该对象非线程安全) */
     protected MessageDigest messageDigest;
     /** 盐值 */
@@ -92,22 +94,6 @@ public class Digester {
     }
 
     // =================================Methods================================================
-    /**
-     * 获得 {@link MessageDigest}
-     * @return {@link MessageDigest}
-     */
-    public MessageDigest getMessageDigest() {
-        return messageDigest;
-    }
-
-    /**
-     * 获取散列长度，0表示不支持此方法
-     * @return 散列长度，0表示不支持此方法
-     */
-    public int getDigestLength() {
-        return this.messageDigest.getDigestLength();
-    }
-
     /**
      * 生成数据的摘要
      * @param input 被摘要数据
@@ -337,5 +323,30 @@ public class Digester {
     public Digester setDigestCount(int digestCount) {
         this.digestCount = digestCount;
         return this;
+    }
+
+    // =================================GetMethods=============================================
+    /**
+     * 返回算法名称(字符串表示)
+     * @return 算法名称
+     */
+    public String getAlgorithm() {
+        return algorithm;
+    }
+
+    /**
+     * 获得 {@link MessageDigest}
+     * @return {@link MessageDigest}
+     */
+    public MessageDigest getMessageDigest() {
+        return messageDigest;
+    }
+
+    /**
+     * 获取散列长度，0表示不支持此方法
+     * @return 散列长度，0表示不支持此方法
+     */
+    public int getDigestLength() {
+        return messageDigest.getDigestLength();
     }
 }

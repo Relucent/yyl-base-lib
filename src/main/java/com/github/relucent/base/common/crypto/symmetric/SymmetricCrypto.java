@@ -29,6 +29,8 @@ import com.github.relucent.base.common.io.IoUtil;
 public class SymmetricCrypto {
 
     // =================================Fields================================================
+    /** 算法名称 */
+    private String algorithm;
     /** 秘密(对称)密钥 */
     private SecretKey secretKey;
     /** 提供加密和解密功能 */
@@ -95,13 +97,14 @@ public class SymmetricCrypto {
         if (secretKey == null) {
             secretKey = generateKey(algorithm);
         }
-        this.secretKey = secretKey;
         // 对于PBE算法使用随机数加盐
         if (params == null && algorithm.startsWith("PBE")) {
             byte[] bytes = new byte[8];
             ThreadLocalRandom.current().nextBytes(bytes);
             params = new PBEParameterSpec(bytes, 100);
         }
+        this.algorithm = algorithm;
+        this.secretKey = secretKey;
         this.params = params;
         this.cipher = createCipher(algorithm);
     }
@@ -360,6 +363,14 @@ public class SymmetricCrypto {
     }
 
     // =================================GetMethods=============================================
+    /**
+     * 返回算法名称(字符串表示)
+     * @return 算法名称
+     */
+    public String getAlgorithm() {
+        return algorithm;
+    }
+
     /**
      * 获得秘密(对称)密钥
      * @return 秘密(对称)密钥
