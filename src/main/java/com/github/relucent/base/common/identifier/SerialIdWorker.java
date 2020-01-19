@@ -35,7 +35,22 @@ public class SerialIdWorker {
     /** 毫秒内序列 */
     private long sequence = 0L;
     /** 序列ID后缀(为不同服务器设置不同后缀，可以防止集群环境序列ID的冲突) */
-    private String suffix = "";
+    private volatile String suffix = "";
+
+    /**
+     * 构造函数
+     */
+    public SerialIdWorker() {
+        this("");
+    }
+
+    /**
+     * 构造函数
+     * @param suffix ID后缀
+     */
+    public SerialIdWorker(String suffix) {
+        this.suffix = suffix;
+    }
 
     /**
      * 获得下一个序列ID
