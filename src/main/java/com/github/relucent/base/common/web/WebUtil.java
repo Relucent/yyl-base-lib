@@ -130,8 +130,7 @@ public class WebUtil {
      * @param response HTTP响应
      * @throws IOException IO异常
      */
-    public static void writeJson(String json, HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
+    public static void writeJson(String json, HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setCharacterEncoding("UTF-8");
         setNoCacheHeader(response);
         response.setContentType("application/json; charset=UTF-8");
@@ -157,8 +156,7 @@ public class WebUtil {
      * @param mode 下载模式
      * @throws IOException IO异常
      */
-    public static void download(DownloadFile file, HttpServletRequest request, HttpServletResponse response,
-            DownloadMode mode) throws IOException {
+    public static void download(DownloadFile file, HttpServletRequest request, HttpServletResponse response, DownloadMode mode) throws IOException {
         String name = file.getName();
         String contentType = file.getContentType();
         String filename = WebUtil.getContentDispositionFilename(name, request);
@@ -280,12 +278,11 @@ public class WebUtil {
         /** 文件长度 */
         private long length;
 
-        public DownloadSimpleFile(String name, String contentType, byte[] content, long length) {
-            super();
+        public DownloadSimpleFile(String name, String contentType, byte[] content) {
             this.name = name;
             this.contentType = contentType;
             this.content = content;
-            this.length = length;
+            this.length = content.length;
         }
 
         @Override
