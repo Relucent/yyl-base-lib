@@ -9,6 +9,8 @@ public class ProviderFactory {
 
     /** 默认的{@link Provider} */
     private static volatile Provider PROVIDER;
+    /** 是否使用了 BouncyCastle */
+    private static volatile boolean isUseBouncyCastle;
 
     static {
         Provider provider = null;
@@ -19,6 +21,7 @@ public class ProviderFactory {
             // ignore
         }
         PROVIDER = provider;
+        isUseBouncyCastle = provider != null;
     }
 
     /**
@@ -28,6 +31,14 @@ public class ProviderFactory {
      */
     public static Provider getProvider() {
         return PROVIDER;
+    }
+
+    /**
+     * 是否使用 Bouncy castle（轻量级密码术包）
+     * @return 如果使用了Bouncy castle库返回true，否则返回false
+     */
+    public static boolean isUseBouncyCastle() {
+        return isUseBouncyCastle;
     }
 
     /**

@@ -1,9 +1,15 @@
 package com.github.relucent.base.common.crypto.asymmetric;
 
+import java.security.Key;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.interfaces.RSAKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+
+import javax.crypto.Cipher;
+
+import com.github.relucent.base.common.crypto.ProviderFactory;
 
 /**
  * RSA加密算法<br>
@@ -17,7 +23,7 @@ public class Rsa extends AsymmetricCrypto {
      * 构造函数，使用随机生成的密钥对(私钥和公钥)
      */
     protected Rsa() {
-        super(AsymmetricAlgorithm.RSA);
+        this(null, null);
     }
 
     /**
@@ -27,7 +33,7 @@ public class Rsa extends AsymmetricCrypto {
      * @param publicKey 公钥
      */
     protected Rsa(PrivateKey privateKey, PublicKey publicKey) {
-        super(AsymmetricAlgorithm.RSA, privateKey, publicKey);
+        super(ProviderFactory.isUseBouncyCastle() ? AsymmetricAlgorithm.RSA_ECB_PKCS1 : AsymmetricAlgorithm.RSA, privateKey, publicKey);
     }
 
     // =================================CreateMethods==========================================
@@ -47,5 +53,21 @@ public class Rsa extends AsymmetricCrypto {
      */
     public static Rsa create(PrivateKey privateKey, PublicKey publicKey) {
         return new Rsa(privateKey, publicKey);
+    }
+
+    // =================================OverrideMethods========================================
+    @Override
+    protected int getBlockSize(int opmode, Key key) {
+        int blockSize = super.getBlockSize(opmode, key);
+        if (blockSize == 0) {
+            RSAKey rsaKey = (RSAKey) key;
+            int bitLength = rsaKey.getModulus().bitLength();
+            if (Cipher.ENCRYPT_MODE == opmode) {}
+            blockSize = bitLength / 8 - 11;
+            if (Cipher.DECRYPT_MODE == opmode) {
+                blockSize = bitLength / 8;
+            }
+        }
+        return blockSize;
     }
 }

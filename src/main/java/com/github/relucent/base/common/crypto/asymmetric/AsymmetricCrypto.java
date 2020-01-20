@@ -23,6 +23,10 @@ public class AsymmetricCrypto extends AbstractAsymmetricCrypto<AsymmetricCrypto>
     // =================================Fields================================================
     /** 提供加密和解密功能 */
     protected Cipher cipher;
+    /** 加密的块大小 */
+    protected int encryptBlockSize = -1;
+    /** 解密的块大小 */
+    protected int decryptBlockSize = -1;
 
     // =================================Constructors===========================================
     /**
@@ -137,10 +141,21 @@ public class AsymmetricCrypto extends AbstractAsymmetricCrypto<AsymmetricCrypto>
 
         // 根据密钥类型获得相应密钥
         Key key = getKey(keyType);
+
+        // 用密钥初始化此 CIPHER
         cipher.init(opmode, key);
 
         // 分段大小
-        int blockSize = cipher.getBlockSize();
+        int blockSize = getBlockSize(opmode, key);
+
+        // 分段大小0，无法分段
+        if (blockSize == 0) {
+            try {
+                return this.cipher.doFinal(input, 0, input.length);
+            } catch (Exception e) {
+                throw new CryptoException(e);
+            }
+        }
 
         // 不足分段，直接进行加密或解密
         if (input.length <= blockSize) {
@@ -158,5 +173,39 @@ public class AsymmetricCrypto extends AbstractAsymmetricCrypto<AsymmetricCrypto>
             }
             return output.toByteArray();
         }
+    }
+
+    /**
+     * 返回块的大小（以字节为单位）。
+     * @param opmode 此 Cipher 的操作模式（ENCRYPT_MODE、DECRYPT_MODE、WRAP_MODE 或 UNWRAP_MODE）
+     * @param key 密钥
+     * @return 块的大小（以字节为单位
+     */
+    protected int getBlockSize(int opmode, Key key) {
+        int blockSize = cipher.getBlockSize();
+        if (Cipher.ENCRYPT_MODE == opmode && encryptBlockSize != -1) {
+            return encryptBlockSize;
+        }
+        if (Cipher.DECRYPT_MODE == opmode && decryptBlockSize != -1) {
+            return decryptBlockSize;
+        }
+        return blockSize;
+    }
+
+    // =================================SetMethods=============================================
+    /**
+     * 设置加密块大小
+     * @param encryptBlockSize 加密块大小
+     */
+    public void setEncryptBlockSize(int encryptBlockSize) {
+        this.encryptBlockSize = encryptBlockSize;
+    }
+
+    /**
+     * 设置解密块大小
+     * @param decryptBlockSize 解密块大小
+     */
+    public void setCustomDecryptBlockSize(int decryptBlockSize) {
+        this.decryptBlockSize = decryptBlockSize;
     }
 }
