@@ -17,7 +17,7 @@ import com.github.relucent.base.common.net.NetworkUtil;
 public class SnowflakeIdWorker {
 	// ==============================Fields===========================================
 	/** 默认实例 */
-	public static final SnowflakeIdWorker DEFAULT = new SnowflakeIdWorker(0, 0);
+	public static final SnowflakeIdWorker DEFAULT = new SnowflakeIdWorker();
 
 	/** 开始时间截 (2010-11-04 09:42:54.657) */
 	private final long twepoch = 1288834974657L;
