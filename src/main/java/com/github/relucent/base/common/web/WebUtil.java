@@ -37,6 +37,9 @@ public class WebUtil {
 	public static String getPathWithinApplication(HttpServletRequest request) {
 		String contextPath = getContextPath(request);
 		String requestUri = getRequestUri(request);
+		if (contextPath == null || requestUri == null) {
+			return requestUri;
+		}
 		if (requestUri.toLowerCase().startsWith(contextPath.toLowerCase())) {
 			String path = requestUri.substring(contextPath.length());
 			return path.isEmpty() ? "/" : path;
