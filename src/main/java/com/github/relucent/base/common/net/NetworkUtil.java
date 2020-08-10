@@ -13,15 +13,14 @@ import java.util.regex.Pattern;
 
 import javax.net.ServerSocketFactory;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.github.relucent.base.common.logging.Logger;
 
 /**
  * 网络信息工具类
  */
 public class NetworkUtil {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(NetworkUtil.class);
+	private static final Logger LOGGER = Logger.getLogger(NetworkUtil.class);
 
 	/** 回送地址(本机地址 ) */
 	public static final String LOCALHOST_IPV4 = "127.0.0.1";

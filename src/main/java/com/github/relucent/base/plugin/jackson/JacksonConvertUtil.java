@@ -4,9 +4,6 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.TreeNode;
@@ -20,13 +17,14 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
 import com.github.relucent.base.common.collection.Listx;
 import com.github.relucent.base.common.collection.Mapx;
+import com.github.relucent.base.common.logging.Logger;
 
 /**
  * 类型转换工具类
  */
 public class JacksonConvertUtil {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(JacksonConvertUtil.class);
+	private static final Logger LOGGER = Logger.getLogger(JacksonConvertUtil.class);
 	public final static JsonDeserializer<Mapx> MAP_DESERIALIZER;
 	public final static JsonDeserializer<Listx> LIST_DESERIALIZER;
 

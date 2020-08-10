@@ -22,11 +22,10 @@ import org.apache.ibatis.plugin.Signature;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.github.relucent.base.common.jdbc.DelegatingDialect;
 import com.github.relucent.base.common.jdbc.Dialect;
+import com.github.relucent.base.common.logging.Logger;
 import com.github.relucent.base.common.page.Pagination;
 
 /**
@@ -57,7 +56,7 @@ public class PaginationInterceptor implements Interceptor {
 			throw new RuntimeException(e);
 		}
 	}
-	protected final Logger logger = LoggerFactory.getLogger(getClass());
+	protected final Logger logger = Logger.getLogger(getClass());
 	private final Map<String, MappedStatement> countMsCache = new ConcurrentHashMap<>();
 	private final DelegatingDialect dialect = new DelegatingDialect();
 
