@@ -39,7 +39,6 @@ public class ExceptionHelper {
 
 	/**
 	 * 创建通用异常
-	 * @param type 异常类型
 	 * @param message 异常信息
 	 * @return 通用异常
 	 */
