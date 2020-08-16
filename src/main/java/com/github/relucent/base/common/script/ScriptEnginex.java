@@ -9,5 +9,4 @@ import javax.script.ScriptEngine;
  * @author YYL
  */
 public interface ScriptEnginex extends ScriptEngine, Compilable, Invocable {
-
 }

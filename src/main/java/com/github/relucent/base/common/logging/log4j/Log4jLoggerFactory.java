@@ -9,13 +9,13 @@ import com.github.relucent.base.common.logging.LoggerFactory;
  */
 public class Log4jLoggerFactory implements LoggerFactory {
 
-	@Override
-	public Logger getLogger(Class<?> clazz) {
-		return new Log4jLogger(clazz);
-	}
+    @Override
+    public Logger getLogger(Class<?> clazz) {
+        return new Log4jLogger(clazz);
+    }
 
-	@Override
-	public Logger getLogger(String name) {
-		return new Log4jLogger(name);
-	}
+    @Override
+    public Logger getLogger(String name) {
+        return new Log4jLogger(name);
+    }
 }

@@ -1,20 +1,18 @@
-package com.github.relucent.base.common.logging.none;
+package com.github.relucent.base.common.logging.jdk;
 
 import com.github.relucent.base.common.logging.Logger;
 import com.github.relucent.base.common.logging.LoggerFactory;
 
 /**
- * NoneLoggerFactory
+ * JdkLoggerFactory
  */
-public class NoneLoggerFactory implements LoggerFactory {
+public class JdkLoggerFactory implements LoggerFactory {
 
-    @Override
     public Logger getLogger(Class<?> clazz) {
-        return new NoneLogger();
+        return new JdkLogger(clazz);
     }
 
-    @Override
     public Logger getLogger(String name) {
-        return new NoneLogger();
+        return new JdkLogger(name);
     }
 }

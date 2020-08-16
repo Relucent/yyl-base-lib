@@ -5,7 +5,7 @@ package com.github.relucent.base.common.logging;
  */
 public interface LoggerFactory {
 
-	Logger getLogger(Class<?> clazz);
+    Logger getLogger(Class<?> clazz);
 
-	Logger getLogger(String name);
+    Logger getLogger(String name);
 }
