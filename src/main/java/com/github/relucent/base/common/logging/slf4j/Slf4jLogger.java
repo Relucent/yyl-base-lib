@@ -11,17 +11,17 @@ import com.github.relucent.base.common.logging.LoggerWrapper;
  */
 public class Slf4jLogger extends LoggerWrapper {
 
-	private static final String FQCN = Slf4jLogger.class.getName();
+    private static final String FQCN = Slf4jLogger.class.getName();
 
-	public Slf4jLogger(Class<?> clazz) {
-		super(wrap(org.slf4j.LoggerFactory.getLogger(clazz)));
-	}
+    public Slf4jLogger(Class<?> clazz) {
+        super(wrap(org.slf4j.LoggerFactory.getLogger(clazz)));
+    }
 
-	public Slf4jLogger(String name) {
-		super(wrap(org.slf4j.LoggerFactory.getLogger(name)));
-	}
+    public Slf4jLogger(String name) {
+        super(wrap(org.slf4j.LoggerFactory.getLogger(name)));
+    }
 
-	private static Logger wrap(org.slf4j.Logger logger) {
-		return logger instanceof AbstractLogger ? new Slf4jLocationAwareLoggerImpl((LocationAwareLogger) logger, FQCN) : new Slf4jLoggerImpl(logger);
-	}
+    private static Logger wrap(org.slf4j.Logger logger) {
+        return logger instanceof AbstractLogger ? new Slf4jLocationAwareLoggerImpl((LocationAwareLogger) logger, FQCN) : new Slf4jLoggerImpl(logger);
+    }
 }
