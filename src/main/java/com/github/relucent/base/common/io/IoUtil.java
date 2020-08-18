@@ -11,7 +11,7 @@ import java.net.HttpURLConnection;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
 
-import com.github.relucent.base.common.constants.IoConstants;
+import com.github.relucent.base.common.constant.IoConstants;
 
 /**
  * IO工具类 <br>

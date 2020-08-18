@@ -1,6 +1,6 @@
 package com.github.relucent.base.common.io;
 
-import com.github.relucent.base.common.constants.FilenameConstants;
+import com.github.relucent.base.common.constant.FilenameConstants;
 
 /**
  * 常规文件名和文件路径操作工作类。

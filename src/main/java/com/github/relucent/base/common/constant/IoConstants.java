@@ -1,4 +1,4 @@
-package com.github.relucent.base.common.constants;
+package com.github.relucent.base.common.constant;
 
 /**
  * I/O 常量

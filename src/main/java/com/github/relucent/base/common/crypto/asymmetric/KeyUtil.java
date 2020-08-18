@@ -13,7 +13,7 @@ import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.ECGenParameterSpec;
 import java.security.spec.KeySpec;
 
-import com.github.relucent.base.common.constants.CharConstants;
+import com.github.relucent.base.common.constant.CharConstants;
 import com.github.relucent.base.common.crypto.CryptoException;
 import com.github.relucent.base.common.crypto.ProviderFactory;
 

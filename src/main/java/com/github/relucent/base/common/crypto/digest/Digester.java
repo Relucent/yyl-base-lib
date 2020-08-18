@@ -9,7 +9,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.Provider;
 
 import com.github.relucent.base.common.codec.Hex;
-import com.github.relucent.base.common.constants.IoConstants;
+import com.github.relucent.base.common.constant.IoConstants;
 import com.github.relucent.base.common.crypto.CryptoException;
 
 /**
