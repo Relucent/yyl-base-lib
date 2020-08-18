@@ -15,7 +15,7 @@ import javax.crypto.spec.DESedeKeySpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
-import com.github.relucent.base.common.constants.CharConstants;
+import com.github.relucent.base.common.constant.CharConstants;
 import com.github.relucent.base.common.crypto.CryptoException;
 import com.github.relucent.base.common.crypto.ProviderFactory;
 

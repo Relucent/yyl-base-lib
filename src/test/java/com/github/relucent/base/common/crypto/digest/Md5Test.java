@@ -6,7 +6,7 @@ import java.io.ByteArrayOutputStream;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.github.relucent.base.common.constants.IoConstants;
+import com.github.relucent.base.common.constant.IoConstants;
 
 public class Md5Test {
     @Test

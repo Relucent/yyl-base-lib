@@ -3,9 +3,9 @@ package com.github.relucent.base.common.lang;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.github.relucent.base.common.constants.ArrayConstants;
-import com.github.relucent.base.common.constants.CharConstants;
-import com.github.relucent.base.common.constants.StringConstants;
+import com.github.relucent.base.common.constant.ArrayConstants;
+import com.github.relucent.base.common.constant.CharConstants;
+import com.github.relucent.base.common.constant.StringConstants;
 
 /**
  * 字符串工具类

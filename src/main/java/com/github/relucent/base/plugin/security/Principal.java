@@ -2,7 +2,7 @@ package com.github.relucent.base.plugin.security;
 
 import java.io.Serializable;
 
-import com.github.relucent.base.common.constants.StringConstants;
+import com.github.relucent.base.common.constant.StringConstants;
 
 /**
  * 用户登录对象
