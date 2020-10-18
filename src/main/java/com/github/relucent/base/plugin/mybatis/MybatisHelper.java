@@ -2,7 +2,6 @@ package com.github.relucent.base.plugin.mybatis;
 
 import java.util.List;
 
-import com.github.relucent.base.common.page.Page;
 import com.github.relucent.base.common.page.Pagination;
 import com.github.relucent.base.common.page.SimplePage;
 
@@ -12,8 +11,17 @@ import com.github.relucent.base.common.page.SimplePage;
  */
 public class MybatisHelper {
 
-    private static ThreadLocal<Pagination> PAGINATION_HOLDER = new ThreadLocal<>();
-    private static ThreadLocal<Long> TOTAL_HOLDER = new ThreadLocal<>();
+    private static final ThreadLocal<PageContext> CONTEXT_HOLDER = ThreadLocal.withInitial(PageContext::new);
+
+    /**
+     * 获得集合第一个元素
+     * @param <E> 元素类型泛型
+     * @param collection 集合对象
+     * @return 集合第一个元素,如果集合为空返回NULL
+     */
+    public static <E> E one(List<E> collection) {
+        return (collection == null || collection.isEmpty()) ? null : collection.get(0);
+    }
 
     /**
      * 分页查询
@@ -22,42 +30,35 @@ public class MybatisHelper {
      * @param select 查询方法
      * @return 分页查询结果
      */
-    public static <T> Page<T> selectPage(Pagination pagination, Select<T> select) {
+    public static <T> SimplePage<T> selectPage(Pagination pagination, Select<T> select) {
         try {
-            PAGINATION_HOLDER.set(pagination);
-            TOTAL_HOLDER.set(-1L);
+            PageContext context = CONTEXT_HOLDER.get();
+            context.setOffset(pagination.getOffset());
+            context.setLimit(pagination.getLimit());
+            context.setTotal(-1);
             List<T> records = select.get();
             long offset = pagination.getOffset();
             long limit = pagination.getLimit();
-            long total = TOTAL_HOLDER.get();
+            long total = context.getTotal();
             return new SimplePage<T>(offset, limit, records, total);
         } finally {
-            release();
+            clearContext();
         }
-    }
-
-    /**
-     * 设置当前分页查询记录总数
-     * @param total 记录总数
-     */
-    protected static void setTotalCount(long total) {
-        TOTAL_HOLDER.set(total);
     }
 
     /**
      * 获得当前分页条件
      * @return 分页条件
      */
-    protected static Pagination getCurrentPagination() {
-        return PAGINATION_HOLDER.get();
+    protected static PageContext getPageContext() {
+        return CONTEXT_HOLDER.get();
     }
 
     /**
      * 释放资源
      */
-    private static void release() {
-        TOTAL_HOLDER.remove();
-        PAGINATION_HOLDER.remove();
+    private static void clearContext() {
+        CONTEXT_HOLDER.remove();
     }
 
     /** 查询方法 */

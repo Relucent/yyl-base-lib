@@ -26,7 +26,6 @@ import org.apache.ibatis.session.RowBounds;
 import com.github.relucent.base.common.jdbc.DelegatingDialect;
 import com.github.relucent.base.common.jdbc.Dialect;
 import com.github.relucent.base.common.logging.Logger;
-import com.github.relucent.base.common.page.Pagination;
 
 /**
  * 用于MyBatis的分页查询插件.<br>
@@ -94,23 +93,26 @@ public class PaginationInterceptor implements Interceptor {
             dialect.route(executor.getTransaction().getConnection());
 
             // 获得分页当前条件
-            Pagination pagination = MybatisHelper.getCurrentPagination();
+            PageContext pageContext = MybatisHelper.getPageContext();
 
             // 判断是否需要进行分页(是否插件分页)
-            if (pagination != null) {
+            if (pageContext != null) {
                 // 查询总数
                 long total = obtainTotalCount(dialect, executor, ms, parameter, resultHandler, boundSql);
 
                 // 暂存总数
-                MybatisHelper.setTotalCount(total);
+                pageContext.setTotal(total);
 
                 // 当查询总数为 0 时，直接返回空的结果
                 if (total == 0) {
                     return new ArrayList<>();
                 }
 
+                int offset = (int) pageContext.getOffset();
+                int limit = (int) pageContext.getLimit();
+
                 // 根据分页条件对象创建分页对象
-                rowBounds = new RowBounds((int) pagination.getOffset(), (int) pagination.getLimit());
+                rowBounds = new RowBounds(offset, limit);
             }
 
             // 判断是否需要进行分页查询
