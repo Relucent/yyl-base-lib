@@ -3,8 +3,6 @@ package com.github.relucent.base.common.lang;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.github.relucent.base.common.lang.StringUtil;
-
 public class StringUtilTest {
 
     @Test
@@ -96,14 +94,12 @@ public class StringUtilTest {
         Assert.assertNull(StringUtil.splitPreserveAllTokens(null, "*", (int) (Math.random() * 100)));
         Assert.assertEquals(StringUtil.splitPreserveAllTokens("", "*", (int) (Math.random() * 100)).length, 0);
         Assert.assertArrayEquals(StringUtil.splitPreserveAllTokens("ab cd ef", null, 0), strings("ab", "cd", "ef"));
-        Assert.assertArrayEquals(StringUtil.splitPreserveAllTokens("ab  cd ef", null, 0),
-                strings("ab", "", "cd", "ef"));
+        Assert.assertArrayEquals(StringUtil.splitPreserveAllTokens("ab  cd ef", null, 0), strings("ab", "", "cd", "ef"));
         Assert.assertArrayEquals(StringUtil.splitPreserveAllTokens("ab:cd:ef", ":", 0), strings("ab", "cd", "ef"));
         Assert.assertArrayEquals(StringUtil.splitPreserveAllTokens("ab:cd:ef", ":", 2), strings("ab", "cd:ef"));
         Assert.assertArrayEquals(StringUtil.splitPreserveAllTokens("ab cd ef", null, 2), strings("ab", "cd ef"));
         Assert.assertArrayEquals(StringUtil.splitPreserveAllTokens("ab cd ef", null, 3), strings("ab", "cd", "ef"));
-        Assert.assertArrayEquals(StringUtil.splitPreserveAllTokens("ab  cd ef", null, 4),
-                strings("ab", "", "cd", "ef"));
+        Assert.assertArrayEquals(StringUtil.splitPreserveAllTokens("ab  cd ef", null, 4), strings("ab", "", "cd", "ef"));
     }
 
     @Test
@@ -115,6 +111,18 @@ public class StringUtilTest {
         Assert.assertArrayEquals(StringUtil.splitPurify("ab:cd:ef", ":"), strings("ab", "cd", "ef"));
         Assert.assertArrayEquals(StringUtil.splitPurify("ab:::cd::ef", ":"), strings("ab", "cd", "ef"));
         Assert.assertArrayEquals(StringUtil.splitPurify(":::ab:cd:ef", ":"), strings("ab", "cd", "ef"));
+    }
+
+    @Test
+    public void testLeftPad() {
+        Assert.assertEquals("00001", StringUtil.leftPad("1", 5, '0'));
+        Assert.assertEquals("123", StringUtil.leftPad("123", 2, '0'));
+    }
+
+    @Test
+    public void testRightPad() {
+        Assert.assertEquals("10000", StringUtil.rightPad("1", 5, '0'));
+        Assert.assertEquals("123", StringUtil.rightPad("123", 2, '0'));
     }
 
     private final String[] strings(final String... strings) {

@@ -113,7 +113,6 @@ public class StringUtil {
         return buffer.toString();
     }
 
-
     /**
      * 切分字符串 *
      * 
@@ -232,6 +231,77 @@ public class StringUtil {
     }
 
     /**
+     * 左填充指定字符的字符串.
+     * 
+     * <pre>
+     * StringUtils.leftPad(null, *, *)     = null
+     * StringUtils.leftPad("", 3, 'z')     = "zzz"
+     * StringUtils.leftPad("bat", 3, 'z')  = "bat"
+     * StringUtils.leftPad("bat", 5, 'z')  = "zzbat"
+     * StringUtils.leftPad("bat", 1, 'z')  = "bat"
+     * StringUtils.leftPad("bat", -1, 'z') = "bat"
+     * </pre>
+     *
+     * @param cs 需要填充的字符串
+     * @param size 要填充到的大小
+     * @param padChar 要填充的字符
+     * @return 左填充字符串或原始字符串（如果不需要填充）
+     */
+    public static String leftPad(final CharSequence cs, final int size, final char padChar) {
+        if (cs == null) {
+            return null;
+        }
+        final int pads = size - cs.length();
+        if (pads <= 0) {
+            return cs.toString();
+        }
+        StringBuilder builder = new StringBuilder(size);
+        for (int i = 0; i < pads; i++) {
+            builder.append(padChar);
+        }
+        builder.append(cs);
+        return builder.toString();
+    }
+
+    /**
+     * <p>
+     * 用指定字符填充字符串
+     * </p>
+     * <p>
+     * The String is padded to the size of {@code size}.
+     * </p>
+     *
+     * <pre>
+     * StringUtils.rightPad(null, *, *)     = null
+     * StringUtils.rightPad("", 3, 'z')     = "zzz"
+     * StringUtils.rightPad("bat", 3, 'z')  = "bat"
+     * StringUtils.rightPad("bat", 5, 'z')  = "batzz"
+     * StringUtils.rightPad("bat", 1, 'z')  = "bat"
+     * StringUtils.rightPad("bat", -1, 'z') = "bat"
+     * </pre>
+     * 
+     * @param cs 需要填充的字符串
+     * @param size 要填充到的大小
+     * @param padChar 要填充的字符
+     * @return 右填充字符串或原始字符串（如果不需要填充）
+     */
+    public static String rightPad(final CharSequence cs, final int size, final char padChar) {
+        if (cs == null) {
+            return null;
+        }
+        final int pads = size - cs.length();
+        if (pads <= 0) {
+            return cs.toString();
+        }
+        StringBuilder builder = new StringBuilder(size);
+        builder.append(cs);
+        for (int i = 0; i < pads; i++) {
+            builder.append(padChar);
+        }
+        return builder.toString();
+    }
+
+    /**
      * 切分字符串
      * @param cs 要处理的字符串
      * @param separator 分隔符字符串
@@ -239,8 +309,7 @@ public class StringUtil {
      * @param preserveAllTokens 保留所有令牌，相邻的分隔符是作为空标记分隔符处理；如果{@code false}，则相邻分离器被视为一个分离器。
      * @return 切分后的字符串数组
      */
-    private static String[] splitWorker(final CharSequence cs, final String separator, final int max,
-            final boolean preserveAllTokens) {
+    private static String[] splitWorker(final CharSequence cs, final String separator, final int max, final boolean preserveAllTokens) {
         if (cs == null) {
             return null;
         }

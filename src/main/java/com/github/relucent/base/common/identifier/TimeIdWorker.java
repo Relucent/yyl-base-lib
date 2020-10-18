@@ -1,9 +1,14 @@
 package com.github.relucent.base.common.identifier;
 
+import java.math.BigInteger;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+
+import com.github.relucent.base.common.jvm.JvmUtil;
+import com.github.relucent.base.common.lang.StringUtil;
+import com.github.relucent.base.common.net.NetworkUtil;
 
 /**
  * 日期时间序列ID生成器<br>
@@ -129,5 +134,15 @@ public class TimeIdWorker {
         Instant instant = Instant.ofEpochMilli(seconds * 1000L);
         ZoneId zone = ZoneId.systemDefault();
         return DATETIME_FORMATTER.format(LocalDateTime.ofInstant(instant, zone));
+    }
+
+    /**
+     * 通过环境获取ID后缀（通过IP地址与进程号获取）
+     * @return ID后缀
+     */
+    public static String getIdSuffixFromEnvironment() {
+        String macMod = new BigInteger(NetworkUtil.getHardwareAddress()).mod(BigInteger.valueOf(36L * 36L * 36L)).toString(36);
+        String pidMod = BigInteger.valueOf(JvmUtil.getPid()).mod(BigInteger.valueOf(36L * 36L)).toString(36);
+        return ("_" + StringUtil.leftPad(macMod, 3, '0') + StringUtil.leftPad(pidMod, 3, '0')).toUpperCase();
     }
 }
