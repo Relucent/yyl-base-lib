@@ -11,8 +11,6 @@ import com.github.relucent.base.common.page.SimplePage;
  */
 public class MybatisHelper {
 
-    private static final ThreadLocal<PageContext> CONTEXT_HOLDER = ThreadLocal.withInitial(PageContext::new);
-
     /**
      * 获得集合第一个元素
      * @param <E> 元素类型泛型
@@ -32,7 +30,7 @@ public class MybatisHelper {
      */
     public static <T> SimplePage<T> selectPage(Pagination pagination, Select<T> select) {
         try {
-            PageContext context = CONTEXT_HOLDER.get();
+            MybatisPageContext context = MybatisPageContextHolder.getContext();
             context.setOffset(pagination.getOffset());
             context.setLimit(pagination.getLimit());
             context.setTotal(-1);
@@ -42,23 +40,8 @@ public class MybatisHelper {
             long total = context.getTotal();
             return new SimplePage<T>(offset, limit, records, total);
         } finally {
-            clearContext();
+            MybatisPageContextHolder.clearContext();
         }
-    }
-
-    /**
-     * 获得当前分页条件
-     * @return 分页条件
-     */
-    protected static PageContext getPageContext() {
-        return CONTEXT_HOLDER.get();
-    }
-
-    /**
-     * 释放资源
-     */
-    private static void clearContext() {
-        CONTEXT_HOLDER.remove();
     }
 
     /** 查询方法 */

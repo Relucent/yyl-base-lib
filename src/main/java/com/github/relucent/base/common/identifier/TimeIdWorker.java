@@ -12,7 +12,7 @@ import com.github.relucent.base.common.net.NetworkUtil;
 
 /**
  * 日期时间序列ID生成器<br>
- * 格式为 日期(年月日时分秒)+秒内计数(5位)<br>
+ * 格式为 “yyyyMMddHHmmssXXXXX”， 日期(年月日时分秒)+秒内计数(5位)<br>
  */
 public class TimeIdWorker {
 
@@ -138,11 +138,11 @@ public class TimeIdWorker {
 
     /**
      * 通过环境获取ID后缀（通过IP地址与进程号获取）
-     * @return ID后缀
+     * @return 6位后缀
      */
     public static String getIdSuffixFromEnvironment() {
         String macMod = new BigInteger(NetworkUtil.getHardwareAddress()).mod(BigInteger.valueOf(36L * 36L * 36L)).toString(36);
         String pidMod = BigInteger.valueOf(JvmUtil.getPid()).mod(BigInteger.valueOf(36L * 36L)).toString(36);
-        return ("_" + StringUtil.leftPad(macMod, 3, '0') + StringUtil.leftPad(pidMod, 3, '0')).toUpperCase();
+        return (StringUtil.leftPad(macMod, 3, '0') + StringUtil.leftPad(pidMod, 3, '0')).toUpperCase();
     }
 }
