@@ -3,7 +3,7 @@ package com.github.relucent.base.plugin.mybatis;
 import java.io.Serializable;
 
 @SuppressWarnings("serial")
-public class PageContext implements Serializable {
+public class MybatisPageContext implements Serializable {
 
     private long offset = 0L;
     private long limit = 1L;

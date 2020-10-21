@@ -115,8 +115,8 @@ public class TreeUtil {
         List<N> nodes = new ArrayList<>();
         for (T model : data) {
             if (Objects.equals(parentId, parentIdGetter.getParentId(model))) {
-                List<N> children =
-                        buildTree(idGetter.getId(model), data, adapter, filter, idGetter, parentIdGetter, childrenSetter, comparator, depth + 1);
+                List<N> children = buildTree(idGetter.getId(model), data, adapter, filter, idGetter, parentIdGetter, childrenSetter, comparator,
+                        depth + 1);
                 if (filter.accept(model, depth, children.isEmpty())) {
                     N node = adapter.adapte(model);
                     childrenSetter.setChildren(node, children);
@@ -162,7 +162,6 @@ public class TreeUtil {
     public static <T> NodeFilter<T> defaultFilter() {
         return DEFAULT_NODE_FILTER;
     }
-
 
     /**
      * 数据ID访问器

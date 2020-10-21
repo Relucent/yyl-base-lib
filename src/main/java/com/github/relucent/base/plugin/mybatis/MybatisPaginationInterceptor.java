@@ -41,7 +41,7 @@ import com.github.relucent.base.common.logging.Logger;
                 MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class, //
                 CacheKey.class, BoundSql.class })//
 })
-public class PaginationInterceptor implements Interceptor {
+public class MybatisPaginationInterceptor implements Interceptor {
 
     // ==============================Fields===========================================
     private static final String COUNT_SUFFIX = "_COUNT";
@@ -93,7 +93,7 @@ public class PaginationInterceptor implements Interceptor {
             dialect.route(executor.getTransaction().getConnection());
 
             // 获得分页当前条件
-            PageContext pageContext = MybatisHelper.getPageContext();
+            MybatisPageContext pageContext = MybatisPageContextHolder.getContext();
 
             // 判断是否需要进行分页(是否插件分页)
             if (pageContext != null) {
