@@ -5,11 +5,13 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.github.relucent.base.common.codec.Base64;
 import com.github.relucent.base.common.io.FilenameUtil;
 import com.github.relucent.base.common.lang.StringUtil;
 
@@ -107,7 +109,8 @@ public class WebUtil {
         try {
             // firefox | chrome
             if (userAgent.indexOf("firefox") >= 0 || userAgent.indexOf("chrome") >= 0) {
-                filename = "\"" + new String(filename.getBytes("UTF-8"), "ISO8859-1") + "\"";
+                filename = Base64.encode(filename.getBytes(StandardCharsets.UTF_8));
+                filename = "=?UTF-8?B?" + filename + "?=";
             }
             // msie | safari
             else {
