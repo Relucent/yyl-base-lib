@@ -11,6 +11,15 @@ import java.util.List;
 public class CollectionUtil {
 
     /**
+     * 判断集合是否为空
+     * @param collection 集合
+     * @return 集合是否为空
+     */
+    public static boolean isEmpty(Collection<?> collection) {
+        return (collection == null || collection.isEmpty());
+    }
+
+    /**
      * 获得集合第一个元素
      * @param <E> 元素类型泛型
      * @param collection 集合对象

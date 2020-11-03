@@ -8,9 +8,14 @@ import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.github.relucent.base.common.collection.CollectionUtil;
-
 public class CollectionUtilTest {
+
+    @Test
+    public void testIsEmpty() {
+        Assert.assertTrue(CollectionUtil.isEmpty(null));
+        Assert.assertTrue(CollectionUtil.isEmpty(new ArrayList<>()));
+        Assert.assertFalse(CollectionUtil.isEmpty(Arrays.asList("A", "B", "C")));
+    }
 
     @Test
     public void testGetFirst() {
@@ -33,6 +38,6 @@ public class CollectionUtilTest {
     public void testToArray() {
         List<?> collection = Arrays.asList("hello", "world");
         Object[] array = CollectionUtil.toArray(collection, Object.class);
-        Assert.assertArrayEquals(array, new Object[] {"hello", "world"});
+        Assert.assertArrayEquals(array, new Object[] { "hello", "world" });
     }
 }
