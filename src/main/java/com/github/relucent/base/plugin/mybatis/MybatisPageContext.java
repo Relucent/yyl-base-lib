@@ -8,6 +8,7 @@ public class MybatisPageContext implements Serializable {
     private long offset = 0L;
     private long limit = 1L;
     private long total = -1L;
+    private boolean count = true;
 
     public long getOffset() {
         return offset;
@@ -31,5 +32,13 @@ public class MybatisPageContext implements Serializable {
 
     public void setTotal(long total) {
         this.total = total;
+    }
+
+    public boolean isCount() {
+        return count;
+    }
+
+    public void setCount(boolean count) {
+        this.count = count;
     }
 }
