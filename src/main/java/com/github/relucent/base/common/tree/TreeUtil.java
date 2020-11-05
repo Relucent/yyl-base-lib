@@ -51,7 +51,7 @@ public class TreeUtil {
     @SuppressWarnings("unchecked")
     public static <T, N, I> List<N> buildTree(I parentId, List<T> data, NodeAdapter<T, N> adapter, IdGetter<T, I> idGetter,
             ParentIdGetter<T, I> parentIdGetter, ChildrenSetter<N> childrenSetter, Comparator<N> comparator) {
-        return buildTree(parentId, data, adapter, DEFAULT_NODE_FILTER, idGetter, parentIdGetter, childrenSetter, (Comparator<N>) NONE_COMPARATOR, 0);
+        return buildTree(parentId, data, adapter, DEFAULT_NODE_FILTER, idGetter, parentIdGetter, childrenSetter, comparator, 0);
     }
 
     /**

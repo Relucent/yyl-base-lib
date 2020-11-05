@@ -96,7 +96,7 @@ public class MybatisPaginationInterceptor implements Interceptor {
             MybatisPageContext pageContext = MybatisPageContextHolder.getContext();
 
             // 判断是否需要进行分页(是否插件分页)
-            if (pageContext != null) {
+            if (pageContext != null && pageContext.isCount()) {
                 // 查询总数
                 long total = obtainTotalCount(dialect, executor, ms, parameter, resultHandler, boundSql);
 

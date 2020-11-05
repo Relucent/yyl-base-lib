@@ -34,6 +34,7 @@ public class MybatisHelper {
             context.setOffset(pagination.getOffset());
             context.setLimit(pagination.getLimit());
             context.setTotal(-1);
+            context.setCount(true);
             List<T> records = select.get();
             long offset = pagination.getOffset();
             long limit = pagination.getLimit();
