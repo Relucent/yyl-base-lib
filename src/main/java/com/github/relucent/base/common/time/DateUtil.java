@@ -13,7 +13,12 @@ import java.util.Date;
 public class DateUtil {
 
     /** ISO日期格式 */
-    public static final String ISO_DATETIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
+    public static final String ISO8601_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
+    /** 默认日期格式 */
+    public static final String DATETIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    /** 默认日期格式 */
+    public static final String DATE_FORMAT = "yyyy-MM-dd";
+
     /** 0001-01-01T00:00:00 */
     public static final Long MIN_MILLIS = -62135798400000L;
     /** 9999-12-31T23:59:59 */
@@ -21,8 +26,8 @@ public class DateUtil {
 
     /** 可解析的日期格式列表 */
     private final static String[] PARSE_DATE_PATTERNS = Arrays.asList(//
-            ISO_DATETIME_FORMAT, //
-            "yyyy-MM-dd HH:mm:ss", //
+            ISO8601_FORMAT, //
+            DATETIME_FORMAT, //
             "yyyy-MM-dd'T'HH:mm:ss.SSS", //
             "EEE MMM dd HH:mm:ss zzz yyyy", //
             "yyyy-MM-dd HH:mm:ss.SSS", //
@@ -40,9 +45,22 @@ public class DateUtil {
     ).toArray(new String[0]);
 
     /** DateFormat线程持有(保证线程安全) */
-    private static ThreadLocal<DateFormat> ISO_DATEFORMAT_HOLDER = new ThreadLocal<DateFormat>() {
+    private static ThreadLocal<DateFormat> ISO8601_FORMAT_HOLDER = new ThreadLocal<DateFormat>() {
         protected DateFormat initialValue() {
-            return new SimpleDateFormat(ISO_DATETIME_FORMAT);
+            return new SimpleDateFormat(ISO8601_FORMAT);
+        };
+    };
+
+    /** DateFormat线程持有(保证线程安全) */
+    private static ThreadLocal<DateFormat> DATETIME_FORMAT_HOLDER = new ThreadLocal<DateFormat>() {
+        protected DateFormat initialValue() {
+            return new SimpleDateFormat(DATETIME_FORMAT);
+        };
+    };
+    /** DateFormat线程持有(保证线程安全) */
+    private static ThreadLocal<DateFormat> DATE_FORMAT_HOLDER = new ThreadLocal<DateFormat>() {
+        protected DateFormat initialValue() {
+            return new SimpleDateFormat(DATE_FORMAT);
         };
     };
 
@@ -87,19 +105,40 @@ public class DateUtil {
     }
 
     /**
-     * 格式化日期对象
+     * 格式化日期对象为ISO格式字符串
      * @param date 日期对象
-     * @return 日期对象字符串
+     * @return 日期ISO格式字符串
      */
     public static String format(Date date) {
-        if (date == null) {
-            return null;
-        }
-        try {
-            return ISO_DATEFORMAT_HOLDER.get().format(date);
-        } catch (Exception e) {
-            return null;
-        }
+        return format(date, ISO8601_FORMAT_HOLDER.get());
+    }
+
+    /**
+     * 格式化日期对象为日期时间字符串<code>yyyy-MM-dd HH:mm:ss</code>
+     * @param date 日期对象
+     * @return 日期时间字符串
+     */
+    public static String formatDateTime(Date date) {
+        return format(date, DATETIME_FORMAT_HOLDER.get());
+    }
+
+    /**
+     * 格式化日期对象为日期字符串 <code>yyyy-MM-dd</code>
+     * @param date 日期对象
+     * @return 日期字符串
+     */
+    public static String formatDate(Date date) {
+        return format(date, DATE_FORMAT_HOLDER.get());
+    }
+
+    /**
+     * 格式化日期对象
+     * @param date 日期对象
+     * @param format 格式
+     * @return 格式化后的日期对象
+     */
+    public static String format(Date date, String format) {
+        return format(date, new SimpleDateFormat(format));
     }
 
     /**
@@ -156,6 +195,23 @@ public class DateUtil {
      */
     public static Date min(Date a, Date b) {
         return b.after(a) ? a : b; // b>a?a:b
+    }
+
+    /**
+     * 格式化日期对象
+     * @param date 日期对象
+     * @param format 格式化工具类
+     * @return 日期对象字符串
+     */
+    private static String format(Date date, DateFormat format) {
+        if (date == null) {
+            return null;
+        }
+        try {
+            return format.format(date);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     /**

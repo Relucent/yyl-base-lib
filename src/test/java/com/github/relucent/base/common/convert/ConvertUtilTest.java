@@ -92,7 +92,7 @@ public class ConvertUtilTest {
 
     @Test
     public void testToString() {
-        SimpleDateFormat format = new SimpleDateFormat(DateUtil.ISO_DATETIME_FORMAT);
+        SimpleDateFormat format = new SimpleDateFormat(DateUtil.DATETIME_FORMAT);
         Date now = new Date();
         Assert.assertEquals(format.format(now), ConvertUtil.toString(now));
         Assert.assertEquals("Default", ConvertUtil.toString(null, "Default"));
