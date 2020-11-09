@@ -36,7 +36,7 @@ public class GeoHashUtil {
             'y', 'z' // 30-31
     };
 
-    private final static HashMap<Character, Integer> LOOKUP = new HashMap<Character, Integer>();
+    private static final HashMap<Character, Integer> LOOKUP = new HashMap<Character, Integer>();
     static {
         for (int i = 0; i < DIGITS.length; i++) {
             LOOKUP.put(DIGITS[i], i);

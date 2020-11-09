@@ -5,17 +5,17 @@ package com.github.relucent.base.common.time;
  */
 public class CalendarTextUtil {
 
-    private final static String YEAR_CN_TEXTS = "年";
+    private static final String YEAR_CN_TEXTS = "年";
 
-    private final static String[] HALFY_EAR_CN_TEXTS = {"上半年", "下半年"//
+    private static final String[] HALFY_EAR_CN_TEXTS = {"上半年", "下半年"//
     };
-    private final static String[] MONTH_CN_TEXTS = { //
+    private static final String[] MONTH_CN_TEXTS = { //
             "一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月" //
     };//
-    private final static String[] QUARTER_CN_TEXTS = { //
+    private static final String[] QUARTER_CN_TEXTS = { //
             "一季度", "二季度", "三季度", "四季度" //
     };//
-    private final static String[] DATE_CN_TEXTS = {null, //
+    private static final String[] DATE_CN_TEXTS = {null, //
             "1日", "2日", "3日", "4日", "5日", "6日", "7日", "8日", "9日", "10日", //
             "11日", "12日", "13日", "14日", "15日", "16日", "17日", "18日", "19日", "20日", //
             "21日", "22日", "23日", "24日", "25日", "26日", "27日", "28日", "29日", "30日", //

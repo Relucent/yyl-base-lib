@@ -17,7 +17,7 @@ public class DatePowerSerializer extends JsonSerializer<Date> {
     /**
      * Singleton instance to use.
      */
-    public final static DatePowerSerializer INSTANCE = new DatePowerSerializer();
+    public static final DatePowerSerializer INSTANCE = new DatePowerSerializer();
 
     @Override
     public void serialize(Date date, JsonGenerator gen, SerializerProvider provider) throws IOException, JsonProcessingException {

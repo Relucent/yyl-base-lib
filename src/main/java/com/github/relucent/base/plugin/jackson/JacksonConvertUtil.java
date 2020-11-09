@@ -25,8 +25,8 @@ import com.github.relucent.base.common.logging.Logger;
 public class JacksonConvertUtil {
 
     private static final Logger LOGGER = Logger.getLogger(JacksonConvertUtil.class);
-    public final static JsonDeserializer<Mapx> MAP_DESERIALIZER;
-    public final static JsonDeserializer<Listx> LIST_DESERIALIZER;
+    public static final JsonDeserializer<Mapx> MAP_DESERIALIZER;
+    public static final JsonDeserializer<Listx> LIST_DESERIALIZER;
 
     static {
         MAP_DESERIALIZER = new JsonDeserializer<Mapx>() {

@@ -62,7 +62,7 @@ public class ConvertUtil {
     }
 
     /** 原始类型的封装类型列表* */
-    private final static Collection<Class<?>> WRAPPED_TYPES = new ArrayList<Class<?>>();
+    private static final Collection<Class<?>> WRAPPED_TYPES = new ArrayList<Class<?>>();
     static {
         WRAPPED_TYPES.add(Boolean.class);
         WRAPPED_TYPES.add(Byte.class);
