@@ -21,7 +21,7 @@ public class DatePowerSerializer extends JsonSerializer<Date> {
 
     @Override
     public void serialize(Date date, JsonGenerator gen, SerializerProvider provider) throws IOException, JsonProcessingException {
-        String text = DateUtil.format(date);
+        String text = DateUtil.formatDateTime(date);
         gen.writeString(text);
     }
 

@@ -35,7 +35,7 @@ public class MyObjectMapper extends ObjectMapper {
         this.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         this.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         //
-        this.setDateFormat(new SimpleDateFormat(DateUtil.ISO_DATETIME_FORMAT));
+        this.setDateFormat(new SimpleDateFormat(DateUtil.DATETIME_FORMAT));
         // 反序列化忽略不需要的字段
         this.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
