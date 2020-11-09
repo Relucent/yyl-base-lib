@@ -23,11 +23,11 @@ public class TimeIdWorker {
     private static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 
     /** 秒内序列限制 */
-    private final long MAX_SEQUENCE = 99999;
+    private static final long MAX_SEQUENCE = 99999;
     /** 秒内序列限制 */
-    private final int MAX_SEQUENCE_SIZE = Long.toString(MAX_SEQUENCE).length();
+    private static final int MAX_SEQUENCE_SIZE = Long.toString(MAX_SEQUENCE).length();
     /** "0" 字符 */
-    private final char ZERO_CHAR = '0';
+    private static final char ZERO_CHAR = '0';
 
     /** 序列ID前缀(为不同业务设置不同前缀，可以防止集群环境序列ID的冲突) */
     private final String prefix;
