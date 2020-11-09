@@ -25,7 +25,7 @@ public class DateUtil {
     public static final Long MAX_MILLIS = 253402271999000L;
 
     /** 可解析的日期格式列表 */
-    private final static String[] PARSE_DATE_PATTERNS = Arrays.asList(//
+    private static final String[] PARSE_DATE_PATTERNS = Arrays.asList(//
             ISO8601_FORMAT, //
             DATETIME_FORMAT, //
             "yyyy-MM-dd'T'HH:mm:ss.SSS", //
@@ -45,20 +45,20 @@ public class DateUtil {
     ).toArray(new String[0]);
 
     /** DateFormat线程持有(保证线程安全) */
-    private static ThreadLocal<DateFormat> ISO8601_FORMAT_HOLDER = new ThreadLocal<DateFormat>() {
+    private static final ThreadLocal<DateFormat> ISO8601_FORMAT_HOLDER = new ThreadLocal<DateFormat>() {
         protected DateFormat initialValue() {
             return new SimpleDateFormat(ISO8601_FORMAT);
         };
     };
 
     /** DateFormat线程持有(保证线程安全) */
-    private static ThreadLocal<DateFormat> DATETIME_FORMAT_HOLDER = new ThreadLocal<DateFormat>() {
+    private static final ThreadLocal<DateFormat> DATETIME_FORMAT_HOLDER = new ThreadLocal<DateFormat>() {
         protected DateFormat initialValue() {
             return new SimpleDateFormat(DATETIME_FORMAT);
         };
     };
     /** DateFormat线程持有(保证线程安全) */
-    private static ThreadLocal<DateFormat> DATE_FORMAT_HOLDER = new ThreadLocal<DateFormat>() {
+    private static final ThreadLocal<DateFormat> DATE_FORMAT_HOLDER = new ThreadLocal<DateFormat>() {
         protected DateFormat initialValue() {
             return new SimpleDateFormat(DATE_FORMAT);
         };

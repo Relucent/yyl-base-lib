@@ -15,7 +15,7 @@ import com.github.relucent.base.common.time.DateUtil;
 public class DatePowerDeserializer extends JsonDeserializer<Date> {
 
     /** Singleton instance to use. */
-    public final static DatePowerDeserializer INSTANCE = new DatePowerDeserializer();
+    public static final DatePowerDeserializer INSTANCE = new DatePowerDeserializer();
 
     @Override
     public Date deserialize(JsonParser parser, DeserializationContext context)

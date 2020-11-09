@@ -25,7 +25,7 @@ public class MapConfig {
     /** 将某个类型Object转换Map时需要排除的字段 */
     private Map<Class<?>, Set<String>> specificIncludeFieldMap = new HashMap<Class<?>, Set<String>>();// Properties
     /** 默认排除的字段(全局) */
-    public final static Set<String> DEFAULT_EXCLUDES;
+    public static final Set<String> DEFAULT_EXCLUDES;
     /** 设置过转换方式的对象类型(specificExcludeFieldMap或者specificIncludeFieldMap包括的类型) */
     private Set<Class<?>> configTypes = new HashSet<Class<?>>();
     /** 转换最大层级数(防止无限层解析下去) */
@@ -177,7 +177,7 @@ public class MapConfig {
         return (T) typeDefaultEmptyValueMap.get(type);
     }
 
-    @SuppressWarnings({"unused"})
+    @SuppressWarnings({ "unused" })
     private String findClassName(Class<?> clazz) {
         String className = clazz.getName();
         int index = className.indexOf("$$EnhancerByCGLIB$$");

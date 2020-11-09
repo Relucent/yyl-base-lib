@@ -16,7 +16,7 @@ public class BigDecimalPowerSerializer extends JsonSerializer<BigDecimal> {
     /**
      * Singleton instance to use.
      */
-    public final static BigDecimalPowerSerializer INSTANCE = new BigDecimalPowerSerializer();
+    public static final BigDecimalPowerSerializer INSTANCE = new BigDecimalPowerSerializer();
 
     @Override
     public void serialize(BigDecimal decimal, JsonGenerator gen, SerializerProvider provider) throws IOException, JsonProcessingException {

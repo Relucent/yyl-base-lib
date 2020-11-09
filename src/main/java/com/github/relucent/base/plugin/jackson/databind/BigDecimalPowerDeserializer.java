@@ -14,7 +14,7 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 public class BigDecimalPowerDeserializer extends JsonDeserializer<BigDecimal> {
 
     /** Singleton instance to use. */
-    public final static BigDecimalPowerDeserializer INSTANCE = new BigDecimalPowerDeserializer();
+    public static final BigDecimalPowerDeserializer INSTANCE = new BigDecimalPowerDeserializer();
 
     @Override
     public BigDecimal deserialize(JsonParser parser, DeserializationContext context) throws IOException, JsonProcessingException {
