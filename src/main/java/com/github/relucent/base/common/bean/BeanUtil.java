@@ -125,7 +125,7 @@ public class BeanUtil {
     public static String getAccessorName(Class<?> type, String fieldName) {
         assertHasText(fieldName);
         assertNotNull(type);
-        if (type.getName().equals("boolean")) {
+        if (Boolean.TYPE.equals(type)) {
             return "is" + capitalizeString(fieldName);
         } else {
             return "get" + capitalizeString(fieldName);

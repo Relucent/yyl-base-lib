@@ -1,5 +1,7 @@
 package com.github.relucent.base.plugin.spring.context;
 
+import java.io.Serializable;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -39,7 +41,7 @@ public class WebContextHolder {
     public static <T> void setSessionAttribute(String name, T value) {
         HttpSession session = getSession();
         if (session != null) {
-            session.setAttribute(name, value);
+            session.setAttribute(name, (Serializable) value);
         }
     }
 

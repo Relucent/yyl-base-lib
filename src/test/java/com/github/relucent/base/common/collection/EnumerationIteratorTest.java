@@ -15,7 +15,7 @@ public class EnumerationIteratorTest {
     public void testIterator() {
         Enumeration<?> enumeration = new StringTokenizer("1 2 3 4 5 6");
         int count = 0;
-        for (Iterator<?> iterator = new EnumerationIterator<>(enumeration).iterator(); iterator.hasNext();) {
+        for (Iterator<?> iterator = new EnumerationIterator<>(enumeration); iterator.hasNext();) {
             iterator.next();
             count++;
         }

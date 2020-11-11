@@ -108,7 +108,6 @@ public class BeanMapDescriber {
             return proxy;
         } catch (Exception ex) {
             // IllegalArgumentException IllegalAccessException
-            ex.printStackTrace();
             return Collections.<String, Object>emptyMap();
         }
     }
@@ -153,7 +152,7 @@ public class BeanMapDescriber {
     }
 
     private boolean resolveBean(int depth) {
-        return config.resolveBeanDepth > depth;
+        return MapConfig.RESOLVE_MAX_DEPTH > depth;
     }
     // Standard Wrapped
 }

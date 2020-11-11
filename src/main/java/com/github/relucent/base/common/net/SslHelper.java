@@ -8,7 +8,7 @@ import java.security.KeyStore;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
- 
+
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
@@ -100,33 +100,39 @@ public class SslHelper {
         if (closeable != null) {
             try {
                 closeable.close();
-            } catch (IOException e) {}
+            } catch (IOException e) {
+            }
         }
     }
 
     /** HTTPS证书管理(信任所有) */
     private static final SSLSocketFactory TRUST_ANY_SSL_SOCKET_FACTORY;
     static {
+        boolean trust = true;
         TRUST_ANY_HOSTNAME_VERIFIER = new HostnameVerifier() {
             public boolean verify(String hostname, SSLSession session) {
-                return true;
+                return trust;
             }
         };
     }
     /** HTTPS域名校验(信任所有) */
     private static final HostnameVerifier TRUST_ANY_HOSTNAME_VERIFIER;
     static {
+        String protocol = "TLS";
+        String provider = "SunJSSE";
         try {
-            SSLContext sslContext = SSLContext.getInstance("TLS", "SunJSSE");
-            sslContext.init(null, new TrustManager[] {new X509TrustManager() {
+            SSLContext sslContext = SSLContext.getInstance(protocol, provider);
+            sslContext.init(null, new TrustManager[] { new X509TrustManager() {
                 public X509Certificate[] getAcceptedIssuers() {
-                    return null;
+                    return new X509Certificate[0];
                 }
 
-                public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {}
+                public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+                }
 
-                public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {}
-            }}, new java.security.SecureRandom());
+                public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+                }
+            } }, new java.security.SecureRandom());
             TRUST_ANY_SSL_SOCKET_FACTORY = sslContext.getSocketFactory();
         } catch (Exception e) {
             throw new RuntimeException("Can't create unsecure trust manager", e);

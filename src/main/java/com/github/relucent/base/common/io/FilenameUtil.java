@@ -71,6 +71,9 @@ public class FilenameUtil {
     public static String relative(String root, String path) {
         root = separatorsToUnix(root);
         path = separatorsToUnix(path);
+        if (root == null || path == null) {
+            return path;
+        }
         if (path.indexOf(root) == 0) {
             return new String(path.substring(root.length()));
         }

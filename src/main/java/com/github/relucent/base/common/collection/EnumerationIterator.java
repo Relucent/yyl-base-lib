@@ -3,13 +3,14 @@ package com.github.relucent.base.common.collection;
 import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * 枚举对象{@link Enumeration}迭代器{@link Iterator}适配类
  * @param <E> 元素类型
  */
 @SuppressWarnings("serial")
-public class EnumerationIterator<E> implements Iterator<E>, Iterable<E>, Serializable {
+public class EnumerationIterator<E> implements Iterator<E>, Serializable {
 
     private final Enumeration<E> enumeration;
 
@@ -28,16 +29,14 @@ public class EnumerationIterator<E> implements Iterator<E>, Iterable<E>, Seriali
 
     @Override
     public E next() {
+        if (!hasNext()) {
+            throw new NoSuchElementException();
+        }
         return enumeration.nextElement();
     }
 
     @Override
     public void remove() {
         throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Iterator<E> iterator() {
-        return this;
     }
 }

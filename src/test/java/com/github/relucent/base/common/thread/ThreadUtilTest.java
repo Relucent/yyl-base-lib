@@ -1,14 +1,10 @@
 package com.github.relucent.base.common.thread;
 
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.junit.Assert;
 import org.junit.Test;
-
-import com.github.relucent.base.common.thread.InterruptedRuntimeException;
-import com.github.relucent.base.common.thread.ThreadUtil;
 
 public class ThreadUtilTest {
 
@@ -87,28 +83,7 @@ public class ThreadUtilTest {
     }
 
     @Test
-    public void testAwaitTermination1() throws InterruptedException {
-        AtomicBoolean innerIsAlive = new AtomicBoolean();
-        AtomicBoolean resumeIsInterrupted = new AtomicBoolean();
-        AtomicLong elapsedMillis = new AtomicLong();
-        startInterruptJoin(new Runnable() {
-            public void run() {
-                Thread inner = new Thread(new TaskRunnable(L3_MILLIS));
-                inner.start();
-                long base = System.currentTimeMillis();
-                ThreadUtil.awaitTermination(inner);
-                elapsedMillis.set(System.currentTimeMillis() - base);
-                innerIsAlive.set(inner.isAlive());
-                resumeIsInterrupted.set(Thread.currentThread().isInterrupted());
-            }
-        });
-        Assert.assertFalse(innerIsAlive.get());
-        Assert.assertTrue(resumeIsInterrupted.get());
-        Assert.assertTrue(elapsedMillis.get() - L3_MILLIS <= ALLOWABLE_DELAY_MILLIS);
-    }
-
-    @Test
-    public void testAwaitTermination2() throws InterruptedException {
+    public void testAwaitTermination() throws InterruptedException {
         Thread worker = new Thread(new TaskRunnable(L3_MILLIS));
         worker.start();
         long base = System.currentTimeMillis();

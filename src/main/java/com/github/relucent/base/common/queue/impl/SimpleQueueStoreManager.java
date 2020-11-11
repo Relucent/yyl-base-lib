@@ -16,7 +16,7 @@ import com.github.relucent.base.common.queue.QueueStoreManager;
 public class SimpleQueueStoreManager<T> implements QueueStoreManager<T> {
 
     private final ConcurrentMap<String, QueueStore<T>> queueMap = new ConcurrentHashMap<>(16);
-    private final QueueStoreBuilder<T> queueBuilder = null;
+    private final QueueStoreBuilder<T> queueBuilder;
     private final boolean dynamic;
 
     public SimpleQueueStoreManager() {
@@ -41,6 +41,7 @@ public class SimpleQueueStoreManager<T> implements QueueStoreManager<T> {
     }
 
     public SimpleQueueStoreManager(QueueStoreBuilder<T> queueBuilder, String... cacheNames) {
+        this.queueBuilder = queueBuilder;
         if (cacheNames != null && cacheNames.length > 0) {
             for (String name : cacheNames) {
                 if (!this.queueMap.containsKey(name)) {

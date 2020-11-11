@@ -7,11 +7,15 @@ import java.util.Date;
 import java.util.Locale;
 
 import com.github.relucent.base.common.convert.ConvertUtil;
+import com.github.relucent.base.common.logging.Logger;
 
 /**
  * 提供一些对象复制功能的工具类
  */
 public class BeanMapper {
+
+    private static final Logger LOGGER = Logger.getLogger(BeanMapper.class);
+
     /** * 默认的日期转换格式. */
     public static final String DEFAULT_DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss";
 
@@ -304,16 +308,12 @@ public class BeanMapper {
 
                         continue;
                     }
-
                     //
                     setter.invoke(dest, result);
-                } catch (Throwable ex) {
-                    // ex.printStackTrace();
-                    System.err.println(ex);
+                } catch (Throwable e) {
+                    LOGGER.warn("!", e);
                 }
             }
-
-            // System.out.println(" ////");
         }
     }
 

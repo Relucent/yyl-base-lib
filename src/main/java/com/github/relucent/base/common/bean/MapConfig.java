@@ -14,6 +14,8 @@ import java.util.Set;
 public class MapConfig {
 
     // ========================================Fields=========================================
+    /** 转换最大层级数(防止无限层解析下去) */
+    public static final int RESOLVE_MAX_DEPTH = 0xF;
     /** 默认的解析器配置 */
     public static final MapConfig DEFAULT = new MapConfig();
     /** 将Object转换Map时需要转换的字段 */
@@ -28,10 +30,6 @@ public class MapConfig {
     public static final Set<String> DEFAULT_EXCLUDES;
     /** 设置过转换方式的对象类型(specificExcludeFieldMap或者specificIncludeFieldMap包括的类型) */
     private Set<Class<?>> configTypes = new HashSet<Class<?>>();
-    /** 转换最大层级数(防止无限层解析下去) */
-    public int resolveBeanDepth = 0xF;
-    /** 转换时是否将NULL的字段添加到MAP */
-    public boolean ignoreNull = true;
 
     /** MAP转Object时，某个字段的默认值(值NULL的时候将采用默认值) */
     private Map<String, Object> fieldDefaultValueMap = new HashMap<String, Object>();

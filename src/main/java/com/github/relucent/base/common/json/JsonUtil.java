@@ -1,5 +1,6 @@
 package com.github.relucent.base.common.json;
 
+import java.util.concurrent.atomic.AtomicReference;
 
 import com.github.relucent.base.common.collection.Listx;
 import com.github.relucent.base.common.collection.Mapx;
@@ -12,7 +13,7 @@ import com.github.relucent.base.plugin.jackson.JacksonHandler;
 public class JsonUtil {
 
     // ===================================Fields==============================================
-    private static volatile JsonHandler HANDLER = getDefaultHandler();
+    private static final AtomicReference<JsonHandler> HANDLER = new AtomicReference<>(getDefaultHandler());
 
     // ===================================Methods=============================================
     /**
@@ -22,7 +23,7 @@ public class JsonUtil {
      * @return 对象的JSON字符串
      */
     public static <T> String encode(T src) {
-        return HANDLER.encode(src);
+        return getHandler().encode(src);
     }
 
     /**
@@ -45,10 +46,9 @@ public class JsonUtil {
      * @return JSON对应的JAVA对象，如果无法解析将返回默认值.
      */
     public static <T> T decode(String json, Class<T> type, T defaultValue) {
-        T object = HANDLER.decode(json, type);
+        T object = getHandler().decode(json, type);
         return object != null ? object : defaultValue;
     }
-
 
     /**
      * 将JSON转换为MAP对象
@@ -56,7 +56,7 @@ public class JsonUtil {
      * @return MAP对象,如果类型不匹配或者转换出现异常则返回null.
      */
     public static Mapx toMap(String json) {
-        return HANDLER.toMap(json);
+        return getHandler().toMap(json);
     }
 
     /**
@@ -65,7 +65,7 @@ public class JsonUtil {
      * @return LIST对象,如果类型不匹配或者转换出现异常则返回null.
      */
     public static Listx toList(String json) {
-        return HANDLER.toList(json);
+        return getHandler().toList(json);
     }
 
     /**
@@ -73,7 +73,7 @@ public class JsonUtil {
      * @param handler JSON处理类
      */
     public static void setHandler(JsonHandler handler) {
-        HANDLER = handler;
+        HANDLER.set(handler);
     }
 
     /**
@@ -81,7 +81,7 @@ public class JsonUtil {
      * @return JSON处理类
      */
     public static JsonHandler getHandler() {
-        return HANDLER;
+        return HANDLER.get();
     }
 
     /**

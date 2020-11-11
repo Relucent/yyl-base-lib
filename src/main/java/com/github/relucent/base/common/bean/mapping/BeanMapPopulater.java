@@ -10,9 +10,11 @@ import java.util.Set;
 
 import com.github.relucent.base.common.bean.MapConfig;
 import com.github.relucent.base.common.convert.ConvertUtil;
+import com.github.relucent.base.common.logging.Logger;
 
 public class BeanMapPopulater {
 
+    private static final Logger LOGGER = Logger.getLogger(BeanMapPopulater.class);
     private MapConfig config;
 
     public BeanMapPopulater(MapConfig config) {
@@ -82,8 +84,8 @@ public class BeanMapPopulater {
                     }
                 }
             }
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } catch (Exception e) {
+            LOGGER.warn("!", e);
         }
     }
 
