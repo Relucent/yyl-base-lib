@@ -13,6 +13,7 @@ public class ThreadUtil {
         try {
             Thread.sleep(millis);
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             throw new InterruptedRuntimeException(e);
         }
     }
@@ -38,12 +39,12 @@ public class ThreadUtil {
     public static void startAndJoinDaemon(Runnable... runnable) {
         Thread[] threads = new Thread[runnable.length];
         for (int i = 0; i < runnable.length; i++) {
-            Thread thread = threads[i] = new Thread(runnable[i]);;
+            Thread thread = threads[i] = new Thread(runnable[i]);
             thread.setDaemon(true);
             thread.start();
         }
         for (Thread thread : threads) {
-            awaitTermination(thread);
+            awaitTermination(thread, Long.MAX_VALUE);
         }
     }
 
@@ -54,30 +55,6 @@ public class ThreadUtil {
     public static void keepIfInterrupted(Throwable throwable) {
         if (throwable instanceof InterruptedException || throwable instanceof InterruptedRuntimeException) {
             Thread.currentThread().interrupt();
-        }
-    }
-
-    /**
-     * 等待线程结束<br>
-     * 无论等待中当前线程是否被中断，方法都会继续等待。如果等待中当前线程被中断，该方法结束时当前线程的中断状态会被保留 {@link Thread#interrupt}。<br>
-     * @param thread 等待结束的线程
-     */
-    public static void awaitTermination(Thread thread) {
-        boolean interrupted = false;
-        try {
-            synchronized (thread) {
-                while (thread.isAlive()) {
-                    try {
-                        thread.wait();
-                    } catch (InterruptedException e) {
-                        interrupted = true;
-                    }
-                }
-            }
-        } finally {
-            if (interrupted) {
-                Thread.currentThread().interrupt();
-            }
         }
     }
 
@@ -94,19 +71,17 @@ public class ThreadUtil {
             millis = Long.MAX_VALUE;
         }
         try {
-            synchronized (thread) {
-                while (thread.isAlive()) {
-                    long delay = millis - now;
-                    if (delay <= 0) {
-                        break;
-                    }
-                    try {
-                        thread.wait(delay);
-                    } catch (InterruptedException e) {
-                        interrupted = true;
-                    }
-                    now = System.currentTimeMillis() - base;
+            while (thread.isAlive()) {
+                long delay = millis - now;
+                if (delay <= 0) {
+                    break;
                 }
+                try {
+                    thread.join(delay);
+                } catch (InterruptedException e) {
+                    interrupted = true;
+                }
+                now = System.currentTimeMillis() - base;
             }
         } finally {
             if (interrupted) {

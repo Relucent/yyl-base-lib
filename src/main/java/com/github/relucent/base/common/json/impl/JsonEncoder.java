@@ -4,14 +4,14 @@ import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+
+import com.github.relucent.base.common.time.DateUtil;
 
 /**
  * JSON编码工具类，将JAVA对象编码为JSON字符串。
@@ -26,7 +26,6 @@ public class JsonEncoder {
         excludeFields.add("declaringClass");
         excludeFields.add("metaClass");
     }
-    private static DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     /**
      * 将Java对象转化为JSON字符串
@@ -101,50 +100,50 @@ public class JsonEncoder {
                 sbr.append(hex(ch));
             } else if (ch < 32) {
                 switch (ch) {
-                    case '\b':
-                        sbr.append('\\');
-                        sbr.append('b');
-                        break;
-                    case '\n':
-                        sbr.append('\\');
-                        sbr.append('n');
-                        break;
-                    case '\t':
-                        sbr.append('\\');
-                        sbr.append('t');
-                        break;
-                    case '\f':
-                        sbr.append('\\');
-                        sbr.append('f');
-                        break;
-                    case '\r':
-                        sbr.append('\\');
-                        sbr.append('r');
-                        break;
-                    default:
-                        if (ch > 0xf) {
-                            sbr.append("\\u00");
-                            sbr.append(hex(ch));
-                        } else {
-                            sbr.append("\\u000");
-                            sbr.append(hex(ch));
-                        }
-                        break;
+                case '\b':
+                    sbr.append('\\');
+                    sbr.append('b');
+                    break;
+                case '\n':
+                    sbr.append('\\');
+                    sbr.append('n');
+                    break;
+                case '\t':
+                    sbr.append('\\');
+                    sbr.append('t');
+                    break;
+                case '\f':
+                    sbr.append('\\');
+                    sbr.append('f');
+                    break;
+                case '\r':
+                    sbr.append('\\');
+                    sbr.append('r');
+                    break;
+                default:
+                    if (ch > 0xf) {
+                        sbr.append("\\u00");
+                        sbr.append(hex(ch));
+                    } else {
+                        sbr.append("\\u000");
+                        sbr.append(hex(ch));
+                    }
+                    break;
                 }
             } else {
                 // line.
                 switch (ch) {
-                    case '\'':
-                        sbr.append("\\u0027");
-                        break;
-                    case '"':
-                    case '\\':
-                        sbr.append("\\");
-                        sbr.append(ch);
-                        break;
-                    default:
-                        sbr.append(ch);
-                        break;
+                case '\'':
+                    sbr.append("\\u0027");
+                    break;
+                case '"':
+                case '\\':
+                    sbr.append("\\");
+                    sbr.append(ch);
+                    break;
+                default:
+                    sbr.append(ch);
+                    break;
                 }
             }
         }
@@ -249,7 +248,7 @@ public class JsonEncoder {
      * @return JSON字符串
      */
     private String encodeDate(Date date) {
-        return this.encode(DATE_FORMAT.format(date));
+        return this.encode(DateUtil.formatDateTime(date));
     }
 
     /**

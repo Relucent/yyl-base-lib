@@ -48,7 +48,7 @@ public class CountableThreadPool {
             try {
                 while (threadAlive.get() >= poolSize.get()) {
                     try {
-                        condition.await(7, TimeUnit.SECONDS);
+                        condition.await();
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
                         return;

@@ -1,6 +1,8 @@
 package com.github.relucent.base.common.crypto;
 
 import java.security.Provider;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * {@link Provider}简单工厂类
@@ -8,9 +10,9 @@ import java.security.Provider;
 public class ProviderFactory {
 
     /** 默认的{@link Provider} */
-    private static volatile Provider PROVIDER;
+    private static final AtomicReference<Provider> PROVIDER = new AtomicReference<>();
     /** 是否使用了 BouncyCastle */
-    private static volatile boolean isUseBouncyCastle;
+    private static final AtomicBoolean IS_USE_BOUNCY_CASTLE = new AtomicBoolean();
 
     static {
         Provider provider = null;
@@ -20,8 +22,9 @@ public class ProviderFactory {
         } catch (Error e) {
             // ignore
         }
-        PROVIDER = provider;
-        isUseBouncyCastle = provider != null;
+        PROVIDER.set(provider);
+        ;
+        IS_USE_BOUNCY_CASTLE.set(provider != null);
     }
 
     /**
@@ -30,7 +33,7 @@ public class ProviderFactory {
      * @return {@link Provider}
      */
     public static Provider getProvider() {
-        return PROVIDER;
+        return PROVIDER.get();
     }
 
     /**
@@ -38,7 +41,7 @@ public class ProviderFactory {
      * @return 如果使用了Bouncy castle库返回true，否则返回false
      */
     public static boolean isUseBouncyCastle() {
-        return isUseBouncyCastle;
+        return IS_USE_BOUNCY_CASTLE.get();
     }
 
     /**
@@ -46,6 +49,6 @@ public class ProviderFactory {
      * @param provider {@link Provider}
      */
     protected static void setProvider(Provider provider) {
-        PROVIDER = provider;
+        PROVIDER.set(provider);
     }
 }

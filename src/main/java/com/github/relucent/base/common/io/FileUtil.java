@@ -98,8 +98,14 @@ public class FileUtil {
      */
     public static void chmod666(File file) {
         if (file.exists()) {
-            file.setReadable(true, false);// 读
-            file.setWritable(true, false);// 写
+            // 读允许
+            if (file.setReadable(true, false)) {
+                // ignore
+            }
+            // 写允许
+            if (file.setWritable(true, false)) {
+                // ignore
+            }
         }
     }
 }

@@ -112,9 +112,8 @@ public class LoggerManager {
                 logger.debug("Logging initialized using '" + implClass + "' adapter.");
             }
             DEFAULT_LOGGER_FACTORY = factory;
-        } catch (Throwable t) {
-            t.printStackTrace();
-            throw new LogException("Error setting Log implementation.  Cause: " + t, t);
+        } catch (Throwable e) {
+            throw new LogException("Error setting Log implementation.", e);
         }
     }
 }

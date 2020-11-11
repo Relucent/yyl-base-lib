@@ -141,13 +141,11 @@ public class HttpUtil {
             }
             return readAndClose(conn.getInputStream());
         } catch (Exception e) {
-            e.printStackTrace();
             throw new RuntimeException(e);
         } finally {
             closeQuietly(conn);
         }
     }
-
 
     /**
      * 获得一个HTTP连接
@@ -254,7 +252,8 @@ public class HttpUtil {
         if (conn != null) {
             try {
                 conn.disconnect();
-            } catch (Exception e) {}
+            } catch (Exception e) {
+            }
         }
     }
 
@@ -301,7 +300,8 @@ public class HttpUtil {
         if (closeable != null) {
             try {
                 closeable.close();
-            } catch (IOException e) {}
+            } catch (IOException e) {
+            }
         }
     }
 }

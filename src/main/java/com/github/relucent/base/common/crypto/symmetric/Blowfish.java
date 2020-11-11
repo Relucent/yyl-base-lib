@@ -9,7 +9,7 @@ package com.github.relucent.base.common.crypto.symmetric;
 import java.security.MessageDigest;
 import java.util.Random;
 
-import com.github.relucent.base.common.logging.Logger;
+import com.github.relucent.base.common.crypto.CryptoException;
 
 /**
  * A class that provides easy Blowfish encryption.<br>
@@ -17,8 +17,6 @@ import com.github.relucent.base.common.logging.Logger;
  * @author Gaston Dombiak
  */
 public class Blowfish {
-
-    private static final Logger LOGGER = Logger.getLogger(Blowfish.class);
 
     private BlowfishCBC m_bfish;
     private static Random m_rndGen = new Random();
@@ -34,7 +32,7 @@ public class Blowfish {
             digest = MessageDigest.getInstance("SHA1");
             digest.update(password.getBytes());
         } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            throw new CryptoException(e);
         }
 
         // setup the encryptor (use a dummy IV)

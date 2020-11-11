@@ -2,8 +2,6 @@ package com.github.relucent.base.common.thread;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -17,11 +15,7 @@ public class ProcessWorker<T> implements Runnable {
     // ==============================Fields===========================================
     private static final int EMPTY_QUEUE_MAX_AWAIT_SECONDS = 31;
     private final Logger logger = Logger.getLogger(getClass());
-    private final ReentrantLock newRequestLock = new ReentrantLock();
-    private final Condition newRequestCondition = newRequestLock.newCondition();
     private final AtomicReference<WorkerState> stateReference = new AtomicReference<>(WorkerState.NEW);
-    private final Object lock = new Object();
-
     private final String name;
     private final Supplier<T> supplier;
     private final Consumer<T> consumer;
@@ -41,18 +35,19 @@ public class ProcessWorker<T> implements Runnable {
         try {
             // 延迟执行(让几个线程首次执行时间错开)
             try {
-                TimeUnit.SECONDS.sleep(5 + (int) (Math.random() * 10));
+                TimeUnit.SECONDS.sleep(5L + (long) (Math.random() * 10));
             } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
                 return;
             }
             // 开始处理队列
-            T: while (!Thread.currentThread().isInterrupted() && WorkerState.RUNNING.equals(stateReference.get())) {
+            while (!Thread.currentThread().isInterrupted() && WorkerState.RUNNING.equals(stateReference.get())) {
                 T request = null;
                 try {
                     request = supplier.get();
                 } catch (Exception e) {
                     if (e instanceof InterruptedException) {
-                        break T;
+                        return;
                     }
                     logger.error("poll()", e);
                 }
@@ -65,7 +60,8 @@ public class ProcessWorker<T> implements Runnable {
                         process(request);
                     } catch (Exception e) {
                         if (e instanceof InterruptedException) {
-                            break T;
+                            Thread.currentThread().interrupt();
+                            return;
                         }
                         logger.error("process request " + request + " error", e);
                     }
@@ -99,14 +95,12 @@ public class ProcessWorker<T> implements Runnable {
     /**
      * 检验线程可运行状态
      */
-    private void checkRunningState() {
-        synchronized (lock) {
-            WorkerState state = stateReference.get();
-            if (!WorkerState.NEW.equals(state)) {
-                throw new IllegalStateException("Worker is already " + state + " !");
-            }
-            stateReference.set(WorkerState.RUNNING);
+    private synchronized void checkRunningState() {
+        WorkerState state = stateReference.get();
+        if (!WorkerState.NEW.equals(state)) {
+            throw new IllegalStateException("Worker is already " + state + " !");
         }
+        stateReference.set(WorkerState.RUNNING);
     }
 
     /**
@@ -115,14 +109,12 @@ public class ProcessWorker<T> implements Runnable {
      */
     private void waitNewRequest() {
         int awaitSeconds = 1 + (int) (Math.random() * EMPTY_QUEUE_MAX_AWAIT_SECONDS); // 1~31
-        newRequestLock.lock();
         try {
             logger.debug("Worker {} waitNewRequest({})", name, awaitSeconds);
-            newRequestCondition.await(awaitSeconds, TimeUnit.SECONDS);
+            TimeUnit.SECONDS.sleep(awaitSeconds);
         } catch (InterruptedException e) {
             logger.warn("Worker " + name + " waitNewRequest - interrupted Error ", e);
-        } finally {
-            newRequestLock.unlock();
+            Thread.currentThread().interrupt();
         }
     }
 
