@@ -1,8 +1,11 @@
 package com.github.relucent.base.common.collection;
 
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * 集合工具类
@@ -45,6 +48,19 @@ public class CollectionUtil {
             return array;
         }
         return collection.toArray(array);
+    }
+
+    /**
+     * 转换集合对象元素
+     * @param collection 集合对象
+     * @param mapper 转换方式
+     * @return 对象的索引
+     */
+    public static <T, R> List<R> map(List<T> collection, Function<T, R> mapper) {
+        if (collection == null || mapper == null) {
+            return new ArrayList<>();
+        }
+        return collection.stream().map(mapper).collect(Collectors.toList());
     }
 
     /**
