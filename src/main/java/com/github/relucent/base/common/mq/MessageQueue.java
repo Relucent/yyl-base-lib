@@ -9,6 +9,12 @@ import java.util.function.Consumer;
 public interface MessageQueue<T> {
 
     /**
+     * 获取消息队列名称
+     * @return 消息队列名称
+     */
+    String getName();
+
+    /**
      * 发布消息
      * @param element 消息元素
      */

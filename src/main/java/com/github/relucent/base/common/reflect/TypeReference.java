@@ -1,6 +1,7 @@
 package com.github.relucent.base.common.reflect;
 
 import java.lang.reflect.Type;
+import java.util.Objects;
 
 /**
  * 类型引用类，用于获取完整的泛型类型信息的泛型抽象类
@@ -47,6 +48,31 @@ public abstract class TypeReference<T> extends TypeCapture<T> {
      */
     public final Type getType() {
         return runtimeType;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(runtimeType);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        TypeReference<?> other = (TypeReference<?>) obj;
+        return Objects.equals(runtimeType, other.runtimeType);
+    }
+
+    @Override
+    public String toString() {
+        return "TypeReference [runtimeType=" + runtimeType + "]";
     }
 
     /** 简单的类型引用实现类 */
