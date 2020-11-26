@@ -2,6 +2,8 @@ package com.github.relucent.base.common.collection;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +25,14 @@ public class CollectionUtilTest {
         Assert.assertNull(CollectionUtil.getFirst(Arrays.asList(null, null, null)));
         Assert.assertNull(CollectionUtil.getFirst(null));
         Assert.assertNull(CollectionUtil.getFirst(new ArrayList<>()));
+    }
+
+    @Test
+    public void testAddAll() {
+        Collection<Object> collection = new HashSet<>();
+        Assert.assertFalse(CollectionUtil.addAll(collection, new Object[0]));
+        Assert.assertTrue(CollectionUtil.addAll(collection, new Object[] { "A", "B", "C" }));
+        Assert.assertFalse(CollectionUtil.addAll(collection, new Object[] { "A", "B", "C" }));
     }
 
     @Test

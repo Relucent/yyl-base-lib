@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.github.relucent.base.common.lang.ArrayUtil;
+
 /**
  * 集合工具类
  * @author _yyl
@@ -61,6 +63,23 @@ public class CollectionUtil {
             return new ArrayList<>();
         }
         return collection.stream().map(mapper).collect(Collectors.toList());
+    }
+
+    /**
+     * 将所有指定元素添加到指定集合
+     * @param <T> 要添加的元素和集合的类
+     * @param collection 要在其中插入元素的集合
+     * @param elements 要插入集合的元素
+     * @return 如果集合发生更改则返回true，否则返回false
+     */
+    public static <T> boolean addAll(Collection<? super T> collection, T[] elements) {
+        boolean result = false;
+        if (ArrayUtil.isNotEmpty(elements)) {
+            for (T element : elements) {
+                result |= collection.add(element);
+            }
+        }
+        return result;
     }
 
     /**

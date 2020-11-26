@@ -257,7 +257,6 @@ public class ArrayUtil {
         return indexOf(array, valueToFind) != INDEX_NOT_FOUND;
     }
 
-
     // ===# short[]
     /**
      * 判断数组是否为空
@@ -753,7 +752,6 @@ public class ArrayUtil {
         return indexOf(array, valueToFind) != INDEX_NOT_FOUND;
     }
 
-
     // ===# boolean[]
     /**
      * 判断数组是否为空
@@ -952,4 +950,14 @@ public class ArrayUtil {
         return indexOf(array, valueToFind) != INDEX_NOT_FOUND;
     }
 
+    /**
+     * 将可变参数转换为数组
+     * @param <T> 元素类型
+     * @param varargs 可变参数
+     * @return 数组
+     */
+    @SafeVarargs
+    public static <T> T[] toArray(T... varargs) {
+        return varargs;
+    }
 }
