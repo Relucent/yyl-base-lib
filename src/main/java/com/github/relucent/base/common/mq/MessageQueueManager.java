@@ -2,7 +2,6 @@ package com.github.relucent.base.common.mq;
 
 /**
  * 消息队列管理器接口类
- * @param <T> 消息元素类型
  */
 public interface MessageQueueManager {
     /**

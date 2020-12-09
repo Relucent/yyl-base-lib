@@ -16,7 +16,7 @@ public abstract class TypeReference<T> extends TypeCapture<T> {
      * 构造函数 <br>
      * 
      * <pre>
-     * TypeToken<List<String>> t = new TypeToken<List<String>>() {
+     * TypeReference&lt;List&lt;String&gt;&gt; t = new TypeReference&lt;List&lt;String&gt;&gt;() {
      * };
      * </pre>
      */

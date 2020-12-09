@@ -11,11 +11,11 @@ public interface SimpleCacheManager {
      * <pre>
      * // 获得一个user缓存 
      * String cacheName = "custom";
-     * Class&gt;CustomBean&gt elementType = CustomBean.class;
+     * Class&gt;CustomBean&gt; elementType = CustomBean.class;
      * Duration ttl = Duration.ofMinutes(30L);
      * Duration maxIdleTime = Duration.ofMinutes(30L);
      * CacheDefinition definition = CacheDefinition.of(cacheName, elementType, ttl, maxIdleTime)
-     * SimpleCache&gt;CustomBean&gt cache = manager.getCache(definition);
+     * SimpleCache&gt;CustomBean&gt; cache = manager.getCache(definition);
      * </pre>
      * 
      * @param <T> 缓存对象类型

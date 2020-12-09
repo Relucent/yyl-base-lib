@@ -5,6 +5,7 @@ import java.lang.reflect.Type;
 
 /**
  * 泛型类型捕获类，用于捕获{@code T}的实际类型
+ * @param <T> 泛型类型
  */
 abstract class TypeCapture<T> {
 

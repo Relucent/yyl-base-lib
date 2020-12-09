@@ -29,7 +29,7 @@ public class ThreadUtilTest {
             }
         });
         Assert.assertNotNull(catchReference.get());
-        Assert.assertFalse(resumeIsInterrupted.get());
+        Assert.assertTrue(resumeIsInterrupted.get());
         Assert.assertTrue(catchReference.get() instanceof InterruptedRuntimeException);
     }
 
