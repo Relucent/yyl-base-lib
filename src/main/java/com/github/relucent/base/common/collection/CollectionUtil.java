@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 
 import com.github.relucent.base.common.lang.ArrayUtil;
@@ -53,16 +54,34 @@ public class CollectionUtil {
     }
 
     /**
-     * 转换集合对象元素
+     * 转换集合对象为数组对象
+     * @param <C> 集合对象泛型
+     * @param <E> 集合对象元素泛型
      * @param collection 集合对象
-     * @param mapper 转换方式
-     * @return 对象的索引
+     * @param generator 产生所需类型和给定长度的新数组的函数
+     * @return 数组对象
      */
-    public static <T, R> List<R> map(List<T> collection, Function<T, R> mapper) {
-        if (collection == null || mapper == null) {
+    public static <C extends Collection<?>, E> E[] toArray(C collection, IntFunction<E[]> generator) {
+        int length = collection == null ? 0 : collection.size();
+        if (length == 0) {
+            return generator.apply(length);
+        }
+        return collection.stream().toArray(generator);
+    }
+
+    /**
+     * 转换集合对象元素
+     * @param <T> 原始元素类型
+     * @param <R> 转换后的元素类型
+     * @param list 集合对象
+     * @param mapper 转换方式
+     * @return 转换后的集合列表
+     */
+    public static <T, R> List<R> map(List<T> list, Function<T, R> mapper) {
+        if (list == null || mapper == null) {
             return new ArrayList<>();
         }
-        return collection.stream().map(mapper).collect(Collectors.toList());
+        return list.stream().map(mapper).collect(Collectors.toList());
     }
 
     /**

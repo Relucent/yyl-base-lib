@@ -46,8 +46,15 @@ public class CollectionUtilTest {
 
     @Test
     public void testToArray() {
-        List<?> collection = Arrays.asList("hello", "world");
-        Object[] array = CollectionUtil.toArray(collection, Object.class);
+        List<?> list = Arrays.asList("hello", "world");
+        Object[] array = CollectionUtil.toArray(list, Object.class);
+        Assert.assertArrayEquals(array, new Object[] { "hello", "world" });
+    }
+
+    @Test
+    public void testToArrayGenerator() {
+        List<?> list = Arrays.asList("hello", "world");
+        Object[] array = CollectionUtil.toArray(list, Object[]::new);
         Assert.assertArrayEquals(array, new Object[] { "hello", "world" });
     }
 }

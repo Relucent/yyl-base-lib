@@ -36,6 +36,7 @@ public class SimpleCacheDefinition<T> {
 
     /**
      * 获得一个缓存定义
+     * @param <T> 缓存元素类型
      * @param name 缓存名称
      * @param elementType 缓存元素的类型引用
      * @return 缓存定义实例
@@ -46,6 +47,7 @@ public class SimpleCacheDefinition<T> {
 
     /**
      * 获得一个缓存定义
+     * @param <T> 缓存元素类型
      * @param name 缓存名称
      * @param elementType 缓存元素的类型引用
      * @param ttl 缓存对象过期时间
@@ -57,6 +59,7 @@ public class SimpleCacheDefinition<T> {
 
     /**
      * 获得一个缓存定义
+     * @param <T> 缓存元素类型
      * @param name 缓存名称
      * @param elementType 缓存元素的类型引用
      * @param ttl 缓存对象过期时间
@@ -69,6 +72,7 @@ public class SimpleCacheDefinition<T> {
 
     /**
      * 获得一个缓存定义
+     * @param <T> 缓存元素类型
      * @param name 缓存名称
      * @param elementType 缓存元素的类型
      * @return 缓存定义实例
@@ -79,6 +83,7 @@ public class SimpleCacheDefinition<T> {
 
     /**
      * 获得一个缓存定义
+     * @param <T> 缓存元素类型
      * @param name 缓存名称
      * @param elementType 缓存元素的类型
      * @param ttl 缓存对象过期时间
@@ -90,6 +95,7 @@ public class SimpleCacheDefinition<T> {
 
     /**
      * 获得一个缓存定义
+     * @param <T> 缓存元素类型
      * @param name 缓存名称
      * @param elementType 缓存元素的类型
      * @param ttl 缓存对象过期时间
