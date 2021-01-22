@@ -1,42 +1,78 @@
 package com.github.relucent.base.common.identifier;
 
 import java.math.BigInteger;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Supplier;
 
+import com.github.relucent.base.common.exception.GeneralException;
 import com.github.relucent.base.common.jvm.JvmUtil;
 import com.github.relucent.base.common.lang.StringUtil;
+import com.github.relucent.base.common.logging.Logger;
 import com.github.relucent.base.common.net.NetworkUtil;
 
 /**
  * 日期时间序列ID生成器<br>
- * 格式为 “yyyyMMddHHmmssXXXXX”， 日期(年月日时分秒)+秒内计数(5位)<br>
+ * 格式为日期(年月日时分秒)+毫秒(3位)+毫秒内计数(2位)+{后缀(可选)}<br>
  */
 public class TimeIdWorker {
 
+    private static final Logger LOGGER = Logger.getLogger(TimeIdWorker.class);
+
     /** 默认实例 */
-    public static final TimeIdWorker DEFAULT = new TimeIdWorker();
+    public static final TimeIdWorker DEFAULT;
 
+    /** 默认ID后缀生成器 */
+    private static final Supplier<String> DEFAULT_SUFFIXER;
+    static {
+        // 进制
+        final int radix36 = 36;
+        // 随机数
+        final Random random = ThreadLocalRandom.current();
+
+        // 当前进程ID (Process Id)
+        BigInteger pid = BigInteger.valueOf(Math.abs(JvmUtil.getPid()));
+        // 本机 MAC地址
+        BigInteger mac = null;
+        try {
+            mac = new BigInteger(NetworkUtil.getHardwareAddress());
+        } catch (Throwable e) {
+            LOGGER.error("!", e);
+            mac = BigInteger.valueOf(random.nextLong());
+        }
+        // ZZ = 35 * 36 + 35 = 1295
+        final BigInteger m = new BigInteger("zz", radix36);
+
+        // 4位环境后缀
+        StringBuilder envModBuilder = new StringBuilder(4);
+        envModBuilder.append(StringUtil.leftPad(pid.mod(m).abs().toString(radix36), 2, '0'));
+        envModBuilder.append(StringUtil.leftPad(mac.mod(m).abs().toString(radix36), 2, '0'));
+        final String envMod = envModBuilder.toString().toUpperCase();
+        final int mod = m.intValue();
+        // 4位环境后缀 + 2位随机后缀
+        DEFAULT_SUFFIXER = () -> envMod + StringUtil.leftPad(Integer.toString(Math.abs(random.nextInt() % mod), radix36), 2, '0').toUpperCase();
+        // 默认默认实例
+        DEFAULT = new TimeIdWorker(DEFAULT_SUFFIXER);
+    }
+
+    /** 日期格式 */
+    private static final String DATETIME_PATTERN = "yyyyMMddHHmmssSSS";
     /** 日期格式化 */
-    private static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-
+    private static final ThreadLocal<DateFormat> DATETIME_FORMAT = ThreadLocal.withInitial(() -> new SimpleDateFormat(DATETIME_PATTERN));
     /** 秒内序列限制 */
-    private static final long MAX_SEQUENCE = 99999;
+    private static final long MAX_SEQUENCE = 99;
     /** 秒内序列限制 */
     private static final int MAX_SEQUENCE_SIZE = Long.toString(MAX_SEQUENCE).length();
     /** "0" 字符 */
     private static final char ZERO_CHAR = '0';
 
-    /** 序列ID前缀(为不同业务设置不同前缀，可以防止集群环境序列ID的冲突) */
-    private final String prefix;
-
     /** 序列ID后缀(为不同服务器设置不同后缀，可以防止集群环境序列ID的冲突) */
-    private final String suffix;
+    private final Supplier<String> suffixer;
 
-    /** 上次生成ID的时间截(秒) */
-    private long lastSeconds = -1L;
+    /** 上次生成ID的时间截 */
+    private long lastTimestamp = -1L;
 
     /** 日期时间字符串 */
     private String datetimeString = "00000000000000";
@@ -48,18 +84,31 @@ public class TimeIdWorker {
      * 构造函数
      */
     public TimeIdWorker() {
-        this.prefix = "";
-        this.suffix = "";
+        this(false);
     }
 
     /**
      * 构造函数
-     * @param prefix 序列ID前缀
+     * @param suffix 是否追加后缀
+     */
+    public TimeIdWorker(boolean suffix) {
+        this.suffixer = suffix ? DEFAULT_SUFFIXER : null;
+    }
+
+    /**
+     * 构造函数
      * @param suffix 序列ID后缀
      */
-    public TimeIdWorker(String prefix, String suffix) {
-        this.prefix = prefix;
-        this.suffix = suffix;
+    public TimeIdWorker(String suffix) {
+        this.suffixer = () -> suffix;
+    }
+
+    /**
+     * 构造函数
+     * @param suffixer 序列ID后缀构建器
+     */
+    public TimeIdWorker(Supplier<String> suffixer) {
+        this.suffixer = suffixer;
     }
 
     /**
@@ -68,81 +117,71 @@ public class TimeIdWorker {
      */
     public synchronized String nextId() {
 
-        long seconds = secondsGen();
+        long timestamp = timeGen();
 
         // 如果当前时间小于上一次ID生成的时间戳，说明系统时钟回退过这个时候应当抛出异常
-        if (seconds < lastSeconds) {
-            throw new RuntimeException(String.format("Clock moved backwards.  Refusing to generate id for %d seconds", lastSeconds - seconds));
+        if (timestamp < lastTimestamp) {
+            throw new GeneralException(String.format("Clock moved backwards.  Refusing to generate id for %d ms", lastTimestamp - timestamp));
         }
 
-        // 如果是同一秒生成的，则递增秒内序列
-        if (lastSeconds == seconds) {
+        // 如果是同一时间生成的，则进行毫秒内序列
+        if (lastTimestamp == timestamp) {
             sequence++;
-            // 秒内序列溢出，需要等待下一秒
-            if (sequence > MAX_SEQUENCE) {
-                seconds = tilNextSeconds(lastSeconds);
+            // 毫秒内序列溢出
+            if (sequence == 0) {
+                // 阻塞到下一个毫秒,获得新的时间戳
+                timestamp = tilNextMillis(lastTimestamp);
             }
         }
 
-        // 时间戳改变，秒内序列重置
-        if (lastSeconds != seconds) {
-            lastSeconds = seconds;
+        // 时间戳改变，毫秒内序列重置
+        if (lastTimestamp != timestamp) {
+            lastTimestamp = timestamp;
             sequence = 0L;
-            datetimeString = formatDatetimeOfSeconds(lastSeconds);
+            datetimeString = formatDatetimeMillis(lastTimestamp);
         }
 
         // 拼装 ID字符串
-        StringBuffer buffer = new StringBuffer();
-        buffer.append(prefix);
+        StringBuilder buffer = new StringBuilder();
         buffer.append(datetimeString);
         String appendSequence = Long.toString(sequence);
         for (int i = MAX_SEQUENCE_SIZE - appendSequence.length(); i > 0; i--) {
             buffer.append(ZERO_CHAR);
         }
         buffer.append(appendSequence);
-        buffer.append(suffix);
+        if (suffixer != null) {
+            buffer.append(suffixer.get());
+        }
         return buffer.toString();
     }
 
     /**
-     * 阻塞到下一个秒，直到获得新的时间戳(秒)
-     * @param lastSecond 上次生成ID的时间戳(秒)
-     * @return 当前时间戳(秒)
+     * 阻塞到下一个毫秒，直到获得新的时间戳
+     * @param lastTimestamp 上次生成ID的时间截
+     * @return 当前时间戳
      */
-    private long tilNextSeconds(long lastSeconds) {
-        long seconds = secondsGen();
-        while (seconds <= lastSeconds) {
-            seconds = secondsGen();
+    protected long tilNextMillis(long lastTimestamp) {
+        long timestamp = timeGen();
+        while (timestamp <= lastTimestamp) {
+            timestamp = timeGen();
         }
-        return seconds;
+        return timestamp;
     }
 
     /**
-     * 返回以秒为单位的当前时间
-     * @return 当前时间(秒)
+     * 返回以毫秒为单位的当前时间
+     * @return 当前时间(毫秒)
      */
-    private long secondsGen() {
-        return System.currentTimeMillis() / 1000L;
+    protected long timeGen() {
+        return System.currentTimeMillis();
     }
 
     /**
-     * 格式化时间秒为日期时间字符串
-     * @param seconds 时间秒
+     * 格式化时间为日期时间字符串
+     * @param millis 毫秒
      * @return 日期时间字符串
      */
-    private String formatDatetimeOfSeconds(long seconds) {
-        Instant instant = Instant.ofEpochMilli(seconds * 1000L);
-        ZoneId zone = ZoneId.systemDefault();
-        return DATETIME_FORMATTER.format(LocalDateTime.ofInstant(instant, zone));
-    }
-
-    /**
-     * 通过环境获取ID后缀（通过IP地址与进程号获取）
-     * @return 6位后缀
-     */
-    public static String getIdSuffixFromEnvironment() {
-        String macMod = new BigInteger(NetworkUtil.getHardwareAddress()).mod(BigInteger.valueOf(36L * 36L * 36L)).toString(36);
-        String pidMod = BigInteger.valueOf(JvmUtil.getPid()).mod(BigInteger.valueOf(36L * 36L)).toString(36);
-        return (StringUtil.leftPad(macMod, 3, '0') + StringUtil.leftPad(pidMod, 3, '0')).toUpperCase();
+    private String formatDatetimeMillis(long millis) {
+        return DATETIME_FORMAT.get().format(millis);
     }
 }

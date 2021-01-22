@@ -27,7 +27,10 @@ public class MyObjectMapper extends ObjectMapper {
     public static final MyObjectMapper INSTANCE = new MyObjectMapper();
 
     public MyObjectMapper() {
+        initialize();
+    }
 
+    protected void initialize() {
         // 当找不到对应的序列化器时 忽略此字段
         this.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
 

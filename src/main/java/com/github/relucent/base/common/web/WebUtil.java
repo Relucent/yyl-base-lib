@@ -151,7 +151,6 @@ public class WebUtil {
         response.setCharacterEncoding("UTF-8");
         setNoCacheHeader(response);
         response.setContentType("application/json; charset=UTF-8");
-        response.addHeader("Access-Control-Allow-Origin", "*");
         response.getWriter().print(json);
     }
 

@@ -12,16 +12,6 @@ import com.github.relucent.base.common.page.SimplePage;
 public class MybatisHelper {
 
     /**
-     * 获得集合第一个元素
-     * @param <E> 元素类型泛型
-     * @param collection 集合对象
-     * @return 集合第一个元素,如果集合为空返回NULL
-     */
-    public static <E> E one(List<E> collection) {
-        return (collection == null || collection.isEmpty()) ? null : collection.get(0);
-    }
-
-    /**
      * 分页查询
      * @param <T> 查询的实体类型
      * @param pagination 分页条件

@@ -1,7 +1,9 @@
 package com.github.relucent.base.common.lang;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 import com.github.relucent.base.common.constant.ArrayConstants;
 import com.github.relucent.base.common.constant.CharConstants;
@@ -11,6 +13,8 @@ import com.github.relucent.base.common.constant.StringConstants;
  * 字符串工具类
  */
 public class StringUtil {
+
+    private static final int STRING_BUILDER_SIZE = 256;
 
     /**
      * 字符串是否为空
@@ -109,6 +113,52 @@ public class StringUtil {
                 continue;
             }
             buffer.append((char) c);
+        }
+        return buffer.toString();
+    }
+
+    /**
+     * 将所提供的集合{@code Iterator}元素连接成字符串。
+     * @param iterable 要连接在一起的集合
+     * @param separator 分隔符
+     * @return 连接到一起的字符串，如多集合为{@code null} 返回 null
+     */
+    public static String join(final Iterable<?> iterable, final String separator) {
+        if (iterable == null) {
+            return null;
+        }
+        return join(iterable.iterator(), separator);
+    }
+
+    /**
+     * 将所提供的集合{@code Iterator}元素连接成字符串。
+     * @param iterator 要连接在一起的集合
+     * @param separator 分隔符
+     * @return 连接到一起的字符串，如多集合为{@code null} 返回 null
+     */
+    public static String join(final Iterator<?> iterator, final String separator) {
+        if (iterator == null) {
+            return null;
+        }
+        if (!iterator.hasNext()) {
+            return StringConstants.EMPTY;
+        }
+        final Object first = iterator.next();
+        if (!iterator.hasNext()) {
+            return Objects.toString(first, "");
+        }
+        final StringBuilder buffer = new StringBuilder(STRING_BUILDER_SIZE);
+        if (first != null) {
+            buffer.append(first);
+        }
+        while (iterator.hasNext()) {
+            if (separator != null) {
+                buffer.append(separator);
+            }
+            final Object obj = iterator.next();
+            if (obj != null) {
+                buffer.append(obj);
+            }
         }
         return buffer.toString();
     }

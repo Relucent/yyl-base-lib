@@ -1,5 +1,7 @@
 package com.github.relucent.base.common.lang;
 
+import java.util.Arrays;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -56,6 +58,13 @@ public class StringUtilTest {
         Assert.assertEquals(StringUtil.deleteWhitespace(" abc "), "abc");
         Assert.assertEquals(StringUtil.deleteWhitespace("\nABC\t"), "ABC");
         Assert.assertEquals(StringUtil.deleteWhitespace("\nA B C\t"), "ABC");
+    }
+
+    @Test
+    public void testJoin1() {
+        Assert.assertNull(StringUtil.join((Iterable<?>) null, null));
+        Assert.assertEquals("AAABBBCCCDDD", StringUtil.join(Arrays.asList("AAA", "BBB", "CCC", "DDD"), null));
+        Assert.assertEquals("AAA||BBB||CCC||DDD", StringUtil.join(Arrays.asList("AAA", "BBB", "CCC", "DDD"), "||"));
     }
 
     @Test

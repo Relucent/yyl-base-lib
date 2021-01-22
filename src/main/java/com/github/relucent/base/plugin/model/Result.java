@@ -15,10 +15,6 @@ public class Result<T> implements Serializable {
     private T data;
 
     // ==============================Constructors==================================
-    public Result(String message, T data) {
-        this(200, message, data);
-    }
-
     public Result(Integer code, String message, T data) {
         this.code = code;
         this.message = message;
@@ -30,23 +26,39 @@ public class Result<T> implements Serializable {
     }
 
     public static <T> Result<T> ok(T data) {
-        return new Result<>("OK", data);
+        return ok("OK", data);
     }
 
-    public static <T> Result<T> ok(String message, T data) {
-        return new Result<>(200, message, data);
+    public static <T> Result<T> okMessage(String message) {
+        return ok(message, null);
     }
 
-    public static Result<?> error() {
-        return new Result<>(500, "ERROR", null);
+    public static <T> Result<T> ok(String msg, T data) {
+        return new Result<>(200, msg, data);
     }
 
-    public static Result<?> error(String message) {
-        return new Result<>(500, message, null);
+    public static <T> Result<T> error() {
+        return error(null);
     }
 
-    public static Result<?> ofMessage(Integer code, String message) {
+    public static <T> Result<T> error(T data) {
+        return error("ERROR", data);
+    }
+
+    public static <T> Result<T> errorMessage(String message) {
+        return error(message, null);
+    }
+
+    public static <T> Result<T> error(String msg, T data) {
+        return new Result<>(500, msg, data);
+    }
+
+    public static <T> Result<T> ofMessage(Integer code, String message) {
         return new Result<>(code, message, null);
+    }
+
+    public static <T> Result<T> of(Integer code, String message, T data) {
+        return new Result<>(code, message, data);
     }
 
     // ========================================Methods========================================
