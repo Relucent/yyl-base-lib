@@ -8,7 +8,7 @@ public class MybatisPageContext implements Serializable {
     private long offset = 0L;
     private long limit = 1L;
     private long total = -1L;
-    private boolean count = true;
+    private boolean count = false;
 
     public long getOffset() {
         return offset;

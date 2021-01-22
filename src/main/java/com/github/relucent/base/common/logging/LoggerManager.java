@@ -2,8 +2,7 @@ package com.github.relucent.base.common.logging;
 
 import java.lang.reflect.Constructor;
 
-import org.apache.ibatis.logging.LogException;
-
+import com.github.relucent.base.common.exception.GeneralException;
 import com.github.relucent.base.common.logging.jdk.JdkLoggerFactory;
 import com.github.relucent.base.common.logging.log4j.Log4jLoggerFactory;
 import com.github.relucent.base.common.logging.log4j2.Log4j2LoggerFactory;
@@ -113,7 +112,7 @@ public class LoggerManager {
             }
             DEFAULT_LOGGER_FACTORY = factory;
         } catch (Throwable e) {
-            throw new LogException("Error setting Log implementation.", e);
+            throw new GeneralException("Error setting Log implementation.", e);
         }
     }
 }
