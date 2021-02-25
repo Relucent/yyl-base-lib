@@ -5,6 +5,7 @@ import java.util.Map;
 import com.github.relucent.base.common.bean.BeanUtil;
 import com.github.relucent.base.common.collection.Listx;
 import com.github.relucent.base.common.collection.Mapx;
+import com.github.relucent.base.common.reflect.TypeReference;
 
 public class JsonHandler implements com.github.relucent.base.common.json.JsonHandler {
 
@@ -34,6 +35,18 @@ public class JsonHandler implements com.github.relucent.base.common.json.JsonHan
         } catch (Exception e) {
             return null;
         }
+    }
+
+    /**
+     * 将JSON字符串，解码为JAVA对象
+     * @param <T> 对象泛型
+     * @param json JSON字符串
+     * @param token JAVA对象类型标记
+     * @return JSON对应的JAVA对象，如果无法解析将返回NULL.
+     */
+    @Override
+    public <T> T decode(String json, TypeReference<T> token) {
+        throw new UnsupportedOperationException("#decode(String, TypeReference)");
     }
 
     /**

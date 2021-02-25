@@ -1,12 +1,13 @@
 package com.github.relucent.base.plugin.jackson;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.github.relucent.base.common.collection.Listx;
 import com.github.relucent.base.common.collection.Mapx;
 import com.github.relucent.base.common.json.JsonHandler;
 import com.github.relucent.base.common.logging.Logger;
+import com.github.relucent.base.common.reflect.TypeReference;
 
 public class JacksonHandler implements JsonHandler {
 
@@ -41,7 +42,7 @@ public class JacksonHandler implements JsonHandler {
     public String encode(Object src) {
         try {
             return objectMapper.writeValueAsString(src);
-        } catch (JsonProcessingException e) {
+        } catch (Throwable e) {
             logger.warn("#", e);
             return null;
         }
@@ -69,9 +70,27 @@ public class JacksonHandler implements JsonHandler {
     public <T> T decode(String json, Class<T> type, T defaultValue) {
         try {
             return objectMapper.readValue(json, type);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             logger.warn("#", e);
             return defaultValue;
+        }
+    }
+
+    /**
+     * 将JSON字符串，解码为JAVA对象
+     * @param <T> 对象泛型
+     * @param json JSON字符串
+     * @param token 类型标记
+     * @return JSON对应的JAVA对象，如果无法解析将返回默认值.
+     */
+    public <T> T decode(String json, TypeReference<T> token) {
+        try {
+            TypeFactory typeFactory = objectMapper.getTypeFactory();
+            JavaType valueType = typeFactory.constructType(token.getType());
+            return objectMapper.readValue(json, valueType);
+        } catch (Throwable e) {
+            logger.error("#", e);
+            return null;
         }
     }
 
@@ -84,7 +103,7 @@ public class JacksonHandler implements JsonHandler {
     public Mapx toMap(String json) {
         try {
             return JacksonConvertUtil.toMap(objectMapper.readTree(json));
-        } catch (Exception e) {
+        } catch (Throwable e) {
             logger.error("#", e);
             return null;
         }
@@ -99,37 +118,9 @@ public class JacksonHandler implements JsonHandler {
     public Listx toList(String json) {
         try {
             return JacksonConvertUtil.toList(objectMapper.readTree(json));
-        } catch (Exception e) {
+        } catch (Throwable e) {
             logger.error("#", e);
             return null;
-        }
-    }
-
-    /**
-     * 将JSON字符串，解码为JAVA对象
-     * @param <T> 对象泛型
-     * @param json JSON字符串
-     * @param token 类型标记
-     * @return JSON对应的JAVA对象，如果无法解析将返回NULL.
-     */
-    public <T> T decode(String json, TypeReference<T> token) {
-        return decode(json, token, null);
-    }
-
-    /**
-     * 将JSON字符串，解码为JAVA对象
-     * @param <T> 对象泛型
-     * @param json JSON字符串
-     * @param token 类型标记
-     * @param defaultValue 默认值
-     * @return JSON对应的JAVA对象，如果无法解析将返回默认值.
-     */
-    public <T> T decode(String json, TypeReference<T> token, T defaultValue) {
-        try {
-            return objectMapper.readValue(json, token);
-        } catch (Exception e) {
-            logger.error("#", e);
-            return defaultValue;
         }
     }
 }

@@ -9,9 +9,6 @@ import java.io.Serializable;
  */
 public interface Pagination extends Serializable {
 
-    /** 默认每页记录条数 */
-    long DEFAULT_LIMIT = 20L;
-
     /**
      * 获取从第几条数据开始查询
      * @return 查询的偏移量

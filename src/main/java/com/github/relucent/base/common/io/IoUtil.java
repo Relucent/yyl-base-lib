@@ -4,8 +4,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.URLConnection;
@@ -21,7 +23,8 @@ public class IoUtil {
     /**
      * 工具类方法，实例不应在标准编程中构造。
      */
-    protected IoUtil() {}
+    protected IoUtil() {
+    }
 
     /**
      * 将文本写入到输出流中
@@ -190,5 +193,19 @@ public class IoUtil {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         copy(input, output);
         return output.toByteArray();
+    }
+
+    /**
+     * 以字符串形式获取<code>InputStream</code>的内容。
+     * @param input 输入流
+     * @param charset 字符编码
+     * @return 字符串
+     * @throws IOException 出现IO异常时抛出
+     */
+    public static String toString(final InputStream input, final Charset charset) throws IOException {
+        try (final Writer writer = new StringWriter()) {
+            copyLarge(new InputStreamReader(input, charset), writer);
+            return writer.toString();
+        }
     }
 }

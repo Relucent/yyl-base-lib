@@ -4,6 +4,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import com.github.relucent.base.common.collection.Listx;
 import com.github.relucent.base.common.collection.Mapx;
+import com.github.relucent.base.common.reflect.TypeReference;
 import com.github.relucent.base.plugin.gson.GsonHandler;
 import com.github.relucent.base.plugin.jackson.JacksonHandler;
 
@@ -47,6 +48,30 @@ public class JsonUtil {
      */
     public static <T> T decode(String json, Class<T> type, T defaultValue) {
         T object = getHandler().decode(json, type);
+        return object != null ? object : defaultValue;
+    }
+
+    /**
+     * 将JSON字符串解码为JAVA对象
+     * @param <T> JAVA对象泛型
+     * @param json 对象的JSON字符串
+     * @param token JAVA对象类型标记
+     * @return JSON对应的JAVA对象，如果无法解析将返回NULL.
+     */
+    public static <T> T decode(String json, TypeReference<T> token) {
+        return decode(json, token, null);
+    }
+
+    /**
+     * 将JSON字符串，解码为JAVA对象
+     * @param <T> JAVA对象泛型
+     * @param json JSON字符串
+     * @param token JAVA对象类型标记
+     * @param defaultValue 默认值
+     * @return JSON对应的JAVA对象，如果无法解析将返回默认值.
+     */
+    public static <T> T decode(String json, TypeReference<T> token, T defaultValue) {
+        T object = getHandler().decode(json, token);
         return object != null ? object : defaultValue;
     }
 
