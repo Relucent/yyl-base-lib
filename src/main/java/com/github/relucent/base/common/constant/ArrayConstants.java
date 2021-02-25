@@ -81,4 +81,7 @@ public class ArrayConstants {
      * An empty immutable {@code Character} array.
      */
     public static final Character[] EMPTY_CHARACTER_OBJECT_ARRAY = new Character[0];
+
+    private ArrayConstants() {
+    }
 }

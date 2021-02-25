@@ -1,15 +1,16 @@
 package com.github.relucent.base.plugin.gson;
 
+import java.lang.reflect.Type;
+
 import com.github.relucent.base.common.collection.Listx;
 import com.github.relucent.base.common.collection.Mapx;
 import com.github.relucent.base.common.json.JsonHandler;
 import com.github.relucent.base.common.logging.Logger;
+import com.github.relucent.base.common.reflect.TypeReference;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import com.google.gson.TypeAdapter;
-import com.google.gson.reflect.TypeToken;
 
 public class GsonHandler implements JsonHandler {
 
@@ -74,6 +75,23 @@ public class GsonHandler implements JsonHandler {
     }
 
     /**
+     * 将JSON字符串，解码为JAVA对象
+     * @param <T> 对象泛型
+     * @param json JSON字符串
+     * @param token 类型标记
+     * @return JSON对应的JAVA对象，如果无法解析将返回默认值.
+     */
+    public <T> T decode(String json, TypeReference<T> token) {
+        try {
+            Type type = token.getType();
+            return gson.fromJson(json, type);
+        } catch (Throwable e) {
+            logger.error("#", e);
+            return null;
+        }
+    }
+
+    /**
      * 将JSON字符串，解码为Map对象
      * @param json JSON字符串
      * @return JSON对应的Map对象，如果无法解析将返回NULL.
@@ -102,35 +120,6 @@ public class GsonHandler implements JsonHandler {
         } catch (Exception e) {
             logger.error("#", e);
             return null;
-        }
-    }
-
-    /**
-     * 将JSON字符串，解码为JAVA对象
-     * @param <T> 对象泛型
-     * @param json JSON字符串
-     * @param token 类型标记
-     * @return JSON对应的JAVA对象，如果无法解析将返回NULL.
-     */
-    public <T> T decode(String json, TypeToken<T> token) {
-        return decode(json, token, null);
-    }
-
-    /**
-     * 将JSON字符串，解码为JAVA对象
-     * @param <T> 对象泛型
-     * @param json JSON字符串
-     * @param token 类型标记
-     * @param defaultValue 默认值
-     * @return JSON对应的JAVA对象，如果无法解析将返回默认值.
-     */
-    public <T> T decode(String json, TypeToken<T> token, T defaultValue) {
-        try {
-            TypeAdapter<T> typeAdapter = gson.getAdapter(token);
-            return typeAdapter.fromJson(json);
-        } catch (Exception e) {
-            logger.error("#", e);
-            return defaultValue;
         }
     }
 }

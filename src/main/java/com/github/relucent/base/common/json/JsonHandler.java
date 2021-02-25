@@ -2,6 +2,7 @@ package com.github.relucent.base.common.json;
 
 import com.github.relucent.base.common.collection.Listx;
 import com.github.relucent.base.common.collection.Mapx;
+import com.github.relucent.base.common.reflect.TypeReference;
 
 /**
  * JSON 处理器接口类
@@ -24,6 +25,15 @@ public interface JsonHandler {
      * @return JSON对应的JAVA对象，如果无法解析将返回NULL.
      */
     <T> T decode(String json, Class<T> type);
+
+    /**
+     * 将JSON字符串，解码为JAVA对象
+     * @param <T> 对象泛型
+     * @param json JSON字符串
+     * @param token JAVA对象类型标记
+     * @return JSON对应的JAVA对象，如果无法解析将返回NULL.
+     */
+    <T> T decode(String json, TypeReference<T> token);
 
     /**
      * 将Java对象解析为MAP对象

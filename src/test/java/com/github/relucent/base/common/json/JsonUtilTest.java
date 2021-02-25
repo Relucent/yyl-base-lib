@@ -6,7 +6,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.github.relucent.base.common.json.JsonUtil;
+import com.github.relucent.base.common.reflect.TypeReference;
 
 public class JsonUtilTest {
 
@@ -32,9 +32,26 @@ public class JsonUtilTest {
     }
 
     @Test
-    public void testEncodeAndEecode() {
+    public void testEncodeAndDecode() {
         String json = JsonUtil.encode(samples);
         Sample[] decodeds = JsonUtil.decode(json, Sample[].class);
+        Assert.assertEquals(samples.length, decodeds.length);
+
+        for (int i = 0; i < samples.length; i++) {
+            Sample sample = samples[i];
+            Sample decoded = decodeds[i];
+            Assert.assertEquals(sample.number, decoded.number);
+            Assert.assertEquals(sample.string, decoded.string);
+            Assert.assertEquals(sample.date, decoded.date);
+        }
+    }
+
+    @Test
+    public void testDecodeTypeReference() {
+        TypeReference<Sample[]> token = new TypeReference<Sample[]>() {
+        };
+        String json = JsonUtil.encode(samples);
+        Sample[] decodeds = JsonUtil.decode(json, token);
         Assert.assertEquals(samples.length, decodeds.length);
 
         for (int i = 0; i < samples.length; i++) {
