@@ -6,6 +6,7 @@ import java.util.Objects;
 /**
  * 类型引用类，用于获取完整的泛型类型信息的泛型抽象类
  * @param <T> 引用类型的泛型
+ * @author YYL
  */
 public abstract class TypeReference<T> extends TypeCapture<T> {
 
@@ -39,7 +40,7 @@ public abstract class TypeReference<T> extends TypeCapture<T> {
      * @return 的类型引用类的实例
      */
     public static <T> TypeReference<T> of(Class<T> type) {
-        return new SimpleTypeReference<T>(type);
+        return new SimpleTypeReference<>(type);
     }
 
     /**

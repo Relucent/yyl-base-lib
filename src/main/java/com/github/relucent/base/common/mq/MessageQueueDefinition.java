@@ -33,7 +33,7 @@ public class MessageQueueDefinition<T> {
      * @return 消息队列定义实例
      */
     public static <T> MessageQueueDefinition<T> of(String name, TypeReference<T> elementType) {
-        return new MessageQueueDefinition<T>(name, elementType);
+        return new MessageQueueDefinition<>(name, elementType);
     }
 
     /**
@@ -64,7 +64,7 @@ public class MessageQueueDefinition<T> {
     }
 
     public Builder<T> newBuilder() {
-        return new Builder<T>(this);
+        return new Builder<>(this);
     }
 
     @Override
@@ -109,7 +109,7 @@ public class MessageQueueDefinition<T> {
         }
 
         public MessageQueueDefinition<T> build() {
-            return new MessageQueueDefinition<T>(name, elementType);
+            return new MessageQueueDefinition<>(name, elementType);
         }
     }
 }

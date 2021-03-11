@@ -21,6 +21,9 @@ public class DialectRouteUtil {
     private static final Map<String, Class<? extends Dialect>> DIALECT_ALIAS_MAP = new ConcurrentHashMap<>();
     private static final Map<String, Dialect> URL_DIALECT_MAP = new ConcurrentHashMap<>();
 
+    private DialectRouteUtil() {
+    }
+
     static {
         // HsqlDb
         DIALECT_ALIAS_MAP.put("hsqldb", HsqldbDialect.class);

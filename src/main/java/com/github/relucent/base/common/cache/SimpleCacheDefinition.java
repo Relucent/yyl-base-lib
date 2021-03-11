@@ -143,7 +143,7 @@ public class SimpleCacheDefinition<T> {
      * @return 缓存定义的构建器
      */
     public Builder<T> newBuilder() {
-        return new Builder<T>(this);
+        return new Builder<>(this);
     }
 
     @Override
@@ -206,7 +206,7 @@ public class SimpleCacheDefinition<T> {
         }
 
         public SimpleCacheDefinition<T> build() {
-            return new SimpleCacheDefinition<T>(name, elementType, ttl, maxIdleTime);
+            return new SimpleCacheDefinition<>(name, elementType, ttl, maxIdleTime);
         }
     }
 }
