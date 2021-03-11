@@ -34,7 +34,7 @@ public class Db2Dialect extends AbstractDialect implements Dialect {
     }
 
     private static String getRowNumber(String sql) {
-        StringBuffer rownumber = new StringBuffer(50).append("rownumber() over(");
+        StringBuilder rownumber = new StringBuilder(50).append("rownumber() over(");
         int orderByIndex = sql.toLowerCase().indexOf("order by");
         if (orderByIndex > 0 && !hasDistinct(sql)) {
             rownumber.append(sql.substring(orderByIndex));

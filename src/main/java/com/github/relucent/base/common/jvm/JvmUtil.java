@@ -6,6 +6,10 @@ import java.lang.management.ManagementFactory;
  * 运行时信息工作类
  */
 public class JvmUtil {
+
+    private JvmUtil() {
+    }
+
     /**
      * 获得当前进程ID (Process Id)，如果获取失败返回 -1
      * @return 当前进程的ID

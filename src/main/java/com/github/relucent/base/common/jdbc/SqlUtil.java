@@ -7,9 +7,12 @@ import java.util.regex.Pattern;
  */
 public class SqlUtil {
     // ==============================Fields===========================================
-    private static final Pattern ORDER_BY_PATTERN =
-            Pattern.compile("\\s+ORDER\\s+BY\\s+\\S+(\\s*(ASC|DESC)?)(\\s*,\\s*\\S+(\\s*(ASC|DESC)?))*\\s*$",
-                    Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+    private static final Pattern ORDER_BY_PATTERN = Pattern.compile("\\s+ORDER\\s+BY\\s+\\S+(\\s*(ASC|DESC)?)(\\s*,\\s*\\S+(\\s*(ASC|DESC)?))*\\s*$",
+            Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+
+    // =================================Constructors===========================================
+    private SqlUtil() {
+    }
 
     // ==============================Methods==========================================
     /**

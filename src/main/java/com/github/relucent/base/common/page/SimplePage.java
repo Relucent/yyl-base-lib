@@ -28,7 +28,7 @@ public class SimplePage<T> implements Page<T> {
      * 构造函数
      */
     public SimplePage() {
-        this.records = new ArrayList<T>();
+        this.records = new ArrayList<>();
     }
 
     /**

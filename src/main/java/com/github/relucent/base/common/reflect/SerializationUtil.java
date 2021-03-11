@@ -8,6 +8,7 @@ import java.io.ObjectOutputStream;
 
 /**
  * 序列化功能的工具类
+ * @author YYL
  */
 public class SerializationUtil {
 
