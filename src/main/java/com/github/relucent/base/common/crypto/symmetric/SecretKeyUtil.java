@@ -38,7 +38,7 @@ public class SecretKeyUtil {
     }
 
     /** 随机字符串可选字符 */
-    private static final char[] RANDOM_CHARS = {//
+    private static final char[] RANDOM_CHARS = { //
             '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', //
             'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', //
             'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', //
@@ -163,12 +163,7 @@ public class SecretKeyUtil {
      * @return 秘密（对称）密钥
      */
     public static SecretKey generateSecretKey(String algorithm, int keySize) {
-        KeyGenerator keyGenerator;
-        try {
-            keyGenerator = KeyGenerator.getInstance(algorithm);
-        } catch (NoSuchAlgorithmException e) {
-            throw new CryptoException(e);
-        }
+        KeyGenerator keyGenerator = getKeyGenerator(algorithm);
         if (keySize > 0) {
             keyGenerator.init(keySize);
         } else if (algorithm.startsWith(PrefixNames.AES)) {
