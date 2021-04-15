@@ -1,6 +1,7 @@
 package com.github.relucent.base.common.lang;
 
 import java.util.Arrays;
+import java.util.Iterator;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -65,6 +66,18 @@ public class StringUtilTest {
         Assert.assertNull(StringUtil.join((Iterable<?>) null, null));
         Assert.assertEquals("AAABBBCCCDDD", StringUtil.join(Arrays.asList("AAA", "BBB", "CCC", "DDD"), null));
         Assert.assertEquals("AAA||BBB||CCC||DDD", StringUtil.join(Arrays.asList("AAA", "BBB", "CCC", "DDD"), "||"));
+    }
+
+    @Test
+    public void testJoinPurify() {
+        String separator = "||";
+        String[] sample1 = { "A", " ", "B", "", "C", null, "D" };
+        Iterable<?> sample2 = Arrays.asList(sample1);
+        Iterator<?> sample3 = sample2.iterator();
+        String expected = "A||B||C||D";
+        Assert.assertEquals(expected, StringUtil.joinPurify(sample1, separator));
+        Assert.assertEquals(expected, StringUtil.joinPurify(sample2, separator));
+        Assert.assertEquals(expected, StringUtil.joinPurify(sample3, separator));
     }
 
     @Test

@@ -164,6 +164,83 @@ public class StringUtil {
     }
 
     /**
+     * 将所提供的对象数组拼装成一个字符串，忽略其中的空字符串。
+     * @param values 需要成字符串的对象数组
+     * @param separator 分隔符
+     * @return 连接到一起的字符串，如果数组为{@code null} 返回 null
+     */
+    public static String joinPurify(final Object[] values, String separator) {
+        if (values == null) {
+            return null;
+        }
+        if (separator == null) {
+            separator = StringConstants.EMPTY;
+        }
+        int count = 0;
+        final StringBuilder buffer = new StringBuilder(STRING_BUILDER_SIZE);
+        for (Object value : values) {
+            if (value != null) {
+                String string = trim(value.toString());
+                if (isNotEmpty(string)) {
+                    if (count > 0 && separator != null) {
+                        buffer.append(separator);
+                    }
+                    buffer.append(string);
+                    count++;
+                }
+            }
+        }
+        return buffer.toString();
+    }
+
+    /**
+     * 将所提供的集合{@code Iterator}元素连接成字符串，忽略其中的空字符串。
+     * @param iterable 要连接在一起的集合
+     * @param separator 分隔符
+     * @return 连接到一起的字符串，如果集合为{@code null} 返回 null
+     */
+    public static String joinPurify(final Iterable<?> iterable, final String separator) {
+        if (iterable == null) {
+            return null;
+        }
+        return joinPurify(iterable.iterator(), separator);
+    }
+
+    /**
+     * 将所提供的集合{@code Iterator}元素连接成字符串，忽略其中的空字符串。
+     * @param iterator 要连接在一起的集合
+     * @param separator 分隔符
+     * @return 连接到一起的字符串，如果集合为{@code null} 返回 null
+     */
+    public static String joinPurify(final Iterator<?> iterator, String separator) {
+        if (iterator == null) {
+            return null;
+        }
+        if (!iterator.hasNext()) {
+            return StringConstants.EMPTY;
+        }
+        if (separator == null) {
+            separator = StringConstants.EMPTY;
+        }
+        int count = 0;
+        final StringBuilder buffer = new StringBuilder(STRING_BUILDER_SIZE);
+        while (iterator.hasNext()) {
+            final Object obj = iterator.next();
+            if (obj != null) {
+                String string = trim(obj.toString());
+                if (isNotEmpty(string)) {
+                    if (count > 0 && separator != null) {
+                        buffer.append(separator);
+                    }
+                    buffer.append(string);
+                    count++;
+                }
+            }
+        }
+        return buffer.toString();
+    }
+
+    /**
      * 切分字符串 *
      * 
      * <pre>
