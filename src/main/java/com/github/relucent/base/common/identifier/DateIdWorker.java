@@ -7,7 +7,6 @@ import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Supplier;
 
-import com.github.relucent.base.common.exception.GeneralException;
 import com.github.relucent.base.common.jvm.JvmUtil;
 import com.github.relucent.base.common.lang.StringUtil;
 import com.github.relucent.base.common.logging.Logger;
@@ -15,52 +14,22 @@ import com.github.relucent.base.common.net.NetworkUtil;
 
 /**
  * 日期时间序列ID生成器<br>
- * 格式为日期(年月日时分秒)+毫秒(3位)+毫秒内计数(2位)+{后缀(可选)}<br>
+ * 格式为日期(年月日时分秒)+毫秒(3位)+毫秒内计数(2位)+{后缀(可选,默认2位环境位+4位随机位)}<br>
  */
-public class DatetimeIdWorker {
+public class DateIdWorker {
 
-    private static final Logger LOGGER = Logger.getLogger(DatetimeIdWorker.class);
-
-    /** 默认实例 */
-    public static final DatetimeIdWorker DEFAULT;
+    private static final Logger LOGGER = Logger.getLogger(DateIdWorker.class);
 
     /** 默认ID后缀生成器 */
-    private static final Supplier<String> DEFAULT_SUFFIXER;
-    static {
-        // 进制
-        final int radix36 = 36;
-        // 随机数
-        final Random random = ThreadLocalRandom.current();
-
-        // 当前进程ID (Process Id)
-        BigInteger pid = BigInteger.valueOf(Math.abs(JvmUtil.getPid()));
-        // 本机 MAC地址
-        BigInteger mac = null;
-        try {
-            mac = new BigInteger(NetworkUtil.getHardwareAddress());
-        } catch (Throwable e) {
-            LOGGER.error("!", e);
-            mac = BigInteger.valueOf(random.nextLong());
-        }
-        // ZZ = 35 * 36 + 35 = 1295
-        final BigInteger m = new BigInteger("zz", radix36);
-
-        // 4位环境后缀
-        StringBuilder envModBuilder = new StringBuilder(4);
-        envModBuilder.append(StringUtil.leftPad(pid.mod(m).abs().toString(radix36), 2, '0'));
-        envModBuilder.append(StringUtil.leftPad(mac.mod(m).abs().toString(radix36), 2, '0'));
-        final String envMod = envModBuilder.toString().toUpperCase();
-        final int mod = m.intValue();
-        // 4位环境后缀 + 2位随机后缀
-        DEFAULT_SUFFIXER = () -> envMod + StringUtil.leftPad(Integer.toString(Math.abs(random.nextInt() % mod), radix36), 2, '0').toUpperCase();
-        // 默认默认实例
-        DEFAULT = new DatetimeIdWorker(DEFAULT_SUFFIXER);
-    }
-
+    private static final Supplier<String> DEFAULT_SUFFIXER = defaultSuffixer();
     /** 日期格式 */
     private static final String DATETIME_PATTERN = "yyyyMMddHHmmssSSS";
     /** 日期格式化 */
     private static final ThreadLocal<DateFormat> DATETIME_FORMAT = ThreadLocal.withInitial(() -> new SimpleDateFormat(DATETIME_PATTERN));
+
+    /** 默认实例 */
+    public static final DateIdWorker DEFAULT = new DateIdWorker();
+
     /** 秒内序列限制 */
     private static final long MAX_SEQUENCE = 99;
     /** 秒内序列限制 */
@@ -83,7 +52,7 @@ public class DatetimeIdWorker {
     /**
      * 构造函数
      */
-    public DatetimeIdWorker() {
+    public DateIdWorker() {
         this(false);
     }
 
@@ -91,7 +60,7 @@ public class DatetimeIdWorker {
      * 构造函数
      * @param suffix 是否追加后缀
      */
-    public DatetimeIdWorker(boolean suffix) {
+    public DateIdWorker(boolean suffix) {
         this.suffixer = suffix ? DEFAULT_SUFFIXER : null;
     }
 
@@ -99,7 +68,7 @@ public class DatetimeIdWorker {
      * 构造函数
      * @param suffix 序列ID后缀
      */
-    public DatetimeIdWorker(String suffix) {
+    public DateIdWorker(String suffix) {
         this.suffixer = () -> suffix;
     }
 
@@ -107,7 +76,7 @@ public class DatetimeIdWorker {
      * 构造函数
      * @param suffixer 序列ID后缀构建器
      */
-    public DatetimeIdWorker(Supplier<String> suffixer) {
+    public DateIdWorker(Supplier<String> suffixer) {
         this.suffixer = suffixer;
     }
 
@@ -119,9 +88,23 @@ public class DatetimeIdWorker {
 
         long timestamp = timeGen();
 
-        // 如果当前时间小于上一次ID生成的时间戳，说明系统时钟回退过这个时候应当抛出异常
+        // 当前时间戳小于上一次ID生成的时间戳，可能是闰秒
         if (timestamp < lastTimestamp) {
-            throw new GeneralException(String.format("Clock moved backwards.  Refusing to generate id for %d ms", lastTimestamp - timestamp));
+            long offset = lastTimestamp - timestamp;
+            // 时间偏差大小小于5ms，则等待两倍时间
+            if (offset <= 5) {
+                try {
+                    wait(offset << 1);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException("Clock moved backwards. Waiting is interrupted.", e);
+                }
+                timestamp = timeGen();
+                if (timestamp < lastTimestamp) {
+                    throw new RuntimeException(String.format("Clock moved backwards. Refusing to generate id for %d milliseconds", offset));
+                }
+            } else {
+                throw new RuntimeException(String.format("Clock moved backwards. Refusing to generate id for %d milliseconds", offset));
+            }
         }
 
         // 如果是同一时间生成的，则进行毫秒内序列
@@ -183,5 +166,50 @@ public class DatetimeIdWorker {
      */
     private String formatDatetimeMillis(long millis) {
         return DATETIME_FORMAT.get().format(millis);
+    }
+
+    /**
+     * 默认的后缀生成器
+     * @return 后缀生成器
+     */
+    private static Supplier<String> defaultSuffixer() {
+        // 随机数
+        final Random random = ThreadLocalRandom.current();
+
+        // 当前进程ID (Process Id)
+        BigInteger pid = null;
+        try {
+            pid = BigInteger.valueOf(Math.abs(JvmUtil.getPid()));
+        } catch (Throwable e) {
+            LOGGER.error("!", e);
+        }
+        // 本机 MAC地址
+        BigInteger mac = null;
+        try {
+            mac = new BigInteger(NetworkUtil.getHardwareAddress());
+        } catch (Throwable e) {
+            LOGGER.error("!", e);
+        }
+
+        if (pid == null) {
+            pid = BigInteger.valueOf(random.nextLong());
+        }
+        if (mac == null) {
+            mac = BigInteger.valueOf(random.nextLong());
+        }
+
+        final int radix36 = 36;
+        final BigInteger z1 = new BigInteger("Z", radix36);
+        final BigInteger z4 = new BigInteger("ZZZZ", radix36);
+
+        // 3位环境后缀
+        StringBuilder envModBuilder = new StringBuilder(2);
+        envModBuilder.append(StringUtil.leftPad(pid.mod(z1).abs().toString(radix36), 1, '0'));
+        envModBuilder.append(StringUtil.leftPad(mac.mod(z1).abs().toString(radix36), 1, '0'));
+        final String envMod = envModBuilder.toString().toUpperCase();
+        final int mod = z4.intValue();
+
+        // 3位环境后缀 + 3位随机后缀
+        return () -> envMod + StringUtil.leftPad(Integer.toString(Math.abs(random.nextInt() % mod), radix36), 4, '0').toUpperCase();
     }
 }
