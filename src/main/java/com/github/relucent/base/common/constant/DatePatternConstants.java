@@ -49,4 +49,7 @@ public class DatePatternConstants {
 
     /** JDK中日期时间格式：EEE MMM dd HH:mm:ss zzz yyyy */
     public static final String JDK_DATETIME_PATTERN = "EEE MMM dd HH:mm:ss zzz yyyy";
+
+    private DatePatternConstants() {
+    }
 }

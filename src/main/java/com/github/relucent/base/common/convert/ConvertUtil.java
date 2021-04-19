@@ -74,6 +74,13 @@ public class ConvertUtil {
         WRAPPED_TYPES.add(Short.class);
     }
 
+    // ==============================Constructors=====================================
+    /**
+     * 工具类方法，实例不应在标准编程中构造。
+     */
+    protected ConvertUtil() {
+    }
+
     // ==============================Methods==========================================
     /**
      * 将对象转换为布尔类型
@@ -315,7 +322,7 @@ public class ConvertUtil {
      * @param defaultValue 默认值
      * @return 转换类型后的对象(无法正确转换类型则返回默认值)
      */
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public static <T> T convert(Object obj, Class<T> toType, T defaultValue) {
         T result = defaultValue;
         try {
@@ -333,7 +340,7 @@ public class ConvertUtil {
         return result;
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private static <T> Converter<T> findConverter(Class<T> type) {
         if (type == null) {
             return null;

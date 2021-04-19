@@ -10,6 +10,12 @@ public class DistanceUtil {
     private static final double EARTH_RADIUS = 6378137.00;
 
     /**
+     * 工具类方法，实例不应在标准编程中构造。
+     */
+    protected DistanceUtil() {
+    }
+
+    /**
      * 通过经纬度计算两点之间的距离(单位：米)<br>
      * 备注：该算法与WGS84计算距离误差在 0.15% 左右（ 例如：1000千米误差在1.5千米，10000千米误差会达到150千米）。<br>
      * @param lat1 坐标1的纬度

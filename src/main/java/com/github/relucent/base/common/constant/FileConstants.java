@@ -37,4 +37,7 @@ public class FileConstants {
     public static final BigInteger ONE_ZB_BI = ONE_KB_BI.multiply(ONE_EB_BI);
     /** 1YB (YottaByte,一亿亿亿字节) 2^80B */
     public static final BigInteger ONE_YB_BI = ONE_KB_BI.multiply(ONE_ZB_BI);
+
+    private FileConstants() {
+    }
 }

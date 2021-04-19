@@ -43,4 +43,7 @@ public class CharsetConstants {
      * {@link java.nio.charset.StandardCharsets#UTF_16}
      */
     public static final Charset UTF_16 = StandardCharsets.UTF_16;
+
+    private CharsetConstants() {
+    }
 }

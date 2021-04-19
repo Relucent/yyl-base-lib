@@ -10,4 +10,7 @@ public class IoConstants {
 
     /** 数据流末尾 */
     public static final int EOF = -1;
+
+    private IoConstants() {
+    }
 }

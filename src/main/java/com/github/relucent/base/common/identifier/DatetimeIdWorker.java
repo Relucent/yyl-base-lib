@@ -17,12 +17,12 @@ import com.github.relucent.base.common.net.NetworkUtil;
  * 日期时间序列ID生成器<br>
  * 格式为日期(年月日时分秒)+毫秒(3位)+毫秒内计数(2位)+{后缀(可选)}<br>
  */
-public class TimeIdWorker {
+public class DatetimeIdWorker {
 
-    private static final Logger LOGGER = Logger.getLogger(TimeIdWorker.class);
+    private static final Logger LOGGER = Logger.getLogger(DatetimeIdWorker.class);
 
     /** 默认实例 */
-    public static final TimeIdWorker DEFAULT;
+    public static final DatetimeIdWorker DEFAULT;
 
     /** 默认ID后缀生成器 */
     private static final Supplier<String> DEFAULT_SUFFIXER;
@@ -54,7 +54,7 @@ public class TimeIdWorker {
         // 4位环境后缀 + 2位随机后缀
         DEFAULT_SUFFIXER = () -> envMod + StringUtil.leftPad(Integer.toString(Math.abs(random.nextInt() % mod), radix36), 2, '0').toUpperCase();
         // 默认默认实例
-        DEFAULT = new TimeIdWorker(DEFAULT_SUFFIXER);
+        DEFAULT = new DatetimeIdWorker(DEFAULT_SUFFIXER);
     }
 
     /** 日期格式 */
@@ -83,7 +83,7 @@ public class TimeIdWorker {
     /**
      * 构造函数
      */
-    public TimeIdWorker() {
+    public DatetimeIdWorker() {
         this(false);
     }
 
@@ -91,7 +91,7 @@ public class TimeIdWorker {
      * 构造函数
      * @param suffix 是否追加后缀
      */
-    public TimeIdWorker(boolean suffix) {
+    public DatetimeIdWorker(boolean suffix) {
         this.suffixer = suffix ? DEFAULT_SUFFIXER : null;
     }
 
@@ -99,7 +99,7 @@ public class TimeIdWorker {
      * 构造函数
      * @param suffix 序列ID后缀
      */
-    public TimeIdWorker(String suffix) {
+    public DatetimeIdWorker(String suffix) {
         this.suffixer = () -> suffix;
     }
 
@@ -107,7 +107,7 @@ public class TimeIdWorker {
      * 构造函数
      * @param suffixer 序列ID后缀构建器
      */
-    public TimeIdWorker(Supplier<String> suffixer) {
+    public DatetimeIdWorker(Supplier<String> suffixer) {
         this.suffixer = suffixer;
     }
 

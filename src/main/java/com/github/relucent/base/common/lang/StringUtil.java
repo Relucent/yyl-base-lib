@@ -14,7 +14,14 @@ import com.github.relucent.base.common.constant.StringConstants;
  */
 public class StringUtil {
 
+    /** 字符串构建器默认构建尺寸 */
     private static final int STRING_BUILDER_SIZE = 256;
+
+    /**
+     * 工具类方法，实例不应在标准编程中构造。
+     */
+    protected StringUtil() {
+    }
 
     /**
      * 字符串是否为空

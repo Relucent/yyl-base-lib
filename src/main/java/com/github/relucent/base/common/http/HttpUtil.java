@@ -25,8 +25,7 @@ import com.github.relucent.base.common.net.SslHelper;
  */
 public class HttpUtil {
 
-    // =================================Fields=================================================
-    // =================================Constants==============================================
+    // ==============================Fields===========================================
     public static final String CONTENT_TYPE = "Content-Type";
     public static final String CONTENT_LENGTH = "Content-Length";
     public static final String USER_AGENT = "User-Agent";
@@ -45,7 +44,14 @@ public class HttpUtil {
     private static final int CONNECT_TIMEOUT = 5 * 1000;// 连接超时(单位毫秒)
     private static final int READ_TIMEOUT = 30 * 1000;// 读取超时(单位毫秒)
 
-    // =================================Methods================================================
+    // ==============================Constructors=====================================
+    /**
+     * 工具类方法，实例不应在标准编程中构造。
+     */
+    protected HttpUtil() {
+    }
+
+    // ==============================Methods==========================================
     /**
      * 发送GET请求
      * @param url 请求地址

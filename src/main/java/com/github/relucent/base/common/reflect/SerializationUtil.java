@@ -13,6 +13,12 @@ import java.io.ObjectOutputStream;
 public class SerializationUtil {
 
     /**
+     * 工具类私有构造
+     */
+    protected SerializationUtil() {
+    }
+
+    /**
      * 将给定对象序列化为字节数组.
      * @param object 要序列化的对象
      * @return 对象序列化的字节数组

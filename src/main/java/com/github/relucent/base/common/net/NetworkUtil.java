@@ -42,6 +42,12 @@ public class NetworkUtil {
     );
 
     /**
+     * 工具类方法，实例不应在标准编程中构造。
+     */
+    protected NetworkUtil() {
+    }
+
+    /**
      * 获得本机网卡物理地址
      * @return 网卡物理地址(数组)
      */

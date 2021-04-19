@@ -8,6 +8,12 @@ import com.github.relucent.base.common.constant.FilenameConstants;
 public class FilenameUtil {
 
     /**
+     * 工具类方法，实例不应在标准编程中构造。
+     */
+    protected FilenameUtil() {
+    }
+
+    /**
      * 获得文件名称
      * @param path 文件路径
      * @return 文件名称

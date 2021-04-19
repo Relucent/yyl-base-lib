@@ -6,6 +6,12 @@ package com.github.relucent.base.common.lang;
  */
 public class Assert {
 
+    /**
+     * 工具类方法，实例不应在标准编程中构造。
+     */
+    protected Assert() {
+    }
+
     public static void isNull(Object object) {
         isNull(object, "[Assertion failed] - the object must be null");
     }
@@ -71,6 +77,4 @@ public class Assert {
     public static void fail(String message) {
         throw new IllegalArgumentException(message);
     }
-
-    private Assert() {}
 }

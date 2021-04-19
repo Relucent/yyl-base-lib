@@ -10,7 +10,10 @@ import com.github.relucent.base.common.lang.ArrayUtil;
  */
 public class TypeUtil {
 
-    TypeUtil() {
+    /**
+     * 工具类方法，实例不应在标准编程中构造。
+     */
+    protected TypeUtil() {
     }
 
     /**

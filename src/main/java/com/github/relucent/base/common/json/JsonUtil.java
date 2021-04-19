@@ -13,10 +13,17 @@ import com.github.relucent.base.plugin.jackson.JacksonHandler;
  */
 public class JsonUtil {
 
-    // ===================================Fields==============================================
+    // ==============================Fields===========================================
     private static final AtomicReference<JsonHandler> HANDLER = new AtomicReference<>(getDefaultHandler());
 
-    // ===================================Methods=============================================
+    // ==============================Constructors=====================================
+    /**
+     * 工具类私有构造
+     */
+    protected JsonUtil() {
+    }
+
+    // ==============================Methods===========================================
     /**
      * 将JAVA对象编码为JSON字符串
      * @param <T> JAVA对象泛型

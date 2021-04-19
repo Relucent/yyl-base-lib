@@ -9,6 +9,12 @@ import javax.crypto.NoSuchPaddingException;
 public class CipherUtil {
 
     /**
+     * 工具类方法，实例不应在标准编程中构造。
+     */
+    protected CipherUtil() {
+    }
+
+    /**
      * 创建加密解密器{@link Cipher}
      * @param algorithm 算法
      * @return 加密解密器
