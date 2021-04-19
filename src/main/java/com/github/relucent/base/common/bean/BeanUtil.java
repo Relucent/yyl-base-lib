@@ -22,6 +22,12 @@ public class BeanUtil {
 
     private static final Logger LOGGER = Logger.getLogger(BeanUtil.class);
 
+    /**
+     * 工具类方法，实例不应在标准编程中构造。
+     */
+    protected BeanUtil() {
+    }
+
     public static Map<String, Object> describe(Object bean) {
         return describe(bean, MapConfig.DEFAULT);
     }

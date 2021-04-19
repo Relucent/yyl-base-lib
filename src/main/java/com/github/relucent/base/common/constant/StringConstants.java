@@ -101,7 +101,6 @@ public class StringConstants {
     /** 波浪号 [0x7E] */
     public static final String TILDE = "~";
 
-
     /** 中文(全角)空格 */
     public static final String FULL_WIDTH_SPACE = "　";
 
@@ -137,4 +136,7 @@ public class StringConstants {
 
     /** JSON对象字符串({})，表示空对象 */
     public static final String JSON_EMPTY_OBJECT = "{}";
+
+    private StringConstants() {
+    }
 }

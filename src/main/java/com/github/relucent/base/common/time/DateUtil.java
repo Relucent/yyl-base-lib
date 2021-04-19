@@ -65,6 +65,12 @@ public class DateUtil {
     };
 
     /**
+     * 工具类方法，实例不应在标准编程中构造。
+     */
+    protected DateUtil() {
+    }
+
+    /**
      * 获得当前时间
      * @return 当前时间
      */

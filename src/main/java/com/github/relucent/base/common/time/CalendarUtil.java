@@ -9,6 +9,12 @@ import java.util.Date;
 public class CalendarUtil {
 
     /**
+     * 工具类方法，实例不应在标准编程中构造。
+     */
+    protected CalendarUtil() {
+    }
+
+    /**
      * 转换 {@link Date} 为 {@link Calendar} 类型
      * @param date {@link Date}
      * @return {link {@link Calendar}}

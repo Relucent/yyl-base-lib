@@ -10,8 +10,11 @@ public class SqlUtil {
     private static final Pattern ORDER_BY_PATTERN = Pattern.compile("\\s+ORDER\\s+BY\\s+\\S+(\\s*(ASC|DESC)?)(\\s*,\\s*\\S+(\\s*(ASC|DESC)?))*\\s*$",
             Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 
-    // =================================Constructors===========================================
-    private SqlUtil() {
+    // ==============================Constructors=====================================
+    /**
+     * 工具类方法，实例不应在标准编程中构造。
+     */
+    protected SqlUtil() {
     }
 
     // ==============================Methods==========================================

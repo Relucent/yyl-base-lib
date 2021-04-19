@@ -17,6 +17,12 @@ import com.github.relucent.base.common.lang.ArrayUtil;
 public class CollectionUtil {
 
     /**
+     * 工具类方法，实例不应在标准编程中构造。
+     */
+    protected CollectionUtil() {
+    }
+
+    /**
      * 判断集合是否为空
      * @param collection 集合
      * @return 集合是否为空

@@ -10,6 +10,12 @@ public class ArrayUtil {
      */
     public static final int INDEX_NOT_FOUND = -1;
 
+    /**
+     * 工具类方法，实例不应在标准编程中构造。
+     */
+    protected ArrayUtil() {
+    }
+
     // ===# Object[]
     /**
      * 判断数组是否为空

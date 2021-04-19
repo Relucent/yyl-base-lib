@@ -17,4 +17,7 @@ public class FilenameConstants {
     public static final char WINDOWS_SEPARATOR = '\\';
     /** 当前系统的文件名路径分隔符 */
     public static final char SYSTEM_SEPARATOR = File.separatorChar;
+
+    private FilenameConstants() {
+    }
 }

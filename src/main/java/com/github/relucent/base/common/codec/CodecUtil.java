@@ -12,6 +12,12 @@ public class CodecUtil {
     private static final String DEFAULT_URI_ENCODING = "UTF-8";
 
     /**
+     * 工具类方法，实例不应在标准编程中构造。
+     */
+    protected CodecUtil() {
+    }
+
+    /**
      * 将字节数组编码成Base64字符串
      * @param data 字节数组
      * @return Base64字符串

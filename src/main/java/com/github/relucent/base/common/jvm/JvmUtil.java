@@ -7,7 +7,10 @@ import java.lang.management.ManagementFactory;
  */
 public class JvmUtil {
 
-    private JvmUtil() {
+    /**
+     * 工具类方法，实例不应在标准编程中构造。
+     */
+    protected JvmUtil() {
     }
 
     /**

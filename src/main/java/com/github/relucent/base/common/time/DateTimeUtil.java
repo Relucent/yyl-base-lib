@@ -8,6 +8,12 @@ import java.util.Date;
 public class DateTimeUtil {
 
     /**
+     * 工具类方法，实例不应在标准编程中构造。
+     */
+    protected DateTimeUtil() {
+    }
+
+    /**
      * 日期时间转换，将{@code Date}转换为{@code LocalDateTime}
      * @param date 日期类型 {@code Date}
      * @return 日期时间类型{@code LocalDateTime}

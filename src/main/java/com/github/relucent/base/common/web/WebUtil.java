@@ -1,7 +1,6 @@
 package com.github.relucent.base.common.web;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -20,6 +19,12 @@ import com.github.relucent.base.common.lang.StringUtil;
  * @author YYL
  */
 public class WebUtil {
+
+    /**
+     * 工具类方法，实例不应在标准编程中构造。
+     */
+    protected WebUtil() {
+    }
 
     /**
      * 获得SessionId
@@ -176,7 +181,7 @@ public class WebUtil {
         String name = file.getName();
         String contentType = file.getContentType();
         String filename = WebUtil.getContentDispositionFilename(name, request);
-        String contentDisposition = mode.name() + ";filename=" + filename;
+        String contentDisposition = mode.getContentDisposition(filename);
         response.setContentType(contentType);
         response.setHeader("content-disposition", contentDisposition);
         file.writeTo(response.getOutputStream());
@@ -249,83 +254,5 @@ public class WebUtil {
         uri = decodeRequestString(request, uri);
         int semicolonIndex = uri.indexOf(';');
         return ((semicolonIndex != -1) ? uri.substring(0, semicolonIndex) : uri);
-    }
-
-    /** 文件下载模式 */
-    public static enum DownloadMode {
-        /** 附件 */
-        attachment,
-        /** 内联 */
-        inline
-    }
-
-    /** 下载文件(接口类) */
-    public static interface DownloadFile {
-        /**
-         * 获得文件名称
-         * @return 文件名称
-         */
-        String getName();
-
-        /**
-         * 获得内容类型
-         * @return 内容类型
-         */
-        String getContentType();
-
-        /**
-         * 将内容写到输出流
-         * @param output 输出流
-         */
-        void writeTo(OutputStream output);
-
-        /**
-         * 获得文件长度
-         * @return 文件长度
-         */
-        long getLength();
-    }
-
-    /** 下载文件(实现类) */
-    public static class DownloadSimpleFile implements DownloadFile {
-        /** 文件名称 */
-        private String name;
-        /** 内容类型 */
-        private String contentType;
-        /** 文件内容 */
-        private byte[] content;
-        /** 文件长度 */
-        private long length;
-
-        public DownloadSimpleFile(String name, String contentType, byte[] content) {
-            this.name = name;
-            this.contentType = contentType;
-            this.content = content;
-            this.length = content.length;
-        }
-
-        @Override
-        public String getName() {
-            return name;
-        }
-
-        @Override
-        public String getContentType() {
-            return contentType;
-        }
-
-        @Override
-        public void writeTo(OutputStream output) {
-            try {
-                output.write(content);
-            } catch (IOException e) {
-                // Ignore
-            }
-        }
-
-        @Override
-        public long getLength() {
-            return length;
-        }
     }
 }

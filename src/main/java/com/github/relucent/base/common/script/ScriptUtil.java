@@ -10,6 +10,12 @@ import javax.script.ScriptEngineManager;
 public class ScriptUtil {
 
     /**
+     * 工具类方法，实例不应在标准编程中构造。
+     */
+    protected ScriptUtil() {
+    }
+
+    /**
      * 获得脚本引擎实例
      * @param name 脚本名称
      * @return 脚本引擎实例

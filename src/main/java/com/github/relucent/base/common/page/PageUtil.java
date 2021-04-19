@@ -8,6 +8,12 @@ package com.github.relucent.base.common.page;
 public class PageUtil {
 
     /**
+     * 工具类方法，实例不应在标准编程中构造。
+     */
+    protected PageUtil() {
+    }
+
+    /**
      * 根据当前页第一条记录数和每页最大记录数计算出当前页数
      * @param offset 当前页第一条记录的索引
      * @param limit 每页最大记录数

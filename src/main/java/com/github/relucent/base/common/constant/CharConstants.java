@@ -98,7 +98,6 @@ public class CharConstants {
     /** 波浪号 [0x7E] */
     public static final char TILDE = '~';
 
-
     /** 中文(全角)空格 */
     public static final char FULL_WIDTH_SPACE = '　';
 
@@ -116,4 +115,7 @@ public class CharConstants {
 
     /** UTF-8 BOM FEFF(65279) */
     public static final char UTF_8_BOM = 0xFEFF;
+
+    private CharConstants() {
+    }
 }

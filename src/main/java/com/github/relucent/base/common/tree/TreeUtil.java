@@ -16,6 +16,12 @@ public class TreeUtil {
     private static final String PATH_SEPARATOR = "/";
 
     /**
+     * 工具类方法，实例不应在标准编程中构造。
+     */
+    protected TreeUtil() {
+    }
+
+    /**
      * 构建树模型
      * @param <T> 原始数据类型泛型
      * @param <N> 树节点对象泛型

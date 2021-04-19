@@ -4,6 +4,13 @@ package com.github.relucent.base.common.thread;
  * 线程工具类，提供一些线程方法
  */
 public class ThreadUtil {
+
+    /**
+     * 工具类方法，实例不应在标准编程中构造。
+     */
+    protected ThreadUtil() {
+    }
+
     /**
      * 在指定的毫秒数内让当前正在执行的线程休眠（暂停执行），此操作受到系统计时器和调度程序精度和准确性的影响。<br>
      * 如果任何线程中断了当前线程，该方法将抛出{@link InterruptedRuntimeException}异常，并且当前线程的中断状态 被清除。
