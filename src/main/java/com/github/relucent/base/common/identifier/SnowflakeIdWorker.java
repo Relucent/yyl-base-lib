@@ -94,10 +94,23 @@ public class SnowflakeIdWorker {
     public synchronized long nextId() {
         long timestamp = timeGen();
 
-        // 如果当前时间小于上一次ID生成的时间戳，说明系统时钟回退过这个时候应当抛出异常
+        // 当前时间戳小于上一次ID生成的时间戳，可能是闰秒
         if (timestamp < lastTimestamp) {
-            throw new RuntimeException(
-                    String.format("Clock moved backwards.  Refusing to generate id for %d milliseconds", lastTimestamp - timestamp));
+            long offset = lastTimestamp - timestamp;
+            // 时间偏差大小小于5ms，则等待两倍时间
+            if (offset <= 5) {
+                try {
+                    wait(offset << 1);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException("Clock moved backwards. Waiting is interrupted.", e);
+                }
+                timestamp = timeGen();
+                if (timestamp < lastTimestamp) {
+                    throw new RuntimeException(String.format("Clock moved backwards. Refusing to generate id for %d milliseconds", offset));
+                }
+            } else {
+                throw new RuntimeException(String.format("Clock moved backwards. Refusing to generate id for %d milliseconds", offset));
+            }
         }
 
         // 如果是同一时间生成的，则进行毫秒内序列

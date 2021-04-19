@@ -15,9 +15,9 @@ import com.github.relucent.base.common.net.NetworkUtil;
 public class TimeId {
 
     private static final int RADIX36 = 36;
-    private static final long RADIX36_MOD1 = RADIX36 - 1;
-    private static final long RADIX36_MOD2 = RADIX36 * RADIX36 - 1;
-    private static final long RADIX36_MOD3 = RADIX36 * RADIX36 * RADIX36 - 1;
+    private static final int RADIX36_MOD1 = RADIX36 - 1;
+    private static final int RADIX36_MOD2 = RADIX36 * RADIX36 - 1;
+    private static final int RADIX36_MOD3 = RADIX36 * RADIX36 * RADIX36 - 1;
     private static final int TIMESTAMP_LENGTH = 9;
     private static final int COUNTER_LENGTH = 3;
     private static final int MAC_LENGTH = 2;
