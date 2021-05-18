@@ -130,7 +130,7 @@ public class JavaCompilerEngine {
      * @param source 类源码
      * @return JAVA源文件对象
      */
-    public JavaSourceFileObject makeJavaSourceFileObject(String name, String source) {
+    public static JavaSourceFileObject makeJavaSourceFileObject(String name, String source) {
         return new JavaSourceFileObject(name, source);
     }
 }

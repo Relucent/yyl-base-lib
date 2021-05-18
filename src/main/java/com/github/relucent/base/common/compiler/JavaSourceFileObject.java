@@ -17,7 +17,7 @@ public class JavaSourceFileObject extends SimpleJavaFileObject {
     /**
      * 构造函数
      * @param name 类名称
-     * @param source 类源码内容
+     * @param content 类源码内容
      */
     public JavaSourceFileObject(String name, String content) {
         super(URI.create("string:///" + name.replace('.', '/') + Kind.SOURCE.extension), Kind.SOURCE);
