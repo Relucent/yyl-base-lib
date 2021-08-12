@@ -26,6 +26,7 @@ target/
 .metadata/
 .factorypath
 .springBeans
+.sts4-cache/
 
 # IntelliJ Idea
 .idea/
