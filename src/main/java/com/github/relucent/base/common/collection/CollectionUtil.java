@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.IntFunction;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import com.github.relucent.base.common.lang.ArrayUtil;
@@ -84,10 +85,28 @@ public class CollectionUtil {
      * @return 转换后的集合列表
      */
     public static <T, R> List<R> map(List<T> list, Function<T, R> mapper) {
-        if (list == null || mapper == null) {
-            return new ArrayList<>();
+        return map(list, mapper, ArrayList::new);
+    }
+
+    /**
+     * 转换集合对象元素
+     * @param <T> 集合元素
+     * @param <R> 新集合元素
+     * @param <C> 新集合对象类型
+     * @param collection 集合对象
+     * @param mapper 转换方式
+     * @param supplier 新集合构建器
+     * @return 新集合对象
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public static <T, R, C extends Collection<R>> C map(Collection<T> collection, Function<T, R> mapper, Supplier<C> supplier) {
+        if (supplier == null) {
+            supplier = (Supplier) ArrayList::new;
         }
-        return list.stream().map(mapper).collect(Collectors.toList());
+        if (collection == null || mapper == null) {
+            return supplier.get();
+        }
+        return collection.stream().map(mapper).collect(Collectors.toCollection(supplier));
     }
 
     /**

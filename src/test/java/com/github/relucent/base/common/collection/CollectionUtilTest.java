@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -17,6 +18,24 @@ public class CollectionUtilTest {
         Assert.assertTrue(CollectionUtil.isEmpty(null));
         Assert.assertTrue(CollectionUtil.isEmpty(new ArrayList<>()));
         Assert.assertFalse(CollectionUtil.isEmpty(Arrays.asList("A", "B", "C")));
+    }
+
+    @Test
+    public void testMap() {
+        List<String> list = Arrays.asList("hello", "world");
+        List<String> actuals = CollectionUtil.map(list, String::toUpperCase);
+        List<String> expecteds = Arrays.asList("HELLO", "WORLD");
+        Assert.assertEquals(expecteds, actuals);
+    }
+
+    @Test
+    public void testMapSet() {
+        List<String> list = Arrays.asList("hello", "world", "hello", "world");
+        Set<String> actuals = CollectionUtil.map(list, String::toUpperCase, HashSet::new);
+        Set<String> expecteds = new HashSet<>();
+        expecteds.add("HELLO");
+        expecteds.add("WORLD");
+        Assert.assertEquals(expecteds, actuals);
     }
 
     @Test
