@@ -38,11 +38,31 @@ public class ExceptionHelper {
     }
 
     /**
+     * 创建提示异常
+     * @param code 异常编码
+     * @param message 提示消息
+     * @return 提示异常
+     */
+    public static PromptException prompt(Integer code, String message) {
+        return new PromptException(message);
+    }
+
+    /**
      * 创建通用异常
      * @param message 异常信息
      * @return 通用异常
      */
     public static GeneralException error(String message) {
         return new GeneralException(message);
+    }
+
+    /**
+     * 创建通用异常
+     * @param code 异常编码
+     * @param message 异常信息
+     * @return 通用异常
+     */
+    public static GeneralException error(Integer code, String message) {
+        return new GeneralException(code, message);
     }
 }
