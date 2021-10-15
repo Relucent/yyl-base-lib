@@ -28,7 +28,9 @@ public class DateUtil {
     private static final String[] PARSE_DATE_PATTERNS = Arrays.asList(//
             ISO8601_FORMAT, //
             DATETIME_FORMAT, //
+            "yyyy-MM-dd'T'HH:mm:ss.SSSZZ", //
             "yyyy-MM-dd'T'HH:mm:ss.SSS", //
+            "yyyy-MM-dd'T'HH:mm:ssZZ", //
             "EEE MMM dd HH:mm:ss zzz yyyy", //
             "yyyy-MM-dd HH:mm:ss.SSS", //
             "yyyy-MM-dd HH:mm", //

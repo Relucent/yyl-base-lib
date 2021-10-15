@@ -12,8 +12,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.github.relucent.base.common.time.DateUtil;
-
 public class DateUtilTest {
 
     private Map<String, Date> sample = new HashMap<>();
@@ -22,16 +20,18 @@ public class DateUtilTest {
     public void before() throws ParseException {
         Date now = DateUtil.now();
         for (String pattern : Arrays.asList( //
-                "yyyy-MM-dd HH:mm:ss", //
+                "yyyy-MM-dd'T'HH:mm:ss.SSSZZ", //
                 "yyyy-MM-dd'T'HH:mm:ss.SSS", //
-                "EEE MMM dd HH:mm:ss zzz yyyy", //
+                "yyyy-MM-dd'T'HH:mm:ss", //
+                "yyyy-MM-dd HH:mm:ss", //
                 "yyyy-MM-dd HH:mm:ss.SSS", //
                 "yyyy-MM-dd HH:mm", //
                 "yyyy-MM-dd HH", //
                 "yyyy-MM-dd", //
                 "yyyy-MM", //
-                "d MMM yyyy h:m a", //
+                "EEE MMM dd HH:mm:ss zzz yyyy", //
                 "MMM d, yyyy HH:mm", //
+                "d MMM yyyy h:m a", //
                 "MMM d, yyyy", //
                 "MM/dd/yyyy", //
                 "yyyyMMdd", //
