@@ -17,7 +17,7 @@ public class LocalMessageQueue<T> implements MessageQueue<T> {
 
     /**
      * 构造本地消息队列
-     * @param 消息队列名称
+     * @param name 消息队列名称
      */
     public LocalMessageQueue(String name) {
         this.name = name;
