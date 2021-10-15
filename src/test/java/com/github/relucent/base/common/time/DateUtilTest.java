@@ -5,7 +5,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.junit.Assert;
@@ -14,7 +14,7 @@ import org.junit.Test;
 
 public class DateUtilTest {
 
-    private Map<String, Date> sample = new HashMap<>();
+    private Map<String, Date> sample = new LinkedHashMap<>();
 
     @Before
     public void before() throws ParseException {

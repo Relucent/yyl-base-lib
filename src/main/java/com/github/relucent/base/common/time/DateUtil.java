@@ -6,6 +6,7 @@ import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * 日期工具类
@@ -24,13 +25,14 @@ public class DateUtil {
     /** 9999-12-31T23:59:59 */
     public static final Long MAX_MILLIS = 253402271999000L;
 
+    /** 零时区格式特殊处理，该格式24个字符 */
+    private static final String ISO_8601_ZERO_ZONE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
     /** 可解析的日期格式列表 */
     private static final String[] PARSE_DATE_PATTERNS = Arrays.asList(//
             ISO8601_FORMAT, //
             DATETIME_FORMAT, //
             "yyyy-MM-dd'T'HH:mm:ss.SSSZZ", //
             "yyyy-MM-dd'T'HH:mm:ss.SSS", //
-            "yyyy-MM-dd'T'HH:mm:ssZZ", //
             "EEE MMM dd HH:mm:ss zzz yyyy", //
             "yyyy-MM-dd HH:mm:ss.SSS", //
             "yyyy-MM-dd HH:mm", //
@@ -234,25 +236,36 @@ public class DateUtil {
         SimpleDateFormat parser = new SimpleDateFormat();
         parser.setLenient(true);
         ParsePosition pos = new ParsePosition(0);
+
+        // ISO# yyyy-MM-dd'T'HH:mm:ss.SSSZ (JSON.stringify)
+        if (source.length() == 24 && source.charAt(23) == 'Z') {
+            parser.applyPattern(ISO_8601_ZERO_ZONE_FORMAT);
+            pos.setIndex(0);
+            Date date = parser.parse(source, pos);
+            if (date != null && pos.getIndex() == source.length()) {
+                return new Date(date.getTime() + TimeZone.getDefault().getRawOffset());
+            }
+        }
+
         for (final String parsePattern : PARSE_DATE_PATTERNS) {
             String pattern = parsePattern;
             // LANG-530 - need to make sure 'ZZ' output doesn't get passed to SimpleDateFormat
-            if (pattern.endsWith("ZZ")) {
+            if (parsePattern.endsWith("ZZ")) {
                 pattern = pattern.substring(0, pattern.length() - 1);
             }
             parser.applyPattern(pattern);
             pos.setIndex(0);
-            String str = source;
+            String string = source;
             // LANG-530 - need to make sure 'ZZ' output doesn't hit SimpleDateFormat as it will ParseException
-            if (pattern.endsWith("ZZ")) {
-                int signIdx = indexOfSignChars(str, 0);
-                while (signIdx != -1) {
-                    str = reformatTimezone(str, signIdx);
-                    signIdx = indexOfSignChars(str, ++signIdx);
+            if (parsePattern.endsWith("ZZ")) {
+                int signIdx = indexOfSignChars(string, 0);
+                while (signIdx >= 0) {
+                    string = reformatTimezone(string, signIdx);
+                    signIdx = indexOfSignChars(string, ++signIdx);
                 }
             }
-            Date date = parser.parse(str, pos);
-            if (date != null && pos.getIndex() == str.length()) {
+            Date date = parser.parse(string, pos);
+            if (date != null && pos.getIndex() == string.length()) {
                 return date;
             }
         }
