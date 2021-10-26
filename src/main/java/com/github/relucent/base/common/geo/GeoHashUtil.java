@@ -56,7 +56,7 @@ public class GeoHashUtil {
      * @param geohash 待解码的GEOHASH字串
      * @return 经纬值数组
      */
-    public static Location decode(String geohash) {
+    public static Coordinate decode(String geohash) {
         StringBuilder buffer = new StringBuilder();
         for (char c : geohash.toCharArray()) {
             int i = LOOKUP.get(c) + 32;
@@ -87,10 +87,10 @@ public class GeoHashUtil {
         double lon = decode(lonset, -180, 180);
         DecimalFormat df = new DecimalFormat("0.00000");
 
-        Location location = new Location();
-        location.setLatitude(Double.parseDouble(df.format(lat)));
-        location.setLongitude(Double.parseDouble(df.format(lon)));
-        return location;
+        Coordinate coordinate = new Coordinate();
+        coordinate.setLatitude(Double.parseDouble(df.format(lat)));
+        coordinate.setLongitude(Double.parseDouble(df.format(lon)));
+        return coordinate;
     }
 
     /**
@@ -115,12 +115,12 @@ public class GeoHashUtil {
 
     /**
      * 根据经纬值得到 GEOHASH 字符串
-     * @param location 经纬度
+     * @param coordinate 经纬度坐标
      * @return GEOHASH 字符串
      */
-    public static String encode(Location location) {
-        BitSet latbits = getBits(location.getLatitude(), -90, 90);
-        BitSet lonbits = getBits(location.getLongitude(), -180, 180);
+    public static String encode(Coordinate coordinate) {
+        BitSet latbits = getBits(coordinate.getLatitude(), -90, 90);
+        BitSet lonbits = getBits(coordinate.getLongitude(), -180, 180);
         StringBuilder buffer = new StringBuilder();
         for (int i = 0; i < NUMBITS; i++) {
             buffer.append((lonbits.get(i)) ? '1' : '0');

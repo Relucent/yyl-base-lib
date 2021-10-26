@@ -7,7 +7,7 @@ import java.io.Serializable;
  * @author YYL
  */
 @SuppressWarnings("serial")
-public class Location implements Serializable {
+public class Coordinate implements Serializable {
     // ==============================Fields============================================
     /** 纬度(latitude:y) */
     private double latitude = 0D;
@@ -15,14 +15,14 @@ public class Location implements Serializable {
     private double longitude = 0D;
 
     // ==============================Constructors=====================================
-    public Location() {
+    public Coordinate() {
     }
 
     /**
      * 构造
-     * @param other {@link Location}
+     * @param other {@link Coordinate}
      */
-    public Location(Location other) {
+    public Coordinate(Coordinate other) {
         this(other.getLatitude(), other.getLongitude());
     }
 
@@ -31,7 +31,7 @@ public class Location implements Serializable {
      * @param latitude 纬度
      * @param longitude 经度
      */
-    public Location(double latitude, double longitude) {
+    public Coordinate(double latitude, double longitude) {
         this.latitude = latitude;
         this.longitude = longitude;
         if (Math.abs(latitude) > 90 || Math.abs(longitude) > 180) {
@@ -77,10 +77,10 @@ public class Location implements Serializable {
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof Location)) {
+        if (!(obj instanceof Coordinate)) {
             return false;
         }
-        Location other = (Location) obj;
+        Coordinate other = (Coordinate) obj;
         if (Double.doubleToLongBits(latitude) != Double.doubleToLongBits(other.latitude)) {
             return false;
         }
