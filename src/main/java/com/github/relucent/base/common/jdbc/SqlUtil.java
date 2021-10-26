@@ -32,7 +32,7 @@ public class SqlUtil {
      * @param size 占位符个数
      * @return 占位符字符串
      */
-    protected static String buildParameterMarkers(int size) {
+    public static String buildMarkers(int size) {
         StringBuilder sql = new StringBuilder();
         for (int i = 0; i < size; i++) {
             if (i != 0) {
