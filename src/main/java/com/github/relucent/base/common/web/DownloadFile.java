@@ -10,7 +10,7 @@ import com.github.relucent.base.common.io.IoUtil;
 /**
  * 下载文件类
  */
-public class DownloadFile {
+public class DownloadFile implements AutoCloseable {
 
     /** 文件名称 */
     private String name;
@@ -82,5 +82,13 @@ public class DownloadFile {
         } catch (IOException e) {
             // Ignore
         }
+    }
+
+    /**
+     * 关闭文件流
+     */
+    @Override
+    public void close() throws Exception {
+        IoUtil.closeQuietly(input);
     }
 }
