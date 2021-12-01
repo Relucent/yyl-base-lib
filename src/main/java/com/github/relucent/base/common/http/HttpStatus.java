@@ -1,10 +1,8 @@
 package com.github.relucent.base.common.http;
 
 /**
- * Constants enumerating the HTTP status codes.
- * All status codes defined in RFC1945 (HTTP/1.0), RFC2616 (HTTP/1.1), and
- * RFC2518 (WebDAV) are listed.
- * @since 4.0
+ * HTTP状态代码的常量<br>
+ * 包括 RFC1945 (HTTP/1.0), RFC2616 (HTTP/1.1), RFC2518 (WebDAV) 已定义所有状态代码<br>
  */
 public interface HttpStatus {
 
@@ -12,7 +10,7 @@ public interface HttpStatus {
 
     /** {@code 100 Continue} (HTTP/1.1 - RFC 2616) */
     public static final int SC_CONTINUE = 100;
-    /** {@code 101 Switching Protocols} (HTTP/1.1 - RFC 2616)*/
+    /** {@code 101 Switching Protocols} (HTTP/1.1 - RFC 2616) */
     public static final int SC_SWITCHING_PROTOCOLS = 101;
     /** {@code 102 Processing} (WebDAV - RFC 2518) */
     public static final int SC_PROCESSING = 102;
@@ -34,9 +32,7 @@ public interface HttpStatus {
     /** {@code 206 Partial Content} (HTTP/1.1 - RFC 2616) */
     public static final int SC_PARTIAL_CONTENT = 206;
     /**
-     * {@code 207 Multi-Status} (WebDAV - RFC 2518)
-     * or
-     * {@code 207 Partial Update OK} (HTTP/1.1 - draft-ietf-http-v11-spec-rev-01?)
+     * {@code 207 Multi-Status} (WebDAV - RFC 2518) or {@code 207 Partial Update OK} (HTTP/1.1 - draft-ietf-http-v11-spec-rev-01?)
      */
     public static final int SC_MULTI_STATUS = 207;
 
@@ -73,7 +69,7 @@ public interface HttpStatus {
     public static final int SC_METHOD_NOT_ALLOWED = 405;
     /** {@code 406 Not Acceptable} (HTTP/1.1 - RFC 2616) */
     public static final int SC_NOT_ACCEPTABLE = 406;
-    /** {@code 407 Proxy Authentication Required} (HTTP/1.1 - RFC 2616)*/
+    /** {@code 407 Proxy Authentication Required} (HTTP/1.1 - RFC 2616) */
     public static final int SC_PROXY_AUTHENTICATION_REQUIRED = 407;
     /** {@code 408 Request Timeout} (HTTP/1.1 - RFC 2616) */
     public static final int SC_REQUEST_TIMEOUT = 408;
@@ -97,25 +93,17 @@ public interface HttpStatus {
     public static final int SC_EXPECTATION_FAILED = 417;
 
     /**
-     * Static constant for a 418 error.
-     * {@code 418 Unprocessable Entity} (WebDAV drafts?)
-     * or {@code 418 Reauthentication Required} (HTTP/1.1 drafts?)
+     * Static constant for a 418 error. {@code 418 Unprocessable Entity} (WebDAV drafts?) or {@code 418 Reauthentication Required} (HTTP/1.1 drafts?)
      */
     // not used
     // public static final int SC_UNPROCESSABLE_ENTITY = 418;
 
     /**
-     * Static constant for a 419 error.
-     * {@code 419 Insufficient Space on Resource}
-     * (WebDAV - draft-ietf-webdav-protocol-05?)
-     * or {@code 419 Proxy Reauthentication Required}
-     * (HTTP/1.1 drafts?)
+     * Static constant for a 419 error. {@code 419 Insufficient Space on Resource} (WebDAV - draft-ietf-webdav-protocol-05?) or {@code 419 Proxy Reauthentication Required} (HTTP/1.1 drafts?)
      */
     public static final int SC_INSUFFICIENT_SPACE_ON_RESOURCE = 419;
     /**
-     * Static constant for a 420 error.
-     * {@code 420 Method Failure}
-     * (WebDAV - draft-ietf-webdav-protocol-05?)
+     * Static constant for a 420 error. {@code 420 Method Failure} (WebDAV - draft-ietf-webdav-protocol-05?)
      */
     public static final int SC_METHOD_FAILURE = 420;
     /** {@code 422 Unprocessable Entity} (WebDAV - RFC 2518) */

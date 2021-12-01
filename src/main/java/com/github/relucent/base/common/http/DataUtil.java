@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 import com.github.relucent.base.common.lang.Assert;
 
 /**
- * Internal static utilities for handling data.
+ * 用于处理数据的工具类
  */
 public final class DataUtil {
 
@@ -28,11 +28,11 @@ public final class DataUtil {
     }
 
     /**
-     * Read the input stream into a byte buffer.
-     * @param inStream the input stream to read from
-     * @param maxSize the maximum size in bytes to read from the stream. Set to 0 to be unlimited.
-     * @return the filled byte buffer
-     * @throws IOException if an exception occurs whilst reading from the input stream.
+     * 将输入流读入字节缓冲区
+     * @param inStream 要读取的输入流
+     * @param maxSize从流中读取的最大大小（以字节为单位）。设置为0将不受限制。
+     * @return 已填充字节缓冲区
+     * @throws IOException 如果从输入流读取时发生异常
      */
     static ByteBuffer readToByteBuffer(InputStream inStream, int maxSize) throws IOException {
         Assert.isTrue(maxSize >= 0, "maxSize must be 0 (unlimited) or larger");
@@ -41,7 +41,6 @@ public final class DataUtil {
         ByteArrayOutputStream outStream = new ByteArrayOutputStream(BUFFER_SIZE);
         int read;
         int remaining = maxSize;
-
         while (true) {
             read = inStream.read(buffer);
             if (read == -1)
@@ -63,9 +62,9 @@ public final class DataUtil {
     }
 
     /**
-     * Parse out a charset from a content type header. If the charset is not supported, returns null (so the default will kick in.)
-     * @param contentType e.g. "text/html; charset=UTF-8"
-     * @return "UTF-8", or null if not found. Charset is trimmed and uppercased.
+     * 从内容类型头解析出字符集。如果不支持该字符集，则返回null（因此默认值将生效）
+     * @param contentType 内容类型，例如“text/html;charset=UTF-8”
+     * @return 返回字符集，例如"UTF-8"，如果没找到会返回NULL，字符集字符串为大写
      */
     static String getCharsetFromContentType(String contentType) {
         if (contentType == null) {
@@ -97,7 +96,7 @@ public final class DataUtil {
     }
 
     /**
-     * Creates a random string, suitable for use as a mime boundary
+     * 创建适合用作mime边界的随机字符串
      */
     static String mimeBoundary() {
         final StringBuilder mime = new StringBuilder(BOUNDARY_LENGTH);
