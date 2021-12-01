@@ -39,7 +39,7 @@ import com.github.relucent.base.common.io.IoUtil;
 import com.github.relucent.base.common.lang.Assert;
 
 /**
- * A Connection provides a convenient implementation to fetch content from the web.
+ * HTTP连接的实现类
  */
 public class Connection {
 
@@ -69,15 +69,20 @@ public class Connection {
         response = new Response();
     }
 
+    /**
+     * 设置要获取的请求URL。协议必须是HTTP或HTTPS
+     * @param url URL 对象
+     * @return 当前连接对象
+     */
     public Connection url(URL url) {
         request.url(url);
         return this;
     }
 
     /**
-     * Set the request URL to fetch. The protocol must be HTTP or HTTPS.
-     * @param url URL to connect to
-     * @return this Connection, for chaining
+     * 设置要获取的请求URL。协议必须是HTTP或HTTPS
+     * @param url URL字符串
+     * @return 当前连接对象
      */
     public Connection url(String url) {
         Assert.notEmpty(url, "Must supply a valid URL");
@@ -90,9 +95,9 @@ public class Connection {
     }
 
     /**
-     * Set the request URL to fetch. The protocol must be HTTP or HTTPS.
-     * @param url URL to connect to
-     * @return this Connection, for chaining
+     * 设置请求使用的代理，如果设置成null表示不使用代理
+     * @param proxy 使用的代理
+     * @return 当前连接对象
      */
     public Connection proxy(Proxy proxy) {
         request.proxy(proxy);
@@ -100,9 +105,10 @@ public class Connection {
     }
 
     /**
-     * Set the proxy to use for this request. Set to <code>null</code> to disable.
-     * @param proxy proxy to use
-     * @return this Connection, for chaining
+     * 设置请求使用的代理，如果设置成null表示不使用代理
+     * @param host 使用的代理地址
+     * @param port 使用的代理端口
+     * @return 当前连接对象
      */
     public Connection proxy(String host, int port) {
         request.proxy(host, port);
@@ -110,11 +116,11 @@ public class Connection {
     }
 
     /**
-     * Set the proxy to use for this request. Set to <code>null</code> to disable.
-     * @param proxy proxy to use
-     * @param port the proxy username
-     * @param port the proxy password
-     * @return this Connection, for chaining
+     * 设置请求使用的代理，如果设置成null表示不使用代理
+     * @param proxy 使用的代理
+     * @param username 用户名
+     * @param password 密码
+     * @return 当前连接对象
      */
     public Connection proxy(Proxy proxy, String username, String password) {
         request.proxy(proxy);
@@ -123,12 +129,12 @@ public class Connection {
     }
 
     /**
-     * Set the HTTP proxy to use for this request.
-     * @param host the proxy hostname
-     * @param port the proxy port
-     * @param port the proxy username
-     * @param port the proxy password
-     * @return this Connection, for chaining
+     * 设置请求使用的代理，如果设置成null表示不使用代理
+     * @param host 使用的代理地址
+     * @param port 使用的代理端口
+     * @param username 用户名
+     * @param password 密码
+     * @return 当前连接对象
      */
     public Connection proxy(String host, int port, String username, String password) {
         request.proxy(host, port);
@@ -137,9 +143,9 @@ public class Connection {
     }
 
     /**
-     * Set the request user-agent header.
-     * @param userAgent user-agent to use
-     * @return this Connection, for chaining
+     * 设置浏览器标识(User-Agent)请求头
+     * @param userAgent 浏览器标识
+     * @return 当前连接对象
      */
     public Connection userAgent(String userAgent) {
         Assert.notNull(userAgent, "User agent must not be null");
@@ -148,9 +154,9 @@ public class Connection {
     }
 
     /**
-     * Set the request timeouts (connect). A timeout of zero is treated as an infinite timeout.
-     * @param millis number of milliseconds (thousandths of a second) before timing out connects or reads.
-     * @return this Connection, for chaining
+     * 设置请求超时（连接）。零超时被视为无限制。
+     * @param millis 超时时间的毫秒数
+     * @return 当前连接对象
      */
     public Connection connectTimeoutMillis(int millis) {
         request.connectTimeoutMillis(millis);
@@ -158,10 +164,10 @@ public class Connection {
     }
 
     /**
-     * Set the request timeouts (connect). A timeout of zero is treated as an infinite timeout.
-     * @param duration the duration
-     * @param unit time unit
-     * @return this Connection, for chaining
+     * 设置请求连接的超时时间，零表示无限制。
+     * @param duration 超时时间
+     * @param unit 时间单位
+     * @return 当前连接对象
      */
     public Connection connectTimeout(int duration, TimeUnit unit) {
         request.connectTimeoutMillis((int) unit.toMillis(duration));
@@ -169,9 +175,9 @@ public class Connection {
     }
 
     /**
-     * Set the request timeouts (connect and read). A timeout of zero is treated as an infinite timeout.
-     * @param millis number of milliseconds (thousandths of a second) before timing out connects or reads.
-     * @return this Connection, for chaining
+     * 设置请求超时（连接和读取），零表示无限制。
+     * @param millis 超时时间的毫秒数
+     * @return 当前连接对象
      */
     public Connection readTimeoutMillis(int millis) {
         request.readTimeoutMillis(millis);
@@ -179,10 +185,10 @@ public class Connection {
     }
 
     /**
-     * Set the request timeouts (connect). A timeout of zero is treated as an infinite timeout.
-     * @param duration the duration
-     * @param unit time unit
-     * @return this Connection, for chaining
+     * 设置请求超时（连接和读取），零表示无限制。
+     * @param duration 超时时间
+     * @param unit 时间单位
+     * @return 当前连接对象
      */
     public Connection readTimeout(int duration, TimeUnit unit) {
         request.readTimeoutMillis((int) unit.toMillis(duration));
@@ -190,25 +196,29 @@ public class Connection {
     }
 
     /**
-     * Set the maximum bytes to read from the (uncompressed) connection into the body, before the connection is closed, and the input truncated. The default maximum is 1MB. A max size of zero is treated as an infinite amount (bounded only by your patience and
-     * the memory available on your machine).
-     * @param bytes number of bytes to read from the input before truncating
-     * @return this Connection, for chaining
+     * 在连接关闭和输入被截断之前，设置从（未压缩的）连接读入正文的最大字节数。默认最大值为1MB。最大大小为零被视为无限量（仅受用户的耐心和机器上可用内存的限制）。
+     * @param bytes 读取的字节数限制
+     * @return 当前连接对象
      */
     public Connection maxBodySize(int bytes) {
         request.maxBodySize(bytes);
         return this;
     }
 
+    /**
+     * 设置是否跟随重定向
+     * @param followRedirects 是否跟随重定向
+     * @return 当前连接对象
+     */
     public Connection followRedirects(boolean followRedirects) {
         request.followRedirects(followRedirects);
         return this;
     }
 
     /**
-     * Set the request referrer (aka "referer") header.
-     * @param referrer referrer to use
-     * @return this Connection, for chaining
+     * 设置请求的 Referer 头，该请求头一般用于表示服务器该网页是从哪个页面链接过来的
+     * @param referrer Referrer 请求头
+     * @return 当前连接对象
      */
     public Connection referrer(String referrer) {
         Assert.notNull(referrer, "Referrer must not be null");
@@ -217,9 +227,9 @@ public class Connection {
     }
 
     /**
-     * Set the request method to use, GET or POST. Default is GET.
-     * @param method HTTP request method
-     * @return this Connection, for chaining
+     * 设置请求方法，默认是 GET.
+     * @param method 请求方法
+     * @return 当前连接对象
      */
     public Connection method(Method method) {
         request.method(method);
@@ -227,10 +237,11 @@ public class Connection {
     }
 
     /**
-     * Configures the connection to not throw exceptions when a HTTP error occurs. (4xx - 5xx, e.g. 404 or 500). By default this is <b>false</b>; an IOException is thrown if an error is encountered. If set to <b>true</b>, the response is populated with the
-     * error body, and the status message will reflect the error.
-     * @param ignoreHttpErrors - false (default) if HTTP errors should be ignored.
-     * @return this Connection, for chaining
+     * 设置是否忽略 HTTP 响应状态的异常（状态码为4xx-5xx，例如404或500）。<br>
+     * 如果设置为<code>false</code>；如果遇到状态异常，将引发IOException。<br>
+     * 如果设置为<code>true</code>，则响应将填充错误正文，并且状态消息将反映错误。<br>
+     * @param ignoreHttpErrors 是否忽略响应状态的异常（默认是false)
+     * @return 当前连接对象
      */
     public Connection ignoreHttpErrors(boolean ignoreHttpErrors) {
         request.ignoreHttpErrors(ignoreHttpErrors);
@@ -238,10 +249,11 @@ public class Connection {
     }
 
     /**
-     * Ignore the document's Content-Type when parsing the response. By default this is <b>false</b>, an unrecognised content-type will cause an IOException to be thrown. (This is to prevent producing garbage by attempting to parse a JPEG binary image, for
-     * example.) Set to true to force a parse attempt regardless of content type.
-     * @param ignoreContentType set to true if you would like the content type ignored on parsing the response into a Document.
-     * @return this Connection, for chaining
+     * 设置解析响应时忽略文档的内容类型。<br>
+     * 默认情况下，这是<code>false</code>，无法识别的内容类型将导致引发IOException。<br>
+     * （例如，这是为了通过尝试解析JPEG二进制图像来防止产生垃圾。）设置为true可强制解析尝试，而不考虑内容类型。
+     * @param ignoreContentType 解析响应时忽略文档的内容类型
+     * @return 当前连接对象
      */
     public Connection ignoreContentType(boolean ignoreContentType) {
         request.ignoreContentType(ignoreContentType);
@@ -249,9 +261,9 @@ public class Connection {
     }
 
     /**
-     * Disable/enable TSL certificates validation for HTTPS requests.
-     * @param value if should validate TSL (SSL) certificates. <b>true</b> by default.
-     * @return this Connection, for chaining
+     * 禁用/启用HTTPS请求的TSL证书验证
+     * @param value 是否启用TSL证书验证(默认true)
+     * @return 当前连接对象
      */
     public Connection validateTLSCertificates(boolean value) {
         request.validateTLSCertificates(value);
@@ -259,74 +271,74 @@ public class Connection {
     }
 
     /**
-     * Add a request data parameter.
-     * @param key data key
-     * @param value data value
-     * @return this Connection, for chaining
+     * 添加请求参数
+     * @param key 数据键(表单元素名称)
+     * @param value 数值值
+     * @return 当前连接对象
      */
     public Connection data(String key, String value) {
-        request.data(KeyVal.create(key, value));
+        request.data(KeyValue.create(key, value));
         return this;
     }
 
     /**
-     * Add an input stream as a request data paramater. For GETs, has no effect, but for POSTS this will upload the input stream.
-     * @param key data key (form item name)
-     * @param filename the name of the file to present to the remove server. Typically just the name, not path, component.
-     * @param inputStream the input stream to upload, that you probably obtained from a {@link java.io.FileInputStream}. You must close the InputStream in a {@code finally} block.
-     * @return this Connections, for chaining
+     * 添加一个输入流作为请求数据参数。对于GETs，没有效果，但是对于POST，这将上传输入流。<br>
+     * @param key 数据键(表单元素名称)
+     * @param filename 文件名
+     * @param inputStream 要上载的输入流，可能是从{@link java.io.FileInputStream}获得的，该方法不会主动流对象，需要在方法外{@code finally}代码块中关闭{@code close}
+     * @return 当前连接对象
      */
     public Connection data(String key, String filename, InputStream inputStream) {
-        request.data(KeyVal.create(key, filename, inputStream));
+        request.data(KeyValue.create(key, filename, inputStream));
         return this;
     }
 
     /**
-     * Adds all of the supplied data to the request data parameters
-     * @param data collection of data parameters
-     * @return this Connection, for chaining
+     * 将所有提供的数据添加到请求数据参数
+     * @param data 参数集合
+     * @return 当前连接对象
      */
     public Connection data(Map<String, String> data) {
         Assert.notNull(data, "Data map must not be null");
         for (Map.Entry<String, String> entry : data.entrySet()) {
-            request.data(KeyVal.create(entry.getKey(), entry.getValue()));
+            request.data(KeyValue.create(entry.getKey(), entry.getValue()));
         }
         return this;
     }
 
     /**
-     * Adds all of the supplied data to the request data parameters
-     * @param data map of data parameters
-     * @return this Connection, for chaining
+     * 将所有提供的数据添加到请求数据参数
+     * @param data 参数集合
+     * @return 当前连接对象
      */
-    public Connection data(Collection<KeyVal> data) {
+    public Connection data(Collection<KeyValue> data) {
         Assert.notNull(data, "Data collection must not be null");
-        for (KeyVal entry : data) {
+        for (KeyValue entry : data) {
             request.data(entry);
         }
         return this;
     }
 
     /**
-     * Get the data KeyVal for this key, if any
-     * @param key the data key
-     * @return null if not set
+     * 获得参数值
+     * @param key 参数键
+     * @return 参数值
      */
-    public KeyVal data(String key) {
+    public KeyValue data(String key) {
         Assert.notEmpty(key, "Data key must not be empty");
-        for (KeyVal keyVal : request().data()) {
-            if (keyVal.key().equals(key))
+        for (KeyValue keyVal : request().data()) {
+            if (keyVal.key().equals(key)) {
                 return keyVal;
+            }
         }
         return null;
     }
 
     /**
-     * Set a POST (or PUT) request body. Useful when a server expects a plain request body, not a set for URL encoded form key/value pairs. E.g.: <code><pre>connect(url)
-     * .requestBody(json)
-     * .header("Content-Type", "application/json")
-     * .post();</pre></code> If any data key/vals are supplied, they will be sent as URL query params.
-     * @return this Request, for chaining
+     * 设置POST（或PUT）请求主体<br>
+     * <code>connect(url).requestBody(json).header("Content-Type", "application/json").post();</code>
+     * @param body 请求主体数据
+     * @return 当前连接对象
      */
     public Connection requestBody(String body) {
         request.requestBody(body);
@@ -334,10 +346,10 @@ public class Connection {
     }
 
     /**
-     * Set a request header.
-     * @param name header name
-     * @param value header value
-     * @return this Connection, for chaining
+     * 设置请求头
+     * @param name 请求头名称
+     * @param value 请求头值
+     * @return 当前连接对象
      */
     public Connection header(String name, String value) {
         request.header(name, value);
@@ -345,10 +357,10 @@ public class Connection {
     }
 
     /**
-     * Set a cookie to be sent in the request.
-     * @param name name of cookie
-     * @param value value of cookie
-     * @return this Connection, for chaining
+     * 设置要在请求中发送的cookie
+     * @param name Cookie 名
+     * @param value Cookie 值
+     * @return 当前连接对象
      */
     public Connection cookie(String name, String value) {
         request.cookie(name, value);
@@ -356,9 +368,9 @@ public class Connection {
     }
 
     /**
-     * Adds each of the supplied cookies to the request.
-     * @param cookies map of cookie name {@literal ->} value pairs
-     * @return this Connection, for chaining
+     * 设置要在请求中发送的cookie
+     * @param cookies Cookie集合
+     * @return 当前连接对象
      */
     public Connection cookies(Map<String, String> cookies) {
         Assert.notNull(cookies, "Cookie map must not be null");
@@ -369,13 +381,9 @@ public class Connection {
     }
 
     /**
-     * Execute the request.
-     * @return a response object
-     * @throws java.net.MalformedURLException if the request URL is not a HTTP or HTTPS URL, or is otherwise malformed
-     * @throws HttpStatusException if the response is not OK and HTTP response errors are not ignored
-     * @throws UnsupportedMimeTypeException if the response mime type is not supported and those errors are not ignored
-     * @throws java.net.SocketTimeoutException if the connection times out
-     * @throws IOException on error
+     * 执行请求
+     * @return 响应对象
+     * @throws IOException 请求出现错误抛出异常
      */
     public Response execute() throws IOException {
         response = Response.execute(request);
@@ -383,8 +391,8 @@ public class Connection {
     }
 
     /**
-     * Get the request object associated with this connection
-     * @return request
+     * 获取与此连接关联的请求对象
+     * @return 请求对象
      */
     public Request request() {
         return request;
@@ -393,7 +401,7 @@ public class Connection {
     /**
      * Set the connection's request
      * @param request new request object
-     * @return this Connection, for chaining
+     * @return 当前连接对象
      */
     public Connection request(Request request) {
         this.request = request;
@@ -411,7 +419,7 @@ public class Connection {
     /**
      * Set the connection's response
      * @param response new response
-     * @return this Connection, for chaining
+     * @return 当前连接对象
      */
     public Connection response(Response response) {
         this.response = response;
@@ -419,9 +427,9 @@ public class Connection {
     }
 
     /**
-     * Sets the default post data character set for x-www-form-urlencoded post data
-     * @param charset character set to encode post data
-     * @return this Connection, for chaining
+     * 为 x-www-form-urlencoded POST 请求数据设置字符集
+     * @param charset 数据字符集
+     * @return 当前连接对象
      */
     public Connection postDataCharset(String charset) {
         request.postDataCharset(charset);
@@ -429,8 +437,8 @@ public class Connection {
     }
 
     /**
-     * Common methods for Requests and Responses
-     * @param <T> Type of Base, either Request or Response
+     * 请求和响应的常用方法
+     * @param <T> 实现类的类型， Request 或者 or Response
      */
     @SuppressWarnings({ "unchecked" })
     private static abstract class Base<T extends Base<T>> {
@@ -445,65 +453,31 @@ public class Connection {
             cookies = new LinkedHashMap<String, String>();
         }
 
-        /**
-         * Get the URL
-         * @return URL
-         */
         public URL url() {
             return url;
         }
 
-        /**
-         * Set the URL
-         * @param url new URL
-         * @return this, for chaining
-         */
         public T url(URL url) {
             Assert.notNull(url, "URL must not be null");
             this.url = url;
             return (T) this;
         }
 
-        /**
-         * Get the request method
-         * @return method
-         */
         public Method method() {
             return method;
         }
 
-        /**
-         * Set the request method
-         * @param method new method
-         * @return this, for chaining
-         */
         public T method(Method method) {
             Assert.notNull(method, "Method must not be null");
             this.method = method;
             return (T) this;
         }
 
-        /**
-         * Get the value of a header. This is a simplified header model, where a header may only have one value.
-         * <p>
-         * Header names are case insensitive.
-         * </p>
-         * @param name name of header (case insensitive)
-         * @return value of header, or null if not set.
-         * @see #hasHeader(String)
-         * @see #cookie(String)
-         */
         public String header(String name) {
             Assert.notNull(name, "Header name must not be null");
             return getHeaderCaseInsensitive(name);
         }
 
-        /**
-         * Set a header. This method will overwrite any existing header with the same case insensitive name.
-         * @param name Name of header
-         * @param value Value of header
-         * @return this, for chaining
-         */
         public T header(String name, String value) {
             Assert.notEmpty(name, "Header name must not be empty");
             Assert.notNull(value, "Header value must not be null");
@@ -512,31 +486,15 @@ public class Connection {
             return (T) this;
         }
 
-        /**
-         * Check if a header is present
-         * @param name name of header (case insensitive)
-         * @return if the header is present in this request/response
-         */
         public boolean hasHeader(String name) {
             Assert.notEmpty(name, "Header name must not be empty");
             return getHeaderCaseInsensitive(name) != null;
         }
 
-        /**
-         * Check if a header is present, with the given value
-         * @param name header name (case insensitive)
-         * @param value value (case insensitive)
-         * @return if the header and value pair are set in this req/res
-         */
         public boolean hasHeaderWithValue(String name, String value) {
             return hasHeader(name) && header(name).equalsIgnoreCase(value);
         }
 
-        /**
-         * Remove a header by name
-         * @param name name of header to remove (case insensitive)
-         * @return this, for chaining
-         */
         public T removeHeader(String name) {
             Assert.notEmpty(name, "Header name must not be empty");
             Map.Entry<String, String> entry = scanHeaders(name); // remove is case insensitive too
@@ -545,10 +503,6 @@ public class Connection {
             return (T) this;
         }
 
-        /**
-         * Retrieve all of the request/response headers as a map
-         * @return headers
-         */
         public Map<String, String> headers() {
             return headers;
         }
@@ -576,25 +530,11 @@ public class Connection {
             return null;
         }
 
-        /**
-         * Get a cookie value by name from this request/response.
-         * <p>
-         * Response objects have a simplified cookie model. Each cookie set in the response is added to the response object's cookie key=value map. The cookie's path, domain, and expiry date are ignored.
-         * </p>
-         * @param name name of cookie to retrieve.
-         * @return value of cookie, or null if not set
-         */
         public String cookie(String name) {
             Assert.notEmpty(name, "Cookie name must not be empty");
             return cookies.get(name);
         }
 
-        /**
-         * Set a cookie in this request/response.
-         * @param name name of cookie
-         * @param value value of cookie
-         * @return this, for chaining
-         */
         public T cookie(String name, String value) {
             Assert.notEmpty(name, "Cookie name must not be empty");
             Assert.notNull(value, "Cookie value must not be null");
@@ -602,38 +542,24 @@ public class Connection {
             return (T) this;
         }
 
-        /**
-         * Check if a cookie is present
-         * @param name name of cookie
-         * @return if the cookie is present in this request/response
-         */
         public boolean hasCookie(String name) {
             Assert.notEmpty(name, "Cookie name must not be empty");
             return cookies.containsKey(name);
         }
 
-        /**
-         * Remove a cookie by name
-         * @param name name of cookie to remove
-         * @return this, for chaining
-         */
         public T removeCookie(String name) {
             Assert.notEmpty(name, "Cookie name must not be empty");
             cookies.remove(name);
             return (T) this;
         }
 
-        /**
-         * Retrieve all of the request/response cookies as a map
-         * @return cookies
-         */
         public Map<String, String> cookies() {
             return cookies;
         }
     }
 
     /**
-     * Represents a HTTP request.
+     * 表示HTTP请求
      */
     public static class Request extends Base<Request> {
         private Proxy proxy; // nullable
@@ -641,7 +567,7 @@ public class Connection {
         private int readTimeoutMillis;// milliseconds
         private int maxBodySizeBytes;
         private boolean followRedirects;
-        private Collection<KeyVal> data;
+        private Collection<KeyValue> data;
         private String body = null;
         private boolean ignoreHttpErrors = false;
         private boolean ignoreContentType = false;
@@ -653,211 +579,109 @@ public class Connection {
             readTimeoutMillis = 30000;
             maxBodySizeBytes = 1024 * 1024; // 1MB
             followRedirects = true;
-            data = new ArrayList<KeyVal>();
+            data = new ArrayList<KeyValue>();
             method = Method.GET;
             headers.put("Accept-Encoding", "gzip");
         }
 
-        /**
-         * Get the proxy used for this request.
-         * @return the proxy; <code>null</code> if not enabled.
-         */
         public Proxy proxy() {
             return proxy;
         }
 
-        /**
-         * Update the proxy for this request.
-         * @param proxy the proxy ot use; <code>null</code> to disable.
-         * @return this Request, for chaining
-         */
         public Request proxy(Proxy proxy) {
             this.proxy = proxy;
             return this;
         }
 
-        /**
-         * Set the HTTP proxy to use for this request.
-         * @param host the proxy hostname
-         * @param port the proxy port
-         * @return this Connection, for chaining
-         */
         public Request proxy(String host, int port) {
             this.proxy = new Proxy(Proxy.Type.HTTP, InetSocketAddress.createUnresolved(host, port));
             return this;
         }
 
-        /**
-         * Get the request timeout, in milliseconds.
-         * @return the timeout in milliseconds.
-         */
         public int connectTimeoutMillis() {
             return connectTimeoutMillis;
         }
 
-        /**
-         * Update the request timeout.
-         * @param millis timeout, in milliseconds
-         * @return this Request, for chaining
-         */
         public Request connectTimeoutMillis(int millis) {
             Assert.isTrue(millis >= 0, "Timeout milliseconds must be 0 (infinite) or greater");
             connectTimeoutMillis = millis;
             return this;
         }
 
-        /**
-         * Get the request timeout, in milliseconds.
-         * @return the timeout in milliseconds.
-         */
         public int readTimeoutMillis() {
             return readTimeoutMillis;
         }
 
-        /**
-         * Update the request timeout.
-         * @param millis timeout, in milliseconds
-         * @return this Request, for chaining
-         */
         public Request readTimeoutMillis(int millis) {
             Assert.isTrue(millis >= 0, "Timeout milliseconds must be 0 (infinite) or greater");
             readTimeoutMillis = millis;
             return this;
         }
 
-        /**
-         * Get the maximum body size, in bytes.
-         * @return the maximum body size, in bytes.
-         */
         public int maxBodySize() {
             return maxBodySizeBytes;
         }
 
-        /**
-         * Update the maximum body size, in bytes.
-         * @param bytes maximum body size, in bytes.
-         * @return this Request, for chaining
-         */
         public Request maxBodySize(int bytes) {
             Assert.isTrue(bytes >= 0, "maxSize must be 0 (unlimited) or larger");
             maxBodySizeBytes = bytes;
             return this;
         }
 
-        /**
-         * Get the current followRedirects configuration.
-         * @return true if followRedirects is enabled.
-         */
         public boolean followRedirects() {
             return followRedirects;
         }
 
-        /**
-         * Configures the request to (not) follow server redirects. By default this is <b>true</b>.
-         * @param followRedirects true if server redirects should be followed.
-         * @return this Request, for chaining
-         */
         public Request followRedirects(boolean followRedirects) {
             this.followRedirects = followRedirects;
             return this;
         }
 
-        /**
-         * Get the current ignoreHttpErrors configuration.
-         * @return true if errors will be ignored; false (default) if HTTP errors will cause an IOException to be thrown.
-         */
         public boolean ignoreHttpErrors() {
             return ignoreHttpErrors;
         }
 
-        /**
-         * Configures the request to ignore HTTP errors in the response.
-         * @param ignoreHttpErrors set to true to ignore HTTP errors.
-         * @return this Request, for chaining
-         */
         public Request ignoreHttpErrors(boolean ignoreHttpErrors) {
             this.ignoreHttpErrors = ignoreHttpErrors;
             return this;
         }
 
-        /**
-         * Get the current ignoreContentType configuration.
-         * @return true if invalid content-types will be ignored; false (default) if they will cause an IOException to be thrown.
-         */
         public boolean ignoreContentType() {
             return ignoreContentType;
         }
 
-        /**
-         * Configures the request to ignore the Content-Type of the response.
-         * @param ignoreContentType set to true to ignore the content type.
-         * @return this Request, for chaining
-         */
         public Request ignoreContentType(boolean ignoreContentType) {
             this.ignoreContentType = ignoreContentType;
             return this;
         }
 
-        /**
-         * Get the current state of TLS (SSL) certificate validation.
-         * @return true if TLS cert validation enabled
-         */
         public boolean validateTLSCertificates() {
             return validateTLSCertificates;
         }
 
-        /**
-         * Set TLS certificate validation.
-         * @param value set false to ignore TLS (SSL) certificates
-         */
-        public void validateTLSCertificates(boolean validateTLSCertificates) {
-            this.validateTLSCertificates = validateTLSCertificates;
+        public void validateTLSCertificates(boolean value) {
+            this.validateTLSCertificates = value;
         }
 
-        /**
-         * Add a data parameter to the request
-         * @param keyval data to add.
-         * @return this Request, for chaining
-         */
-        public Request data(KeyVal keyval) {
+        public Request data(KeyValue keyval) {
             Assert.notNull(keyval, "Key val must not be null");
             data.add(keyval);
             return this;
         }
 
-        /**
-         * Get all of the request's data parameters
-         * @return collection of keyvals
-         */
-        public Collection<KeyVal> data() {
+        public Collection<KeyValue> data() {
             return data;
         }
 
-        /**
-         * Set a POST (or PUT) request body. Useful when a server expects a plain request body, not a set for URL encoded form key/value pairs. E.g.: <code><pre>connect(url)
-         * .requestBody(json)
-         * .header("Content-Type", "application/json")
-         * .post();</pre></code> If any data key/vals are supplied, they will be sent as URL query params.
-         * @return this Request, for chaining
-         */
         public Request requestBody(String body) {
             this.body = body;
             return this;
         }
 
-        /**
-         * Get the current request body.
-         * @return null if not set.
-         */
         public String requestBody() {
             return body;
         }
 
-        /**
-         * Sets the post data character set for x-www-form-urlencoded post data
-         * @param charset character set to encode post data
-         * @return this Request, for chaining
-         */
         public Request postDataCharset(String charset) {
             Assert.notNull(charset, "Charset must not be null");
             if (!Charset.isSupported(charset))
@@ -866,17 +690,13 @@ public class Connection {
             return this;
         }
 
-        /**
-         * Gets the post data character set for x-www-form-urlencoded post data
-         * @return character set to encode post data
-         */
         public String postDataCharset() {
             return postDataCharset;
         }
     }
 
     /**
-     * Represents a HTTP response.
+     * 表示HTTP响应
      */
     public static class Response extends Base<Response> {
         private static final int MAX_REDIRECTS = 20;
@@ -1014,42 +834,22 @@ public class Connection {
             return res;
         }
 
-        /**
-         * Get the status code of the response.
-         * @return status code
-         */
         public int statusCode() {
             return statusCode;
         }
 
-        /**
-         * Get the status message of the response.
-         * @return status message
-         */
         public String statusMessage() {
             return statusMessage;
         }
 
-        /**
-         * Get the character set name of the response.
-         * @return character set name
-         */
         public String charset() {
             return charset;
         }
 
-        /**
-         * Get the response content type (e.g. "text/html");
-         * @return the response content type
-         */
         public String contentType() {
             return contentType;
         }
 
-        /**
-         * Get the body of the response as a plain string.
-         * @return body
-         */
         public String body() {
             Assert.isTrue(executed, "Request must be executed (with .execute(), .get(), or .post() before getting response body");
             // charset gets set from header on execute, and from meta-equiv on parse. parse may not
@@ -1063,10 +863,6 @@ public class Connection {
             return body;
         }
 
-        /**
-         * Get the body of the response as an array of bytes.
-         * @return body bytes
-         */
         public byte[] bodyAsBytes() {
             Assert.isTrue(executed, "Request must be executed (with .execute(), .get(), or .post() before getting response body");
             return byteData.array();
@@ -1101,8 +897,8 @@ public class Connection {
         }
 
         /**
-         * Instantiate Hostname Verifier that does nothing. This is used for connections with disabled SSL certificates validation.
-         * @return Hostname Verifier that does nothing and accepts all hostnames
+         * 实例化不执行任何操作的主机名验证器，这用于禁用SSL证书验证的连接。
+         * @return 主机名验证器
          */
         private static HostnameVerifier getInsecureVerifier() {
             return new HostnameVerifier() {
@@ -1113,10 +909,9 @@ public class Connection {
         }
 
         /**
-         * Initialise Trust manager that does not validate certificate chains and add it to current SSLContext.
-         * <p/>
-         * please not that this method will only perform action if sslSocketFactory is not yet instantiated.
-         * @throws IOException
+         * 初始化不验证证书链的信任管理器，并将其添加到当前SSLContext。<br>
+         * 请注意，此方法仅在sslSocketFactory尚未实例化时执行操作。<br>
+         * @throws IOException 生成证书链错误
          */
         private static synchronized void initUnSecureTSL() throws IOException {
             if (sslSocketFactory == null) {
@@ -1258,12 +1053,12 @@ public class Connection {
         }
 
         private static void writePost(final Request req, final OutputStream outputStream, final String bound) throws IOException {
-            final Collection<KeyVal> data = req.data();
+            final Collection<KeyValue> data = req.data();
             final BufferedWriter w = new BufferedWriter(new OutputStreamWriter(outputStream, req.postDataCharset()));
 
             if (bound != null) {
                 // boundary will be set if we're in multipart mode
-                for (KeyVal keyVal : data) {
+                for (KeyValue keyVal : data) {
                     w.write("--");
                     w.write(bound);
                     w.write("\r\n");
@@ -1292,7 +1087,7 @@ public class Connection {
             } else {
                 // regular form data (application/x-www-form-urlencoded)
                 boolean first = true;
-                for (KeyVal keyVal : data) {
+                for (KeyValue keyVal : data) {
                     if (!first)
                         w.append('&');
                     else
@@ -1334,7 +1129,7 @@ public class Connection {
                 url.append(in.getQuery());
                 first = false;
             }
-            for (KeyVal keyVal : req.data()) {
+            for (KeyValue keyVal : req.data()) {
                 Assert.isFalse(keyVal.hasInputStream(), "InputStream data not supported in URL query string.");
                 if (!first)
                     url.append('&');
@@ -1365,7 +1160,7 @@ public class Connection {
         // multipart mode, for files. add the header if we see something with an inputstream, and
         // return a non-null boundary
         boolean needsMulti = false;
-        for (KeyVal keyVal : req.data()) {
+        for (KeyValue keyVal : req.data()) {
             if (keyVal.hasInputStream()) {
                 needsMulti = true;
                 break;
@@ -1375,85 +1170,54 @@ public class Connection {
     }
 
     /**
-     * A Key Value tuple.
+     * 键值元组(tuple)
      */
-    public static class KeyVal {
+    public static class KeyValue {
         private String key;
         private String value;
         private InputStream stream;
 
-        public static KeyVal create(String key, String value) {
-            return new KeyVal().key(key).value(value);
+        public static KeyValue create(String key, String value) {
+            return new KeyValue().key(key).value(value);
         }
 
-        public static KeyVal create(String key, String filename, InputStream stream) {
-            return new KeyVal().key(key).value(filename).inputStream(stream);
+        public static KeyValue create(String key, String filename, InputStream stream) {
+            return new KeyValue().key(key).value(filename).inputStream(stream);
         }
 
-        private KeyVal() {
+        private KeyValue() {
         }
 
-        /**
-         * Update the key of a keyval
-         * @param key new key
-         * @return this KeyVal, for chaining
-         */
-        public KeyVal key(String key) {
+        public KeyValue key(String key) {
             Assert.notEmpty(key, "Data key must not be empty");
             this.key = key;
             return this;
         }
 
-        /**
-         * Get the key of a keyval
-         * @return the key
-         */
         public String key() {
             return key;
         }
 
-        /**
-         * Update the value of a keyval
-         * @param value the new value
-         * @return this KeyVal, for chaining
-         */
-        public KeyVal value(String value) {
+        public KeyValue value(String value) {
             Assert.notNull(value, "Data value must not be null");
             this.value = value;
             return this;
         }
 
-        /**
-         * Get the value of a keyval
-         * @return the value
-         */
         public String value() {
             return value;
         }
 
-        /**
-         * Add or update an input stream to this keyVal
-         * @param inputStream new input stream
-         * @return this KeyVal, for chaining
-         */
-        public KeyVal inputStream(InputStream inputStream) {
+        public KeyValue inputStream(InputStream inputStream) {
             Assert.notNull(value, "Data input stream must not be null");
             this.stream = inputStream;
             return this;
         }
 
-        /**
-         * Get the input stream associated with this keyval, if any
-         * @return input stream if set, or null
-         */
         public InputStream inputStream() {
             return stream;
         }
 
-        /**
-         * Does this keyval have an input stream?
-         * @return true if this keyval does indeed have an input stream
-         */
         public boolean hasInputStream() {
             return stream != null;
         }
@@ -1465,7 +1229,7 @@ public class Connection {
     }
 
     /**
-     * GET and POST http methods.
+     * HTTP方法枚举类
      */
     public static enum Method {
 
@@ -1478,8 +1242,8 @@ public class Connection {
         }
 
         /**
-         * Check if this HTTP method has/needs a request body
-         * @return if body needed
+         * 检查此HTTP方法是否包含请求体
+         * @return 是否包含请求体
          */
         public final boolean hasBody() {
             return hasBody;
