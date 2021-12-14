@@ -20,7 +20,7 @@ public class Desede extends SymmetricCrypto {
      * @param secretKey 秘密(对称)密钥，如果为null，表示使用随机密钥
      */
     protected Desede(SecretKey secretKey) {
-        super(SymmetricAlgorithm.DESede, secretKey);
+        super(SymmetricAlgorithmEnum.DESede, secretKey);
     }
 
     /**
@@ -28,17 +28,17 @@ public class Desede extends SymmetricCrypto {
      * @param key 密钥数据，长度24个字节；如果为null，表示使用随机密钥
      */
     protected Desede(byte[] key) {
-        super(SymmetricAlgorithm.DESede, key);
+        super(SymmetricAlgorithmEnum.DESede, key);
     }
 
     /**
      * 构造函数
-     * @param mode 模式{@link Mode}
-     * @param padding {@link Padding}补码方式
+     * @param mode 模式{@link ModeEnum}
+     * @param padding {@link PaddingEnum}补码方式
      * @param secretKey 秘密(对称)密钥
      * @param iv 算法参数(偏移向量,加盐)
      */
-    protected Desede(Mode mode, Padding padding, SecretKey secretKey, IvParameterSpec iv) {
+    protected Desede(ModeEnum mode, PaddingEnum padding, SecretKey secretKey, IvParameterSpec iv) {
         super(ALGORITHM_PREFIX + "/" + mode.name() + "/" + padding.name(), secretKey, iv);
     }
 
@@ -71,35 +71,35 @@ public class Desede extends SymmetricCrypto {
 
     /**
      * 创建DESede实例
-     * @param mode 模式 {@link Mode}
-     * @param padding {@link Padding}补码方式
+     * @param mode 模式 {@link ModeEnum}
+     * @param padding {@link PaddingEnum}补码方式
      * @param secretKey 秘密(对称)密钥
      * @return DESede实例
      */
-    public static Desede create(Mode mode, Padding padding, SecretKey secretKey) {
+    public static Desede create(ModeEnum mode, PaddingEnum padding, SecretKey secretKey) {
         return create(mode, padding, secretKey, null);
     }
 
     /**
      * 创建DESede实例
-     * @param mode 模式 {@link Mode}
-     * @param padding {@link Padding}补码方式
+     * @param mode 模式 {@link ModeEnum}
+     * @param padding {@link PaddingEnum}补码方式
      * @param key 密钥数据，长度24个字节；如果为null，表示使用随机密钥
      * @return DESede实例
      */
-    public static Desede create(Mode mode, Padding padding, byte[] key) {
+    public static Desede create(ModeEnum mode, PaddingEnum padding, byte[] key) {
         return create(mode, padding, key, null);
     }
 
     /**
      * 创建DESede实例
-     * @param mode 模式 {@link Mode}
-     * @param padding {@link Padding}补码方式
+     * @param mode 模式 {@link ModeEnum}
+     * @param padding {@link PaddingEnum}补码方式
      * @param key 密钥数据，长度24个字节；如果为null，表示使用随机密钥
      * @param iv 偏移向量(加盐)
      * @return DESede实例
      */
-    public static Desede create(Mode mode, Padding padding, byte[] key, byte[] iv) {
+    public static Desede create(ModeEnum mode, PaddingEnum padding, byte[] key, byte[] iv) {
         SecretKey secretKey = key == null ? null : SecretKeyUtil.generateSecretKey(ALGORITHM_PREFIX, key);
         IvParameterSpec paramsSpec = iv == null ? null : new IvParameterSpec(iv);
         return create(mode, padding, secretKey, paramsSpec);
@@ -107,13 +107,13 @@ public class Desede extends SymmetricCrypto {
 
     /**
      * 创建DESede实例
-     * @param mode 模式 {@link Mode}
-     * @param padding {@link Padding}补码方式
+     * @param mode 模式 {@link ModeEnum}
+     * @param padding {@link PaddingEnum}补码方式
      * @param secretKey 秘密(对称)密钥
      * @param paramsSpec 加密参数的(偏移向量,加盐)
      * @return DESede实例
      */
-    public static Desede create(Mode mode, Padding padding, SecretKey secretKey, IvParameterSpec paramsSpec) {
+    public static Desede create(ModeEnum mode, PaddingEnum padding, SecretKey secretKey, IvParameterSpec paramsSpec) {
         return new Desede(mode, padding, secretKey, paramsSpec);
     }
 
