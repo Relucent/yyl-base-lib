@@ -43,7 +43,7 @@ public class SymmetricCrypto {
      * 构造函数，使用随机密钥
      * @param algorithm 算法
      */
-    public SymmetricCrypto(SymmetricAlgorithm algorithm) {
+    public SymmetricCrypto(SymmetricAlgorithmEnum algorithm) {
         this(algorithm, null, null);
     }
 
@@ -52,8 +52,8 @@ public class SymmetricCrypto {
      * @param algorithm 算法
      * @param key 密钥数据
      */
-    public SymmetricCrypto(SymmetricAlgorithm algorithm, byte[] key) {
-        this(algorithm, SecretKeyUtil.generateSecretKey(algorithm.getValue(), key), null);
+    public SymmetricCrypto(SymmetricAlgorithmEnum algorithm, byte[] key) {
+        this(algorithm, SecretKeyUtil.generateSecretKey(algorithm.string(), key), null);
     }
 
     /**
@@ -61,7 +61,7 @@ public class SymmetricCrypto {
      * @param algorithm 算法
      * @param secretKey 密钥数据
      */
-    public SymmetricCrypto(SymmetricAlgorithm algorithm, SecretKey secretKey) {
+    public SymmetricCrypto(SymmetricAlgorithmEnum algorithm, SecretKey secretKey) {
         this(algorithm, secretKey, null);
     }
 
@@ -71,8 +71,8 @@ public class SymmetricCrypto {
      * @param secretKey 秘密(对称)密钥
      * @param params 算法参数
      */
-    public SymmetricCrypto(SymmetricAlgorithm algorithm, SecretKey secretKey, AlgorithmParameterSpec params) {
-        this(algorithm.getValue(), secretKey, params);
+    public SymmetricCrypto(SymmetricAlgorithmEnum algorithm, SecretKey secretKey, AlgorithmParameterSpec params) {
+        this(algorithm.string(), secretKey, params);
     }
 
     /**
@@ -160,8 +160,6 @@ public class SymmetricCrypto {
     public byte[] encrypt(String input) {
         return encrypt(input, StandardCharsets.UTF_8);
     }
-
-
 
     /**
      * 加密数据，返回十六进制字符串

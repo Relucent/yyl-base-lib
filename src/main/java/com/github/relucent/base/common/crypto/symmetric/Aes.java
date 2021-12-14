@@ -18,7 +18,7 @@ public class Aes extends SymmetricCrypto {
      * @param secretKey 秘密(对称)密钥，如果为null，表示使用随机密钥
      */
     protected Aes(SecretKey secretKey) {
-        super(SymmetricAlgorithm.AES, secretKey);
+        super(SymmetricAlgorithmEnum.AES, secretKey);
     }
 
     /**
@@ -26,17 +26,17 @@ public class Aes extends SymmetricCrypto {
      * @param key 密钥，支持三种密钥长度：128(16字节)、192(24字节)、256位(32字节)；如果为null，表示使用随机密钥
      */
     protected Aes(byte[] key) {
-        super(SymmetricAlgorithm.AES, key);
+        super(SymmetricAlgorithmEnum.AES, key);
     }
 
     /**
      * 构造函数
-     * @param mode 模式{@link Mode}
-     * @param padding {@link Padding}补码方式
+     * @param mode 模式{@link ModeEnum}
+     * @param padding {@link PaddingEnum}补码方式
      * @param secretKey 秘密(对称)密钥
-     * @param parameterSpec 算法参数(偏移向量,加盐)
+     * @param parameterSpec 算法参数(初始化向量)
      */
-    protected Aes(Mode mode, Padding padding, SecretKey secretKey, IvParameterSpec parameterSpec) {
+    protected Aes(ModeEnum mode, PaddingEnum padding, SecretKey secretKey, IvParameterSpec parameterSpec) {
         super(ALGORITHM_PREFIX + "/" + mode.name() + "/" + padding.name(), secretKey, parameterSpec);
     }
 
@@ -69,35 +69,35 @@ public class Aes extends SymmetricCrypto {
 
     /**
      * 创建AES实例
-     * @param mode 模式 {@link Mode}
-     * @param padding {@link Padding}补码方式
+     * @param mode 模式 {@link ModeEnum}
+     * @param padding {@link PaddingEnum}补码方式
      * @param secretKey 秘密(对称)密钥
      * @return AES实例
      */
-    public static Aes create(Mode mode, Padding padding, SecretKey secretKey) {
+    public static Aes create(ModeEnum mode, PaddingEnum padding, SecretKey secretKey) {
         return create(mode, padding, secretKey, null);
     }
 
     /**
      * 创建AES实例
-     * @param mode 模式 {@link Mode}
-     * @param padding {@link Padding}补码方式
+     * @param mode 模式 {@link ModeEnum}
+     * @param padding {@link PaddingEnum}补码方式
      * @param key 密钥，支持三种密钥长度：128(16字节)、192(24字节)、256位(32字节)；如果为null，表示使用随机密钥
      * @return AES实例
      */
-    public static Aes create(Mode mode, Padding padding, byte[] key) {
+    public static Aes create(ModeEnum mode, PaddingEnum padding, byte[] key) {
         return create(mode, padding, key, null);
     }
 
     /**
      * 创建AES实例
-     * @param mode 模式 {@link Mode}
-     * @param padding {@link Padding}补码方式
+     * @param mode 模式 {@link ModeEnum}
+     * @param padding {@link PaddingEnum}补码方式
      * @param key 密钥，支持三种密钥长度：128(16字节)、192(24字节)、256位(32字节)；如果为null，表示使用随机密钥
      * @param iv 偏移向量(加盐)
      * @return AES实例
      */
-    public static Aes create(Mode mode, Padding padding, byte[] key, byte[] iv) {
+    public static Aes create(ModeEnum mode, PaddingEnum padding, byte[] key, byte[] iv) {
         SecretKey secretKey = key == null ? null : SecretKeyUtil.generateSecretKey(ALGORITHM_PREFIX, key);
         IvParameterSpec paramsSpec = iv == null ? null : new IvParameterSpec(iv);
         return create(mode, padding, secretKey, paramsSpec);
@@ -105,13 +105,13 @@ public class Aes extends SymmetricCrypto {
 
     /**
      * 创建AES实例
-     * @param mode 模式 {@link Mode}
-     * @param padding {@link Padding}补码方式
+     * @param mode 模式 {@link ModeEnum}
+     * @param padding {@link PaddingEnum}补码方式
      * @param secretKey 秘密(对称)密钥
-     * @param paramsSpec 加密参数的(偏移向量,加盐)
+     * @param paramsSpec 加密参数的(初始化向量)
      * @return AES实例
      */
-    public static Aes create(Mode mode, Padding padding, SecretKey secretKey, IvParameterSpec paramsSpec) {
+    public static Aes create(ModeEnum mode, PaddingEnum padding, SecretKey secretKey, IvParameterSpec paramsSpec) {
         return new Aes(mode, padding, secretKey, paramsSpec);
     }
 

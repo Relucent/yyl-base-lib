@@ -4,7 +4,7 @@ package com.github.relucent.base.common.crypto.symmetric;
  * 对称算法类型<br>
  * @see <a href="https://docs.oracle.com/javase/7/docs/technotes/guides/security/StandardNames.html#KeyGenerator">KeyGenerator</a>
  */
-public enum SymmetricAlgorithm {
+public enum SymmetricAlgorithmEnum {
     /** 默认的AES加密方式：AES/CBC/PKCS5Padding */
     AES("AES"),
     /** ARCFOUR 安全性比较低 */
@@ -25,21 +25,21 @@ public enum SymmetricAlgorithm {
     PBEWithSHA1AndRC2_40("PBEWithSHA1AndRC2_40");
 
     /** 算法字符串表示 */
-    private final String value;
+    private final String string;
 
     /**
      * 构造函数
-     * @param value 算法字符串表示(区分大小写)
+     * @param string 算法字符串表示(区分大小写)
      */
-    private SymmetricAlgorithm(String value) {
-        this.value = value;
+    private SymmetricAlgorithmEnum(String string) {
+        this.string = string;
     }
 
     /**
      * 获取算法字符串表示
      * @return 算法字符串表示
      */
-    public String getValue() {
-        return this.value;
+    public String string() {
+        return string;
     }
 }
