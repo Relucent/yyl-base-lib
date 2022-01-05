@@ -9,20 +9,22 @@ import com.github.relucent.base.common.lang.StringUtil;
 import com.github.relucent.base.common.net.NetworkUtil;
 
 /**
- * 时间序列ID生成器<br>
+ * 时间序列ID生成器(20位)<br>
  * 时间戳+循环计数+随机数+网络地址+进程号<br>
  */
 public class TimeId {
 
     private static final int RADIX36 = 36;
-    private static final int RADIX36_MOD1 = RADIX36 - 1;
-    private static final int RADIX36_MOD2 = RADIX36 * RADIX36 - 1;
-    private static final int RADIX36_MOD3 = RADIX36 * RADIX36 * RADIX36 - 1;
     private static final int TIMESTAMP_LENGTH = 9;
-    private static final int COUNTER_LENGTH = 3;
+    private static final int COUNTER_LENGTH = 5;
     private static final int MAC_LENGTH = 2;
     private static final int PID_LENGTH = 1;
     private static final int RANDOM_LENGTH = 3;
+    private static final int COUNTER_MOD = computeRadix36Mod(COUNTER_LENGTH);
+    private static final int MAC_MOD = computeRadix36Mod(MAC_LENGTH);
+    private static final int PID_MOD = computeRadix36Mod(PID_LENGTH);
+    private static final int RANDOM_MOD = computeRadix36Mod(RANDOM_LENGTH);
+
     private static final char ZERO_CHAR = '0';
 
     /** 循环序列号 */
@@ -51,10 +53,10 @@ public class TimeId {
      */
     private TimeId(long timestamp, long counter, long mac, long pid, long random) {
         this.timestamp = timestamp;
-        this.counter = Math.abs(counter % RADIX36_MOD3);
-        this.mac = Math.abs(mac % RADIX36_MOD1);
-        this.pid = Math.abs(pid % RADIX36_MOD1);
-        this.random = Math.abs(random % RADIX36_MOD2);
+        this.counter = Math.abs(counter % COUNTER_MOD);
+        this.mac = Math.abs(mac % MAC_MOD);
+        this.pid = Math.abs(pid % PID_MOD);
+        this.random = Math.abs(random % RANDOM_MOD);
     }
 
     /**
@@ -130,5 +132,18 @@ public class TimeId {
             pid = Holder.NUMBER_GENERATOR.nextLong();
         }
         return pid;
+    }
+
+    /**
+     * 计算模数
+     * @param length 长度
+     * @return 进制模(32)
+     */
+    private static int computeRadix36Mod(int length) {
+        int value = 1;
+        for (int i = 0; i < length; i++) {
+            value *= RADIX36;
+        }
+        return value - 1;
     }
 }
