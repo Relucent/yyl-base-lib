@@ -1,5 +1,6 @@
 package com.github.relucent.base.common.io;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.IOException;
@@ -12,6 +13,8 @@ import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.github.relucent.base.common.constant.IoConstants;
 
@@ -184,6 +187,16 @@ public class IoUtil {
     }
 
     /**
+     * 如果给定字符流是{@link BufferedReader}，则返回该字符流，否则包装一个 BufferedReader返回。
+     * @param reader 字符读取流
+     * @return {@link BufferedReader}
+     * @throws 如果参数为空抛出异常
+     */
+    public static BufferedReader toBufferedReader(final Reader reader) {
+        return reader instanceof BufferedReader ? (BufferedReader) reader : new BufferedReader(reader);
+    }
+
+    /**
      * 获取数据流数据。该方法不会{@code close}数据流。
      * @param input 流数据
      * @return 流数据的字节数组
@@ -207,5 +220,22 @@ public class IoUtil {
             copyLarge(new InputStreamReader(input, charset), writer);
             return writer.toString();
         }
+    }
+
+    /**
+     * 获取读取器的内容作为字符串列表，每行一个条目。
+     * @param input 字符读取流
+     * @return 字符串列表（不会为空）
+     * @throws IOException 出现IO错误，抛出异常
+     */
+    public static List<String> readLines(final Reader input) throws IOException {
+        final BufferedReader reader = toBufferedReader(input);
+        final List<String> list = new ArrayList<>();
+        String line = reader.readLine();
+        while (line != null) {
+            list.add(line);
+            line = reader.readLine();
+        }
+        return list;
     }
 }
