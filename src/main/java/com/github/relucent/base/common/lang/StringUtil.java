@@ -70,9 +70,9 @@ public class StringUtil {
      * 返回传入的字符串，或者如果字符串为{@code null}，则返回默认字符串{@code defaultString}.
      * 
      * <pre>
-     * StringUtils.defaultString(null, "NULL")  = "NULL"
-     * StringUtils.defaultString("", "NULL")    = ""
-     * StringUtils.defaultString("bat", "NULL") = "bat"
+     * StringUtil.defaultString(null, "NULL")  = "NULL"
+     * StringUtil.defaultString("", "NULL")    = ""
+     * StringUtil.defaultString("bat", "NULL") = "bat"
      * </pre>
      * 
      * @param string 要检查的字符串
@@ -368,12 +368,12 @@ public class StringUtil {
      * 左填充指定字符的字符串.
      * 
      * <pre>
-     * StringUtils.leftPad(null, *, *)     = null
-     * StringUtils.leftPad("", 3, 'z')     = "zzz"
-     * StringUtils.leftPad("bat", 3, 'z')  = "bat"
-     * StringUtils.leftPad("bat", 5, 'z')  = "zzbat"
-     * StringUtils.leftPad("bat", 1, 'z')  = "bat"
-     * StringUtils.leftPad("bat", -1, 'z') = "bat"
+     * StringUtil.leftPad(null, *, *)     = null
+     * StringUtil.leftPad("", 3, 'z')     = "zzz"
+     * StringUtil.leftPad("bat", 3, 'z')  = "bat"
+     * StringUtil.leftPad("bat", 5, 'z')  = "zzbat"
+     * StringUtil.leftPad("bat", 1, 'z')  = "bat"
+     * StringUtil.leftPad("bat", -1, 'z') = "bat"
      * </pre>
      *
      * @param cs 需要填充的字符串
@@ -406,12 +406,12 @@ public class StringUtil {
      * </p>
      *
      * <pre>
-     * StringUtils.rightPad(null, *, *)     = null
-     * StringUtils.rightPad("", 3, 'z')     = "zzz"
-     * StringUtils.rightPad("bat", 3, 'z')  = "bat"
-     * StringUtils.rightPad("bat", 5, 'z')  = "batzz"
-     * StringUtils.rightPad("bat", 1, 'z')  = "bat"
-     * StringUtils.rightPad("bat", -1, 'z') = "bat"
+     * StringUtil.rightPad(null, *, *)     = null
+     * StringUtil.rightPad("", 3, 'z')     = "zzz"
+     * StringUtil.rightPad("bat", 3, 'z')  = "bat"
+     * StringUtil.rightPad("bat", 5, 'z')  = "batzz"
+     * StringUtil.rightPad("bat", 1, 'z')  = "bat"
+     * StringUtil.rightPad("bat", -1, 'z') = "bat"
      * </pre>
      * 
      * @param cs 需要填充的字符串
