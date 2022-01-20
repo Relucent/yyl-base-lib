@@ -17,6 +17,9 @@ public class StringUtil {
     /** 字符串构建器默认构建尺寸 */
     private static final int STRING_BUILDER_SIZE = 256;
 
+    /** 表示未找到的索引 */
+    private static final int INDEX_NOT_FOUND = -1;
+
     /**
      * 工具类方法，实例不应在标准编程中构造。
      */
@@ -522,5 +525,184 @@ public class StringUtil {
             list.add(cs.subSequence(start, i).toString());
         }
         return list.toArray(new String[list.size()]);
+    }
+
+    /**
+     * 查找字符串在文本中第一次出现的位置
+     * 
+     * <pre>
+     * StringUtil.indexOf(null, *, *)          = -1
+     * StringUtil.indexOf(*, null, *)          = -1
+     * StringUtil.indexOf("", "", 0)           = 0
+     * StringUtil.indexOf("", *, 0)            = -1 (except when * = "")
+     * StringUtil.indexOf("aabaabaa", "a", 0)  = 0
+     * StringUtil.indexOf("aabaabaa", "b", 0)  = 2
+     * StringUtil.indexOf("aabaabaa", "ab", 0) = 1
+     * StringUtil.indexOf("aabaabaa", "b", 3)  = 5
+     * StringUtil.indexOf("aabaabaa", "b", 9)  = -1
+     * StringUtil.indexOf("aabaabaa", "b", -1) = 2
+     * StringUtil.indexOf("aabaabaa", "", 2)   = 2
+     * StringUtil.indexOf("abc", "", 9)        = 3
+     * </pre>
+     * 
+     * @param text 用于查找的文本
+     * @param searchStr 查找的字符串
+     * @param startPos 开始查找的位置
+     * @return 字符串第一次出现的位置，如果未找到返回 -1
+     */
+    public static int indexOf(final CharSequence text, final CharSequence searchSeq, final int startPos) {
+        if (text == null || searchSeq == null) {
+            return INDEX_NOT_FOUND;
+        }
+        return CharSequenceUtil.indexOf(text, searchSeq, startPos);
+    }
+
+    /**
+     * 查找字符串在文本中第一次出现的位置（忽略大小写）
+     * 
+     * <pre>
+     * StringUtil.indexOfIgnoreCase(null, *, *)          = -1
+     * StringUtil.indexOfIgnoreCase(*, null, *)          = -1
+     * StringUtil.indexOfIgnoreCase("", "", 0)           = 0
+     * StringUtil.indexOfIgnoreCase("aabaabaa", "A", 0)  = 0
+     * StringUtil.indexOfIgnoreCase("aabaabaa", "B", 0)  = 2
+     * StringUtil.indexOfIgnoreCase("aabaabaa", "AB", 0) = 1
+     * StringUtil.indexOfIgnoreCase("aabaabaa", "B", 3)  = 5
+     * StringUtil.indexOfIgnoreCase("aabaabaa", "B", 9)  = -1
+     * StringUtil.indexOfIgnoreCase("aabaabaa", "B", -1) = 2
+     * StringUtil.indexOfIgnoreCase("aabaabaa", "", 2)   = 2
+     * StringUtil.indexOfIgnoreCase("abc", "", 9)        = -1
+     * </pre>
+     *
+     * @param text 用于查找的文本
+     * @param searchStr 查找的字符串
+     * @param startPos 开始查找的位置
+     * @return 字符串第一次出现的位置，如果未找到返回 -1
+     */
+    public static int indexOfIgnoreCase(final CharSequence text, final CharSequence searchStr, int startPos) {
+        if (text == null || searchStr == null) {
+            return INDEX_NOT_FOUND;
+        }
+        if (startPos < 0) {
+            startPos = 0;
+        }
+        final int endLimit = text.length() - searchStr.length() + 1;
+        if (startPos > endLimit) {
+            return INDEX_NOT_FOUND;
+        }
+        if (searchStr.length() == 0) {
+            return startPos;
+        }
+        for (int i = startPos; i < endLimit; i++) {
+            if (CharSequenceUtil.regionMatches(text, true, i, searchStr, 0, searchStr.length())) {
+                return i;
+            }
+        }
+        return INDEX_NOT_FOUND;
+    }
+
+    /**
+     * 替换字符串
+     * 
+     * <pre>
+     * StringUtil.replace(null, *, *)        = null
+     * StringUtil.replace("", *, *)          = ""
+     * StringUtil.replace("any", null, *)    = "any"
+     * StringUtil.replace("any", *, null)    = "any"
+     * StringUtil.replace("any", "", *)      = "any"
+     * StringUtil.replace("aba", "a", null)  = "aba"
+     * StringUtil.replace("aba", "a", "")    = "b"
+     * StringUtil.replace("aba", "a", "z")   = "zbz"
+     * </pre>
+     *
+     * @param text 用于查找替换的文本
+     * @param searchString 查找的字符串
+     * @param replacement 替换的字符串
+     * @return 处理后的文本
+     */
+    public static String replace(final String text, final String searchString, final String replacement) {
+        return replace(text, searchString, replacement, -1);
+    }
+
+    /**
+     * 替换字符串
+     * 
+     * <pre>
+     * StringUtil.replace(null, *, *, *)         = null
+     * StringUtil.replace("", *, *, *)           = ""
+     * StringUtil.replace("any", null, *, *)     = "any"
+     * StringUtil.replace("any", *, null, *)     = "any"
+     * StringUtil.replace("any", "", *, *)       = "any"
+     * StringUtil.replace("any", *, *, 0)        = "any"
+     * StringUtil.replace("abaa", "a", null, -1) = "abaa"
+     * StringUtil.replace("abaa", "a", "", -1)   = "b"
+     * StringUtil.replace("abaa", "a", "z", 0)   = "abaa"
+     * StringUtil.replace("abaa", "a", "z", 1)   = "zbaa"
+     * StringUtil.replace("abaa", "a", "z", 2)   = "zbza"
+     * StringUtil.replace("abaa", "a", "z", -1)  = "zbzz"
+     * </pre>
+     *
+     * @param text 用于查找替换的文本
+     * @param searchString 查找的字符串
+     * @param replacement 替换的字符串
+     * @param max 需要替换的字符串个数，{@code -1} 表示无限制
+     * @return 处理后的文本
+     */
+    public static String replace(final String text, final String searchString, final String replacement, final int max) {
+        return replace(text, searchString, replacement, max, false);
+    }
+
+    /**
+     * 替换字符串
+     * 
+     * <pre>
+     * StringUtil.replace(null, *, *, *, false)         = null
+     * StringUtil.replace("", *, *, *, false)           = ""
+     * StringUtil.replace("any", null, *, *, false)     = "any"
+     * StringUtil.replace("any", *, null, *, false)     = "any"
+     * StringUtil.replace("any", "", *, *, false)       = "any"
+     * StringUtil.replace("any", *, *, 0, false)        = "any"
+     * StringUtil.replace("abaa", "a", null, -1, false) = "abaa"
+     * StringUtil.replace("abaa", "a", "", -1, false)   = "b"
+     * StringUtil.replace("abaa", "a", "z", 0, false)   = "abaa"
+     * StringUtil.replace("abaa", "A", "z", 1, false)   = "abaa"
+     * StringUtil.replace("abaa", "A", "z", 1, true)   = "zbaa"
+     * StringUtil.replace("abAa", "a", "z", 2, true)   = "zbza"
+     * StringUtil.replace("abAa", "a", "z", -1, true)  = "zbzz"
+     * </pre>
+     *
+     * @param text 要处理的文本
+     * @param searchString 要替换的文本
+     * @param replacement 要替换为的文本
+     * @param max 需要替换的字符串个数，{@code -1} 表示无限制
+     * @param ignoreCase 查找时是否忽略大小写
+     * @return 替换后的文本
+     */
+    private static String replace(final String text, String searchString, final String replacement, int max, final boolean ignoreCase) {
+        if (isEmpty(text) || isEmpty(searchString) || replacement == null || max == 0) {
+            return text;
+        }
+        if (ignoreCase) {
+            searchString = searchString.toLowerCase();
+        }
+        int start = 0;
+        int end = ignoreCase ? indexOfIgnoreCase(text, searchString, start) : indexOf(text, searchString, start);
+        if (end == INDEX_NOT_FOUND) {
+            return text;
+        }
+        final int replLength = searchString.length();
+        int increase = Math.max(replacement.length() - replLength, 0);
+        increase *= max < 0 ? 16 : Math.min(max, 64);
+        final StringBuilder buf = new StringBuilder(text.length() + increase);
+        while (end != INDEX_NOT_FOUND) {
+            buf.append(text, start, end).append(replacement);
+            start = end + replLength;
+            if (--max == 0) {
+                break;
+            }
+            end = ignoreCase ? indexOfIgnoreCase(text, searchString, start) : indexOf(text, searchString, start);
+        }
+        buf.append(text, start, text.length());
+        return buf.toString();
     }
 }

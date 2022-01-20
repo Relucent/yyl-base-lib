@@ -2,6 +2,8 @@ package com.github.relucent.base.common.jdbc;
 
 import java.util.regex.Pattern;
 
+import com.github.relucent.base.common.lang.StringUtil;
+
 /**
  * SQL工具类
  */
@@ -18,6 +20,23 @@ public class SqlUtil {
     }
 
     // ==============================Methods==========================================
+    /**
+     * 转义字符串中的字符，使其适合传递给SQL查询.
+     * 
+     * <pre>
+     * statement.executeQuery("SELECT * FROM MOVIES WHERE TITLE='" + SqlUtil.escapeSql("McHale's Navy") + "'");
+     * </pre>
+     * 
+     * @param str 需要转义的字符串
+     * @return 新的字符串，已经转义
+     */
+    public static String escapeSql(String value) {
+        if (value == null) {
+            return null;
+        }
+        return StringUtil.replace(value, "'", "''");
+    }
+
     /**
      * 移除表达式末尾的排序语句
      * @param sql 查询表达式

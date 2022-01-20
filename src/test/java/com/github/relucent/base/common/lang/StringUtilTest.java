@@ -147,6 +147,12 @@ public class StringUtilTest {
         Assert.assertEquals("123", StringUtil.rightPad("123", 2, '0'));
     }
 
+    @Test
+    public void testReplace() {
+        Assert.assertEquals("A1**C3D4E5", StringUtil.replace("A1B2C3D4E5", "B2", "**"));
+        Assert.assertEquals("A1B2C3D4E5", StringUtil.replace("A1B2C3D4E5", "F6", "**"));
+    }
+
     private final String[] strings(final String... strings) {
         return strings;
     }
