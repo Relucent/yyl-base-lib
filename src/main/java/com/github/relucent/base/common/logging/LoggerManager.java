@@ -4,7 +4,6 @@ import java.lang.reflect.Constructor;
 
 import com.github.relucent.base.common.exception.GeneralException;
 import com.github.relucent.base.common.logging.jdk.JdkLoggerFactory;
-import com.github.relucent.base.common.logging.log4j.Log4jLoggerFactory;
 import com.github.relucent.base.common.logging.log4j2.Log4j2LoggerFactory;
 import com.github.relucent.base.common.logging.none.NoneLoggerFactory;
 import com.github.relucent.base.common.logging.slf4j.Slf4jLoggerFactory;
@@ -27,12 +26,6 @@ public class LoggerManager {
             @Override
             public void run() {
                 useLog4J2Logging();
-            }
-        });
-        tryImplementation(new Runnable() {
-            @Override
-            public void run() {
-                useLog4jLogging();
             }
         });
         tryImplementation(new Runnable() {
@@ -74,10 +67,6 @@ public class LoggerManager {
 
     public static synchronized void useLog4J2Logging() {
         setImplementation(Log4j2LoggerFactory.class);
-    }
-
-    public static synchronized void useLog4jLogging() {
-        setImplementation(Log4jLoggerFactory.class);
     }
 
     public static synchronized void useJdkLogging() {
