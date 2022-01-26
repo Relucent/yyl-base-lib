@@ -13,7 +13,7 @@ import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.ECGenParameterSpec;
 import java.security.spec.KeySpec;
 
-import com.github.relucent.base.common.constant.CharConstants;
+import com.github.relucent.base.common.constant.CharConstant;
 import com.github.relucent.base.common.crypto.CryptoException;
 import com.github.relucent.base.common.crypto.ProviderFactory;
 
@@ -228,7 +228,7 @@ public class KeyUtil {
      */
     private static String getMainAlgorithm(String algorithm) {
         // 获取加密算法第主体算法名称
-        int slashIndex = algorithm.indexOf(CharConstants.SLASH);
+        int slashIndex = algorithm.indexOf(CharConstant.SLASH);
         if (slashIndex > 0) {
             algorithm = algorithm.substring(0, slashIndex);
         }

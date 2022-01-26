@@ -9,7 +9,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.Provider;
 
 import com.github.relucent.base.common.codec.Hex;
-import com.github.relucent.base.common.constant.IoConstants;
+import com.github.relucent.base.common.constant.IoConstant;
 import com.github.relucent.base.common.crypto.CryptoException;
 
 /**
@@ -228,11 +228,11 @@ public class Digester {
      * @throws IOException 出现IO异常时抛出
      */
     private void doUpdate(InputStream input) throws IOException {
-        byte[] buffer = new byte[IoConstants.DEFAULT_BUFFER_SIZE];
+        byte[] buffer = new byte[IoConstant.DEFAULT_BUFFER_SIZE];
         // 无加盐
         if (salt == null || salt.length == 0) {
             int n = 0;
-            while (IoConstants.EOF != (n = input.read(buffer))) {
+            while (IoConstant.EOF != (n = input.read(buffer))) {
                 messageDigest.update(buffer, 0, n);
             }
         }
@@ -247,7 +247,7 @@ public class Digester {
             }
 
             // 加盐在中间
-            while (IoConstants.EOF != (n = input.read(buffer))) {
+            while (IoConstant.EOF != (n = input.read(buffer))) {
                 if (count <= saltPosition && saltPosition < count + n) {
                     int offset = (int) (saltPosition - count);
                     if (offset != 0) {

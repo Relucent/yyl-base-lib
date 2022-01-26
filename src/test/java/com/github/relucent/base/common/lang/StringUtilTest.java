@@ -27,6 +27,15 @@ public class StringUtilTest {
     }
 
     @Test
+    public void testIsBlank() {
+        Assert.assertTrue(StringUtil.isBlank(""));
+        Assert.assertTrue(StringUtil.isBlank(" "));
+        Assert.assertFalse(StringUtil.isBlank("hello"));
+        Assert.assertFalse(StringUtil.isBlank("h e l l o"));
+        Assert.assertFalse(StringUtil.isBlank(" hello "));
+    }
+
+    @Test
     public void testLength() {
         Assert.assertEquals(StringUtil.length(""), 0);
         Assert.assertEquals(StringUtil.length(null), 0);

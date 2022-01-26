@@ -1,6 +1,6 @@
 package com.github.relucent.base.common.page;
 
-import com.github.relucent.base.common.constant.PageConstants;
+import com.github.relucent.base.common.constant.PageConstant;
 
 /**
  * 分页查询条件参数<br>
@@ -15,14 +15,14 @@ public class SimplePagination implements Pagination {
     private long offset = 0;
 
     /** 每页条数 */
-    private long limit = PageConstants.DEFAULT_LIMIT;
+    private long limit = PageConstant.DEFAULT_LIMIT;
 
     // =================================Constructors===========================================
     /**
      * 构造函数
      */
     public SimplePagination() {
-        this(0, PageConstants.DEFAULT_LIMIT);
+        this(0, PageConstant.DEFAULT_LIMIT);
     }
 
     /**

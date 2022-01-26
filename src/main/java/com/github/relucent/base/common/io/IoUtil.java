@@ -16,7 +16,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.github.relucent.base.common.constant.IoConstants;
+import com.github.relucent.base.common.constant.IoConstant;
 
 /**
  * IO工具类 <br>
@@ -75,7 +75,7 @@ public class IoUtil {
      * @throws IOException 如果发生I/O错误
      */
     public static long copyLarge(InputStream input, OutputStream output) throws IOException {
-        return copyLarge(input, output, new byte[IoConstants.DEFAULT_BUFFER_SIZE]);
+        return copyLarge(input, output, new byte[IoConstant.DEFAULT_BUFFER_SIZE]);
     }
 
     /**
@@ -90,7 +90,7 @@ public class IoUtil {
     public static long copyLarge(InputStream input, OutputStream output, byte[] buffer) throws IOException {
         long count = 0;
         int n = 0;
-        while (IoConstants.EOF != (n = input.read(buffer))) {
+        while (IoConstant.EOF != (n = input.read(buffer))) {
             output.write(buffer, 0, n);
             count += n;
         }
@@ -125,7 +125,7 @@ public class IoUtil {
      * @throws IOException 如果发生I/O错误
      */
     public static long copyLarge(Reader input, Writer output) throws IOException {
-        return copyLarge(input, output, new char[IoConstants.DEFAULT_BUFFER_SIZE]);
+        return copyLarge(input, output, new char[IoConstant.DEFAULT_BUFFER_SIZE]);
     }
 
     /**
@@ -140,7 +140,7 @@ public class IoUtil {
     public static long copyLarge(Reader input, Writer output, char[] buffer) throws IOException {
         long count = 0;
         int n = 0;
-        while (IoConstants.EOF != (n = input.read(buffer))) {
+        while (IoConstant.EOF != (n = input.read(buffer))) {
             output.write(buffer, 0, n);
             count += n;
         }
@@ -190,7 +190,6 @@ public class IoUtil {
      * 如果给定字符流是{@link BufferedReader}，则返回该字符流，否则包装一个 BufferedReader返回。
      * @param reader 字符读取流
      * @return {@link BufferedReader}
-     * @throws 如果参数为空抛出异常
      */
     public static BufferedReader toBufferedReader(final Reader reader) {
         return reader instanceof BufferedReader ? (BufferedReader) reader : new BufferedReader(reader);

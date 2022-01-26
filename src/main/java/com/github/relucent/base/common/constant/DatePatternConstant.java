@@ -3,7 +3,7 @@ package com.github.relucent.base.common.constant;
 /**
  * 日期格式常量
  */
-public class DatePatternConstants {
+public class DatePatternConstant {
 
     /** 标准日期时间格式（精确到秒）：yyyy-MM-dd HH:mm:ss */
     public static final String NORM_DATETIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
@@ -50,6 +50,6 @@ public class DatePatternConstants {
     /** JDK中日期时间格式：EEE MMM dd HH:mm:ss zzz yyyy */
     public static final String JDK_DATETIME_PATTERN = "EEE MMM dd HH:mm:ss zzz yyyy";
 
-    private DatePatternConstants() {
+    private DatePatternConstant() {
     }
 }

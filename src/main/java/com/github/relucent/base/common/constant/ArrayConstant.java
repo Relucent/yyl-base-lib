@@ -3,7 +3,7 @@ package com.github.relucent.base.common.constant;
 /**
  * 常量数组
  */
-public class ArrayConstants {
+public class ArrayConstant {
 
     /**
      * An empty immutable {@code Object}array.
@@ -82,6 +82,6 @@ public class ArrayConstants {
      */
     public static final Character[] EMPTY_CHARACTER_OBJECT_ARRAY = new Character[0];
 
-    private ArrayConstants() {
+    private ArrayConstant() {
     }
 }
