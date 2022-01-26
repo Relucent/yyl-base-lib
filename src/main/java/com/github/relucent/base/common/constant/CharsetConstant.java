@@ -6,7 +6,7 @@ import java.nio.charset.StandardCharsets;
 /**
  * 字符集常量
  */
-public class CharsetConstants {
+public class CharsetConstant {
 
     /**
      * UNICODE 字符集 <br>
@@ -44,6 +44,6 @@ public class CharsetConstants {
      */
     public static final Charset UTF_16 = StandardCharsets.UTF_16;
 
-    private CharsetConstants() {
+    private CharsetConstant() {
     }
 }

@@ -6,7 +6,7 @@ import java.io.ByteArrayOutputStream;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.github.relucent.base.common.constant.IoConstants;
+import com.github.relucent.base.common.constant.IoConstant;
 
 public class Md5Test {
     @Test
@@ -40,13 +40,13 @@ public class Md5Test {
     @Test
     public void testDigestInputStream() throws Exception {
         byte[] salt = {0x1, 0x2, 0x3, 0x4, 0x5};
-        int saltPosition = IoConstants.DEFAULT_BUFFER_SIZE + (IoConstants.DEFAULT_BUFFER_SIZE / 2);
+        int saltPosition = IoConstant.DEFAULT_BUFFER_SIZE + (IoConstant.DEFAULT_BUFFER_SIZE / 2);
         int digestCount = 2;
         Md5 md5 = Md5.create(salt, saltPosition, digestCount);
         try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
-            output.write(new byte[IoConstants.DEFAULT_BUFFER_SIZE]);
-            output.write(new byte[IoConstants.DEFAULT_BUFFER_SIZE]);
-            output.write(new byte[IoConstants.DEFAULT_BUFFER_SIZE]);
+            output.write(new byte[IoConstant.DEFAULT_BUFFER_SIZE]);
+            output.write(new byte[IoConstant.DEFAULT_BUFFER_SIZE]);
+            output.write(new byte[IoConstant.DEFAULT_BUFFER_SIZE]);
             byte[] large = output.toByteArray();
             try (ByteArrayInputStream input = new ByteArrayInputStream(large)) {
                 byte[] hash1 = md5.digest(large);

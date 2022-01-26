@@ -3,7 +3,7 @@ package com.github.relucent.base.common.page;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.github.relucent.base.common.constant.PageConstants;
+import com.github.relucent.base.common.constant.PageConstant;
 
 /**
  * 分页查询的结果数据 <br>
@@ -15,9 +15,9 @@ public class SimplePage<T> implements Page<T> {
 
     // =================================Fields================================================
     /** 开始查询 的数据索引号 (从0开始) */
-    private long offset = PageConstants.DEFAULT_OFFSET;
+    private long offset = PageConstant.DEFAULT_OFFSET;
     /** 每页条数 */
-    private long limit = PageConstants.DEFAULT_LIMIT;
+    private long limit = PageConstant.DEFAULT_LIMIT;
     /** 总记录数 */
     private long total = 0;
     /** 当前页数据 */

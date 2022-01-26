@@ -15,7 +15,7 @@ import javax.crypto.spec.DESedeKeySpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
-import com.github.relucent.base.common.constant.CharConstants;
+import com.github.relucent.base.common.constant.CharConstant;
 import com.github.relucent.base.common.crypto.CryptoException;
 import com.github.relucent.base.common.crypto.ProviderFactory;
 
@@ -205,7 +205,7 @@ public class SecretKeyUtil {
      * @return 主体算法名
      */
     private static String getMainAlgorithm(String algorithm) {
-        int slashIndex = algorithm.indexOf(CharConstants.SLASH);
+        int slashIndex = algorithm.indexOf(CharConstant.SLASH);
         if (slashIndex > 0) {
             return algorithm.substring(0, slashIndex);
         }

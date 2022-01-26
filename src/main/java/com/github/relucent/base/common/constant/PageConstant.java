@@ -3,7 +3,7 @@ package com.github.relucent.base.common.constant;
 /**
  * 分页常量
  */
-public class PageConstants {
+public class PageConstant {
 
     /** 默认的当前页数 */
     public static final long DEFAULT_CURRENT = 1L;
@@ -14,6 +14,6 @@ public class PageConstants {
     /** 默认每页记录条数 */
     public static final long DEFAULT_LIMIT = 15L;
 
-    private PageConstants() {
+    private PageConstant() {
     }
 }

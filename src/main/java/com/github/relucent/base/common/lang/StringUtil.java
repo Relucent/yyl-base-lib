@@ -5,9 +5,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
-import com.github.relucent.base.common.constant.ArrayConstants;
-import com.github.relucent.base.common.constant.CharConstants;
-import com.github.relucent.base.common.constant.StringConstants;
+import com.github.relucent.base.common.constant.ArrayConstant;
+import com.github.relucent.base.common.constant.CharConstant;
+import com.github.relucent.base.common.constant.StringConstant;
 
 /**
  * 字符串工具类
@@ -45,6 +45,52 @@ public class StringUtil {
     }
 
     /**
+     * 检查字符序列是否为空或者空白，空白由{@link Character#isWhitespace(char)}定义。
+     * 
+     * <pre>
+     * StringUtils.isBlank(null)        = true
+     * StringUtils.isBlank("")          = true
+     * StringUtils.isBlank(" ")         = true
+     * StringUtils.isBlank("hello")     = false
+     * StringUtils.isBlank("h e l l o") = false
+     * StringUtils.isBlank("  hello  ") = false
+     * </pre>
+     * 
+     * @param cs 要检查的字符序列
+     * @return 如果字符序列为 null或者空白，则返回 {@code true}
+     */
+    public static boolean isBlank(final CharSequence cs) {
+        final int length = length(cs);
+        if (length == 0) {
+            return true;
+        }
+        for (int i = 0; i < length; i++) {
+            if (!Character.isWhitespace(cs.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 检查字符序列是否只包含数字字符
+     * @param cs 检查的字符序列
+     * @return 如果字符串只包含数字字符，则返回{@code true} //
+     */
+    public static boolean isDigits(final String cs) {
+        if (isEmpty(cs)) {
+            return false;
+        }
+        final int sz = cs.length();
+        for (int i = 0; i < sz; i++) {
+            if (!Character.isDigit(cs.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * 获取字符串的长度，如果为null返回0
      * @param cs 字符串
      * @return 字符串的长度，如果为null返回0
@@ -66,7 +112,7 @@ public class StringUtil {
      * @return 传入的字符串，如果是{@code null}，则为返回空字符串("").
      */
     public static String defaultString(final String string) {
-        return defaultString(string, StringConstants.EMPTY);
+        return defaultString(string, StringConstant.EMPTY);
     }
 
     /**
@@ -101,7 +147,7 @@ public class StringUtil {
      * @return 修剪后的字符串
      */
     public static String trimToEmpty(final CharSequence cs) {
-        return cs == null ? StringConstants.EMPTY : cs.toString().trim();
+        return cs == null ? StringConstant.EMPTY : cs.toString().trim();
     }
 
     /**
@@ -119,7 +165,7 @@ public class StringUtil {
             if (Character.isWhitespace(c)) {
                 continue;
             }
-            if (CharConstants.UTF_8_BOM == c) {
+            if (CharConstant.UTF_8_BOM == c) {
                 continue;
             }
             buffer.append((char) c);
@@ -151,7 +197,7 @@ public class StringUtil {
             return null;
         }
         if (!iterator.hasNext()) {
-            return StringConstants.EMPTY;
+            return StringConstant.EMPTY;
         }
         final Object first = iterator.next();
         if (!iterator.hasNext()) {
@@ -184,7 +230,7 @@ public class StringUtil {
             return null;
         }
         if (separator == null) {
-            separator = StringConstants.EMPTY;
+            separator = StringConstant.EMPTY;
         }
         int count = 0;
         final StringBuilder buffer = new StringBuilder(STRING_BUILDER_SIZE);
@@ -227,10 +273,10 @@ public class StringUtil {
             return null;
         }
         if (!iterator.hasNext()) {
-            return StringConstants.EMPTY;
+            return StringConstant.EMPTY;
         }
         if (separator == null) {
-            separator = StringConstants.EMPTY;
+            separator = StringConstant.EMPTY;
         }
         int count = 0;
         final StringBuilder buffer = new StringBuilder(STRING_BUILDER_SIZE);
@@ -356,7 +402,7 @@ public class StringUtil {
     public static String[] splitPurify(final CharSequence cs, final String separator) {
         String[] array = split(cs, separator);
         if (array == null) {
-            return ArrayConstants.EMPTY_STRING_ARRAY;
+            return ArrayConstant.EMPTY_STRING_ARRAY;
         }
         List<String> result = new ArrayList<>();
         for (String value : array) {
@@ -364,7 +410,7 @@ public class StringUtil {
                 result.add(value);
             }
         }
-        return result.toArray(ArrayConstants.EMPTY_STRING_ARRAY);
+        return result.toArray(ArrayConstant.EMPTY_STRING_ARRAY);
     }
 
     /**
@@ -452,7 +498,7 @@ public class StringUtil {
         }
         final int len = cs.length();
         if (len == 0) {
-            return ArrayConstants.EMPTY_STRING_ARRAY;
+            return ArrayConstant.EMPTY_STRING_ARRAY;
         }
         final List<String> list = new ArrayList<>();
         int sizePlus1 = 1;
@@ -531,10 +577,31 @@ public class StringUtil {
      * 查找字符串在文本中第一次出现的位置
      * 
      * <pre>
+     * StringUtil.indexOf(null, *)          = -1
+     * StringUtil.indexOf(*, null)          = -1
+     * StringUtil.indexOf("", "")           = 0
+     * StringUtil.indexOf("", *)            = -1
+     * StringUtil.indexOf("aabaabaa", "a")  = 0
+     * StringUtil.indexOf("aabaabaa", "b")  = 2
+     * StringUtil.indexOf("aabaabaa", "ab") = 1
+     * </pre>
+     * 
+     * @param text 用于查找的文本
+     * @param search 查找的字符串
+     * @return 字符串第一次出现的位置，如果未找到返回 -1
+     */
+    public static int indexOf(final CharSequence text, final CharSequence search) {
+        return CharSequenceUtil.indexOf(text, search, 0);
+    }
+
+    /**
+     * 查找字符串在文本中第一次出现的位置
+     * 
+     * <pre>
      * StringUtil.indexOf(null, *, *)          = -1
      * StringUtil.indexOf(*, null, *)          = -1
      * StringUtil.indexOf("", "", 0)           = 0
-     * StringUtil.indexOf("", *, 0)            = -1 (except when * = "")
+     * StringUtil.indexOf("", *, 0)            = -1
      * StringUtil.indexOf("aabaabaa", "a", 0)  = 0
      * StringUtil.indexOf("aabaabaa", "b", 0)  = 2
      * StringUtil.indexOf("aabaabaa", "ab", 0) = 1
@@ -546,15 +613,35 @@ public class StringUtil {
      * </pre>
      * 
      * @param text 用于查找的文本
-     * @param searchStr 查找的字符串
+     * @param search 查找的字符串
      * @param startPos 开始查找的位置
      * @return 字符串第一次出现的位置，如果未找到返回 -1
      */
-    public static int indexOf(final CharSequence text, final CharSequence searchSeq, final int startPos) {
-        if (text == null || searchSeq == null) {
+    public static int indexOf(final CharSequence text, final CharSequence search, final int startPos) {
+        if (text == null || search == null) {
             return INDEX_NOT_FOUND;
         }
-        return CharSequenceUtil.indexOf(text, searchSeq, startPos);
+        return CharSequenceUtil.indexOf(text, search, startPos);
+    }
+
+    /**
+     * 判断文本中是否包含指定字符串
+     * 
+     * <pre>
+     * StringUtil.contains(null, *)     = false
+     * StringUtil.contains(*, null)     = false
+     * StringUtil.contains("", "")      = true
+     * StringUtil.contains("abc", "")   = true
+     * StringUtil.contains("abc", "a")  = true
+     * StringUtil.contains("abc", "z")  = false
+     * </pre>
+     *
+     * @param text 要检查的文本
+     * @param search 要查找的字符串
+     * @return 如果文本中包含要查找的字符串则返回 true，否则返回false
+     */
+    public static boolean contains(final CharSequence text, final CharSequence search) {
+        return indexOf(text, search) >= 0;
     }
 
     /**
@@ -575,26 +662,26 @@ public class StringUtil {
      * </pre>
      *
      * @param text 用于查找的文本
-     * @param searchStr 查找的字符串
+     * @param search 查找的字符串
      * @param startPos 开始查找的位置
      * @return 字符串第一次出现的位置，如果未找到返回 -1
      */
-    public static int indexOfIgnoreCase(final CharSequence text, final CharSequence searchStr, int startPos) {
-        if (text == null || searchStr == null) {
+    public static int indexOfIgnoreCase(final CharSequence text, final CharSequence search, int startPos) {
+        if (text == null || search == null) {
             return INDEX_NOT_FOUND;
         }
         if (startPos < 0) {
             startPos = 0;
         }
-        final int endLimit = text.length() - searchStr.length() + 1;
+        final int endLimit = text.length() - search.length() + 1;
         if (startPos > endLimit) {
             return INDEX_NOT_FOUND;
         }
-        if (searchStr.length() == 0) {
+        if (search.length() == 0) {
             return startPos;
         }
         for (int i = startPos; i < endLimit; i++) {
-            if (CharSequenceUtil.regionMatches(text, true, i, searchStr, 0, searchStr.length())) {
+            if (CharSequenceUtil.regionMatches(text, true, i, search, 0, search.length())) {
                 return i;
             }
         }

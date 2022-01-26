@@ -5,7 +5,7 @@ import java.io.File;
 /**
  * 常规文件名和文件路径相关常量
  */
-public class FilenameConstants {
+public class FilenameConstant {
 
     /** 文件扩展名分隔符 */
     public static final char EXTENSION_SEPARATOR = '.';
@@ -18,6 +18,6 @@ public class FilenameConstants {
     /** 当前系统的文件名路径分隔符 */
     public static final char SYSTEM_SEPARATOR = File.separatorChar;
 
-    private FilenameConstants() {
+    private FilenameConstant() {
     }
 }

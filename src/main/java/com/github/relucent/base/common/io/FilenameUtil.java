@@ -1,6 +1,6 @@
 package com.github.relucent.base.common.io;
 
-import com.github.relucent.base.common.constant.FilenameConstants;
+import com.github.relucent.base.common.constant.FilenameConstant;
 
 /**
  * 常规文件名和文件路径操作工作类。
@@ -92,10 +92,10 @@ public class FilenameUtil {
      * @return 符合规范的文件路径
      */
     public static String separatorsToUnix(String path) {
-        if ((path == null) || (path.indexOf(FilenameConstants.WINDOWS_SEPARATOR) == -1)) {
+        if ((path == null) || (path.indexOf(FilenameConstant.WINDOWS_SEPARATOR) == -1)) {
             return path;
         }
-        return path.replace(FilenameConstants.WINDOWS_SEPARATOR, FilenameConstants.UNIX_SEPARATOR);
+        return path.replace(FilenameConstant.WINDOWS_SEPARATOR, FilenameConstant.UNIX_SEPARATOR);
     }
 
     /**
@@ -132,8 +132,8 @@ public class FilenameUtil {
         if (path == null) {
             return -1;
         }
-        int lastUnixPos = path.lastIndexOf(FilenameConstants.UNIX_SEPARATOR);
-        int lastWindowsPos = path.lastIndexOf(FilenameConstants.WINDOWS_SEPARATOR);
+        int lastUnixPos = path.lastIndexOf(FilenameConstant.UNIX_SEPARATOR);
+        int lastWindowsPos = path.lastIndexOf(FilenameConstant.WINDOWS_SEPARATOR);
         return Math.max(lastUnixPos, lastWindowsPos);
     }
 
@@ -146,7 +146,7 @@ public class FilenameUtil {
         if (path == null) {
             return -1;
         }
-        int extensionPos = path.lastIndexOf(FilenameConstants.EXTENSION_SEPARATOR);
+        int extensionPos = path.lastIndexOf(FilenameConstant.EXTENSION_SEPARATOR);
         int lastSeparator = indexOfLastSeparator(path);
         return lastSeparator > extensionPos ? -1 : extensionPos;
     }

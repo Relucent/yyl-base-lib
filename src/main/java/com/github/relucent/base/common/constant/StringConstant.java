@@ -3,7 +3,7 @@ package com.github.relucent.base.common.constant;
 /**
  * 常量字符串
  */
-public class StringConstants {
+public class StringConstant {
 
     /** 空字符串 */
     public static final String EMPTY = "";
@@ -137,6 +137,6 @@ public class StringConstants {
     /** JSON对象字符串({})，表示空对象 */
     public static final String JSON_EMPTY_OBJECT = "{}";
 
-    private StringConstants() {
+    private StringConstant() {
     }
 }

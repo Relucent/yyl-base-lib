@@ -3,7 +3,7 @@ package com.github.relucent.base.common.constant;
 /**
  * 常量字符
  */
-public class CharConstants {
+public class CharConstant {
 
     /** 水平制表符(horizontal tab) [0x09] */
     public static final char TAB = '\t';
@@ -116,6 +116,6 @@ public class CharConstants {
     /** UTF-8 BOM FEFF(65279) */
     public static final char UTF_8_BOM = 0xFEFF;
 
-    private CharConstants() {
+    private CharConstant() {
     }
 }

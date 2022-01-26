@@ -11,6 +11,13 @@ import com.github.relucent.base.common.net.NetworkUtil;
 /**
  * 时间序列ID生成器(20位)<br>
  * 时间戳+循环计数+随机数+网络地址+进程号<br>
+ * 优势：<br>
+ * TimeId 因此是有序的（有序但不连贯）<br>
+ * TimeId 使用了和 SnowflakeIdWorker 类似的时间戳算法，但是冲突的概率更低<br>
+ * TimeId 与 UUID 相比，大小从36个符号减少到21个符号<br>
+ * 劣势：<br>
+ * TimeId 是字符串，相对 SnowflakeIdWorker（ 长整型） 占用更大的空间（但是与UUID比较依旧是紧凑的）
+ * @author YYL
  */
 public class TimeId {
 
@@ -24,7 +31,6 @@ public class TimeId {
     private static final int MAC_MOD = computeRadix36Mod(MAC_LENGTH);
     private static final int PID_MOD = computeRadix36Mod(PID_LENGTH);
     private static final int RANDOM_MOD = computeRadix36Mod(RANDOM_LENGTH);
-
     private static final char ZERO_CHAR = '0';
 
     /** 循环序列号 */
@@ -37,52 +43,24 @@ public class TimeId {
         static final long PID_VALUE = getPid();
     }
 
-    private final long timestamp;
-    private final long counter;
-    private final long mac;
-    private final long pid;
-    private final long random;
-
     /**
      * 构造函数
-     * @param timestamp 时间戳
-     * @param counter 毫秒内计数
-     * @param mac 网卡ID
-     * @param pid 进程ID
-     * @param random 随机数
      */
-    private TimeId(long timestamp, long counter, long mac, long pid, long random) {
-        this.timestamp = timestamp;
-        this.counter = Math.abs(counter % COUNTER_MOD);
-        this.mac = Math.abs(mac % MAC_MOD);
-        this.pid = Math.abs(pid % PID_MOD);
-        this.random = Math.abs(random % RANDOM_MOD);
+    protected TimeId() {
+
     }
 
     /**
-     * 生成序列ID
-     * @return 序列ID
+     * 生成 TimeId
+     * @return TimeId 字符串
      */
-    public static TimeId generate() {
-        long timestamp = timeGen();
-        long counter = NEXT_COUNTER.getAndIncrement();
-        long mac = Holder.MAC_VALUE;
-        long pid = Holder.PID_VALUE;
-        long random = Holder.NUMBER_GENERATOR.nextLong();
-        return new TimeId(timestamp, counter, mac, pid, random);
-    }
-
-    /**
-     * 输出对象的字符串形式
-     * @return 对象的字符串形式
-     */
-    public String toString() {
+    public static String nextId() {
         StringBuilder buffer = new StringBuilder();
-        append(buffer, timestamp, TIMESTAMP_LENGTH);
-        append(buffer, counter, COUNTER_LENGTH);
-        append(buffer, mac, MAC_LENGTH);
-        append(buffer, pid, PID_LENGTH);
-        append(buffer, random, RANDOM_LENGTH);
+        append(buffer, timeGen(), TIMESTAMP_LENGTH);
+        append(buffer, Math.abs(NEXT_COUNTER.getAndIncrement() % COUNTER_MOD), COUNTER_LENGTH);
+        append(buffer, Math.abs(Holder.MAC_VALUE % MAC_MOD), MAC_LENGTH);
+        append(buffer, Math.abs(Holder.PID_VALUE % PID_MOD), PID_LENGTH);
+        append(buffer, Math.abs(Holder.NUMBER_GENERATOR.nextLong() % RANDOM_MOD), RANDOM_LENGTH);
         return buffer.toString();
     }
 
@@ -92,7 +70,7 @@ public class TimeId {
      * @param value 数值
      * @param length 添加的位数
      */
-    private void append(StringBuilder buffer, long value, int length) {
+    private static void append(StringBuilder buffer, long value, int length) {
         buffer.append(StringUtil.leftPad(Long.toString(value, RADIX36), length, ZERO_CHAR));
     }
 

@@ -5,7 +5,7 @@ import java.math.BigInteger;
 /**
  * 文件相关常量
  */
-public class FileConstants {
+public class FileConstant {
 
     /** 1KB (KiloByte,千字节,千) 2^10B */
     public static final long ONE_KB = 1024L;
@@ -38,6 +38,6 @@ public class FileConstants {
     /** 1YB (YottaByte,一亿亿亿字节) 2^80B */
     public static final BigInteger ONE_YB_BI = ONE_KB_BI.multiply(ONE_ZB_BI);
 
-    private FileConstants() {
+    private FileConstant() {
     }
 }
