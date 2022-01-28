@@ -3,7 +3,7 @@ package com.github.relucent.base.common.lock;
 /**
  * 分布式锁
  */
-public interface ConcurrentLock {
+public interface DistributedLock {
 
     /** 获取锁 */
     void lock();

@@ -10,8 +10,9 @@ import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * 集合对象，通过{@link ConcurrentHashMap}实现的线程安全Set，性能高于{@link ConcurrentSkipListSet}。<br>
- * @see Collections#newSetFromMap
  * @see ConcurrentSkipListSet
+ * @see Collections#newSetFromMap
+ * @see ConcurrentHashMap#newKeySet
  * @param <E> 元素类型
  */
 @SuppressWarnings("serial")
