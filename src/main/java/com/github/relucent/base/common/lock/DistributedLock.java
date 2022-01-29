@@ -1,13 +1,9 @@
 package com.github.relucent.base.common.lock;
 
+import java.util.concurrent.locks.Lock;
+
 /**
  * 分布式锁
  */
-public interface DistributedLock {
-
-    /** 获取锁 */
-    void lock();
-
-    /** 释放锁 */
-    void unlock();
+public interface DistributedLock extends Lock {
 }
