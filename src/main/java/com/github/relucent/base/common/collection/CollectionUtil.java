@@ -3,7 +3,10 @@ package com.github.relucent.base.common.collection;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
@@ -140,5 +143,65 @@ public class CollectionUtil {
             }
         }
         return -1;
+    }
+
+    /**
+     * 获取指定的集合（Collection或者iterator）的大小， 此方法可以按如下方式处理对象：
+     * <ul>
+     * <li>Collection {@code Collection#size()}
+     * <li>Map - {@code Map#size()}
+     * <li>Array - {@code array.length}
+     * <li>Iterator - 迭代器中剩余的元素数
+     * <li>Enumeration - 枚举中剩余的元素数
+     * </ul>
+     * @param 对象要获取其大小的对象
+     * @return 指定集合的大小，如果对象为null，则为0
+     * @throws IllegalArgumentException 无法识别对象
+     */
+    public static int size(final Object object) {
+        if (object == null) {
+            return 0;
+        }
+        int total = 0;
+        if (object instanceof Map<?, ?>) {
+            total = ((Map<?, ?>) object).size();
+        } else if (object instanceof Collection<?>) {
+            total = ((Collection<?>) object).size();
+        } else if (object instanceof Iterable<?>) {
+            total = nextIteratorAndGetSize(((Iterable<?>) object).iterator());
+        } else if (object instanceof Object[]) {
+            total = ((Object[]) object).length;
+        } else if (object instanceof Iterator<?>) {
+            total = nextIteratorAndGetSize((Iterator<?>) object);
+        } else if (object instanceof Enumeration<?>) {
+            final Enumeration<?> it = (Enumeration<?>) object;
+            while (it.hasMoreElements()) {
+                total++;
+                it.nextElement();
+            }
+        } else {
+            try {
+                total = Array.getLength(object);
+            } catch (final IllegalArgumentException ex) {
+                throw new IllegalArgumentException("Unsupported object type: " + object.getClass().getName());
+            }
+        }
+        return total;
+    }
+
+    /**
+     * 返回给定迭代器中包含的元素数
+     * @param iterator 要检查的迭代器
+     * @return 迭代器中包含的元素数
+     */
+    private static int nextIteratorAndGetSize(final Iterator<?> iterator) {
+        int size = 0;
+        if (iterator != null) {
+            while (iterator.hasNext()) {
+                iterator.next();
+                size++;
+            }
+        }
+        return size;
     }
 }

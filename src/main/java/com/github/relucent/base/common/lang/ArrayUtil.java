@@ -1,5 +1,7 @@
 package com.github.relucent.base.common.lang;
 
+import java.lang.reflect.Array;
+
 /**
  * 数组工具类
  * @author _yyl
@@ -35,6 +37,30 @@ public class ArrayUtil {
      */
     public static <T> boolean isNotEmpty(final T[] array) {
         return !isEmpty(array);
+    }
+
+    /**
+     * 返回指定数组的长度<br>
+     * 如果输入数组为{@code null}，则返回{@code 0}<br>
+     * 
+     * <pre>
+     * ArrayUtil.getLength(null)            = 0
+     * ArrayUtil.getLength([])              = 0
+     * ArrayUtil.getLength([null])          = 1
+     * ArrayUtil.getLength([true, false])   = 2
+     * ArrayUtil.getLength([1, 2, 3])       = 3
+     * ArrayUtil.getLength(["a", "b", "c"]) = 3
+     * </pre>
+     * 
+     * @param array 需要获取长度的数组
+     * @return 数组的长度, 如果数组为 {@code null}则返回 {@code 0}
+     * @throws IllegalArgumentException 如果对象参数不是数组
+     */
+    public static int getLength(final Object array) {
+        if (array == null) {
+            return 0;
+        }
+        return Array.getLength(array);
     }
 
     /**
