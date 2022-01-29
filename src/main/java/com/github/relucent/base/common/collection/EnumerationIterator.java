@@ -15,7 +15,7 @@ public class EnumerationIterator<E> implements Iterator<E>, Serializable {
     private final Enumeration<E> enumeration;
 
     /**
-     * 构造
+     * 构造函数
      * @param enumeration {@link Enumeration}对象
      */
     public EnumerationIterator(Enumeration<E> enumeration) {
@@ -33,10 +33,5 @@ public class EnumerationIterator<E> implements Iterator<E>, Serializable {
             throw new NoSuchElementException();
         }
         return enumeration.nextElement();
-    }
-
-    @Override
-    public void remove() {
-        throw new UnsupportedOperationException();
     }
 }

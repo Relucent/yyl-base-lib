@@ -3,7 +3,10 @@ package com.github.relucent.base.common.collection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -75,5 +78,23 @@ public class CollectionUtilTest {
         List<?> list = Arrays.asList("hello", "world");
         Object[] array = CollectionUtil.toArray(list, Object[]::new);
         Assert.assertArrayEquals(array, new Object[] { "hello", "world" });
+    }
+
+    @Test
+    public void testSize() {
+        int count = 100;
+        Map<Integer, Long> map = new HashMap<>();
+        for (int i = 0; i < count; i++) {
+            map.put(i, Long.valueOf(i));
+        }
+        Collection<?> collection = map.keySet();
+        Object[] array = collection.toArray();
+        Iterator<?> iterator = collection.iterator();
+        Enumeration<?> enumeration = new IteratorEnumeration<>(collection.iterator());
+        Assert.assertEquals(count, CollectionUtil.size(collection));
+        Assert.assertEquals(count, CollectionUtil.size(map));
+        Assert.assertEquals(count, CollectionUtil.size(array));
+        Assert.assertEquals(count, CollectionUtil.size(iterator));
+        Assert.assertEquals(count, CollectionUtil.size(enumeration));
     }
 }
