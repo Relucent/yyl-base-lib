@@ -3,6 +3,9 @@ package com.github.relucent.base.common.crypto.symmetric;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 
+import com.github.relucent.base.common.crypto.ModeEnum;
+import com.github.relucent.base.common.crypto.PaddingEnum;
+
 /**
  * Data Encryption Standard(数据加密标准)算法实现<br>
  * Java中的默认模式是：DES/CBC/PKCS5Padding<br>

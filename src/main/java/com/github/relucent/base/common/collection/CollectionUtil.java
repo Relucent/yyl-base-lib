@@ -154,7 +154,7 @@ public class CollectionUtil {
      * <li>Iterator - 迭代器中剩余的元素数
      * <li>Enumeration - 枚举中剩余的元素数
      * </ul>
-     * @param 对象要获取其大小的对象
+     * @param object 要获取其大小的对象
      * @return 指定集合的大小，如果对象为null，则为0
      * @throws IllegalArgumentException 无法识别对象
      */
