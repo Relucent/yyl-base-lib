@@ -226,7 +226,6 @@ public class JedisDistributedLock implements DistributedLock {
     /**
      * 到期续订
      * @param threadId 线程ID
-     * @return 是否续订成功
      */
     protected void renewExpiration(long threadId) {
         TIMER.schedule(new TimerTask() {
