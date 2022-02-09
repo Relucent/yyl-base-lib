@@ -9,7 +9,7 @@ import com.github.relucent.base.common.reflect.TypeReference;
  * 缓存定义
  * @param <T> 缓存元素的类型
  */
-public class SimpleCacheDefinition<T> {
+public class CacheDefinition<T> {
 
     /** 缓存名称 */
     private final String name;
@@ -27,7 +27,7 @@ public class SimpleCacheDefinition<T> {
      * @param ttl 缓存对象过期时间
      * @param maxIdleTime 缓存对象最长空闲时间
      */
-    protected SimpleCacheDefinition(String name, TypeReference<T> elementType, Duration ttl, Duration maxIdleTime) {
+    protected CacheDefinition(String name, TypeReference<T> elementType, Duration ttl, Duration maxIdleTime) {
         this.name = name;
         this.elementType = elementType;
         this.ttl = ttl;
@@ -41,7 +41,7 @@ public class SimpleCacheDefinition<T> {
      * @param elementType 缓存元素的类型引用
      * @return 缓存定义实例
      */
-    public static <T> SimpleCacheDefinition<T> of(String name, TypeReference<T> elementType) {
+    public static <T> CacheDefinition<T> of(String name, TypeReference<T> elementType) {
         return of(name, elementType, null, null);
     }
 
@@ -53,7 +53,7 @@ public class SimpleCacheDefinition<T> {
      * @param ttl 缓存对象过期时间
      * @return 缓存定义实例
      */
-    public static <T> SimpleCacheDefinition<T> of(String name, TypeReference<T> elementType, Duration ttl) {
+    public static <T> CacheDefinition<T> of(String name, TypeReference<T> elementType, Duration ttl) {
         return of(name, elementType, ttl, null);
     }
 
@@ -66,8 +66,8 @@ public class SimpleCacheDefinition<T> {
      * @param maxIdleTime 缓存对象最长空闲时间
      * @return 缓存定义实例
      */
-    public static <T> SimpleCacheDefinition<T> of(String name, TypeReference<T> elementType, Duration ttl, Duration maxIdleTime) {
-        return new SimpleCacheDefinition<T>(name, elementType, ttl, maxIdleTime);
+    public static <T> CacheDefinition<T> of(String name, TypeReference<T> elementType, Duration ttl, Duration maxIdleTime) {
+        return new CacheDefinition<T>(name, elementType, ttl, maxIdleTime);
     }
 
     /**
@@ -77,7 +77,7 @@ public class SimpleCacheDefinition<T> {
      * @param elementType 缓存元素的类型
      * @return 缓存定义实例
      */
-    public static <T> SimpleCacheDefinition<T> of(String name, Class<T> elementType) {
+    public static <T> CacheDefinition<T> of(String name, Class<T> elementType) {
         return of(name, elementType, null, null);
     }
 
@@ -89,7 +89,7 @@ public class SimpleCacheDefinition<T> {
      * @param ttl 缓存对象过期时间
      * @return 缓存定义实例
      */
-    public static <T> SimpleCacheDefinition<T> of(String name, Class<T> elementType, Duration ttl) {
+    public static <T> CacheDefinition<T> of(String name, Class<T> elementType, Duration ttl) {
         return of(name, elementType, ttl, null);
     }
 
@@ -102,7 +102,7 @@ public class SimpleCacheDefinition<T> {
      * @param maxIdleTime 缓存对象最长空闲时间
      * @return 缓存定义实例
      */
-    public static <T> SimpleCacheDefinition<T> of(String name, Class<T> elementType, Duration ttl, Duration maxIdleTime) {
+    public static <T> CacheDefinition<T> of(String name, Class<T> elementType, Duration ttl, Duration maxIdleTime) {
         return of(name, TypeReference.of(elementType), ttl, maxIdleTime);
     }
 
@@ -162,7 +162,7 @@ public class SimpleCacheDefinition<T> {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        SimpleCacheDefinition<?> other = (SimpleCacheDefinition<?>) obj;
+        CacheDefinition<?> other = (CacheDefinition<?>) obj;
         return Objects.equals(name, other.name) && Objects.equals(elementType, other.elementType) && Objects.equals(maxIdleTime, other.maxIdleTime)
                 && Objects.equals(ttl, other.ttl);
     }
@@ -178,7 +178,7 @@ public class SimpleCacheDefinition<T> {
         private Duration ttl;
         private Duration maxIdleTime;
 
-        protected Builder(SimpleCacheDefinition<T> definition) {
+        protected Builder(CacheDefinition<T> definition) {
             this.name = definition.name;
             this.elementType = definition.elementType;
             this.ttl = definition.ttl;
@@ -205,8 +205,8 @@ public class SimpleCacheDefinition<T> {
             return this;
         }
 
-        public SimpleCacheDefinition<T> build() {
-            return new SimpleCacheDefinition<>(name, elementType, ttl, maxIdleTime);
+        public CacheDefinition<T> build() {
+            return new CacheDefinition<>(name, elementType, ttl, maxIdleTime);
         }
     }
 }
