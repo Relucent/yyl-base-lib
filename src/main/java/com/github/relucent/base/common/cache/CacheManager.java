@@ -3,8 +3,8 @@ package com.github.relucent.base.common.cache;
 /**
  * 缓存管理器接口类
  */
-public interface SimpleCacheManager {
-
+public interface CacheManager {
+    
     /**
      * 获得对象缓存实例
      * 
@@ -23,5 +23,5 @@ public interface SimpleCacheManager {
      * @param definition 缓存定义信息
      * @return 对象缓存
      */
-    <T> SimpleCache<T> getCache(SimpleCacheDefinition<T> definition);
+    <T> Cache<T> getCache(CacheDefinition<T> definition);
 }

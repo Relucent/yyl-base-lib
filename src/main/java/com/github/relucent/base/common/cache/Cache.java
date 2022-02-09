@@ -4,13 +4,7 @@ package com.github.relucent.base.common.cache;
  * 缓存接口类
  * @param <T> 缓存对象类型
  */
-public interface SimpleCache<T> {
-
-    /**
-     * 获得缓存名称
-     * @return 缓存名称
-     */
-    String getName();
+public interface Cache<T> {
 
     /**
      * 读取缓存的对象

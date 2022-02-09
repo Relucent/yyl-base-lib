@@ -14,9 +14,9 @@ import com.github.relucent.base.common.net.NetworkUtil;
  * 优势：<br>
  * TimeId 因此是有序的（有序但不连贯）<br>
  * TimeId 使用了和 SnowflakeIdWorker 类似的时间戳算法，但是冲突的概率更低<br>
- * TimeId 与 UUID 相比，大小从36个符号减少到21个符号<br>
+ * TimeId 与 UUID 相比，大小从36个符号减少到20个符号<br>
  * 劣势：<br>
- * TimeId 是字符串，相对 SnowflakeIdWorker（ 长整型） 占用更大的空间（但是与UUID比较依旧是紧凑的）
+ * TimeId 是字符串，相对 SnowflakeIdWorker（ 长整型） 占用更大的空间，但是比UUID紧凑
  * @author YYL
  */
 public class TimeId {

@@ -26,28 +26,38 @@ public class ObjectUtil {
 
     /**
      * 判断对象是否非NULL
-     * @param object 要检查的对象
+     * @param value 要检查的对象
      * @return 是否非NULL
      */
-    public static boolean isNotNull(final Object object) {
-        return object != null;
+    public static boolean isNotNull(final Object value) {
+        return value != null;
     }
 
     /**
-     * 返回传入的对象，或者如果对象为{@code null}，则返回默认对象{@code defaultObject}.
+     * 如果传入的对象不为{@code null}，则直接返回，否则返回默认对象{@code defaultValue}
      * 
      * <pre>
-     * ObjectUtil.defaultObject(null, "NULL")  = "NULL"
-     * ObjectUtil.defaultObject("", "NULL")    = ""
-     * ObjectUtil.defaultObject("bat", "NULL") = "bat"
+     * ObjectUtil.orElse(null, "NULL")  = "NULL"
+     * ObjectUtil.orElse("", "NULL")    = ""
+     * ObjectUtil.orElse("bat", "NULL") = "bat"
      * </pre>
      * 
-     * @param object 要检查的对象
-     * @param defaultObject 默认对象
-     * @return 传入的对象，如果是{@code null}，则返回默认对象{@code defaultObject}.
+     * @param value 要检查的对象
+     * @param defaultValue 默认对象
+     * @return 传入的对象，如果是{@code null}，则返回默认对象{@code defaultValue}.
      */
-    public static Object defaultObject(final Object object, final Object defaultObject) {
-        return object == null ? defaultObject : object;
+    public static <T> T defaultIfNull(final T value, final T defaultValue) {
+        return value != null ? value : defaultValue;
+    }
+
+    /**
+     * 如果传入的对象不为{@code null}，则直接返回，否则调用{@code defaultSupplier}并返回该调用的结果。
+     * @param value 要检查的对象
+     * @param defaultSupplier {@code Supplier}，如果不存在值，则返回其结果
+     * @return 传入的对象，如果是{@code null}，则返回{@code defaultSupplier}调用的结果。
+     */
+    public static <T> T defaultIfNullGet(final T value, final Supplier<? extends T> defaultSupplier) {
+        return value != null ? value : defaultSupplier.get();
     }
 
     /**

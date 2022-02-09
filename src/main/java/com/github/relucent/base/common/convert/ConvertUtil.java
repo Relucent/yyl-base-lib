@@ -2,8 +2,6 @@ package com.github.relucent.base.common.convert;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -59,19 +57,6 @@ public class ConvertUtil {
         // 集合 类型
         CONVERTERS.put(Mapx.class, MapxConverter.INSTANCE);
         CONVERTERS.put(Listx.class, ListxConverter.INSTANCE);
-    }
-
-    /** 原始类型的封装类型列表* */
-    private static final Collection<Class<?>> WRAPPED_TYPES = new ArrayList<Class<?>>();
-    static {
-        WRAPPED_TYPES.add(Boolean.class);
-        WRAPPED_TYPES.add(Byte.class);
-        WRAPPED_TYPES.add(Character.class);
-        WRAPPED_TYPES.add(Double.class);
-        WRAPPED_TYPES.add(Float.class);
-        WRAPPED_TYPES.add(Integer.class);
-        WRAPPED_TYPES.add(Long.class);
-        WRAPPED_TYPES.add(Short.class);
     }
 
     // ==============================Constructors=====================================
@@ -393,14 +378,5 @@ public class ConvertUtil {
             return true;
         }
         return false;
-    }
-
-    /**
-     * 判断类型是否是原始类型的封装类型
-     * @param clazz 对象类型
-     * @return 如果参数是原始类型的封装类型的封裝类型则返回TRUE，否则返回FLASE
-     */
-    public static boolean isWrappedType(Class<?> clazz) {
-        return WRAPPED_TYPES.contains(clazz);
     }
 }
