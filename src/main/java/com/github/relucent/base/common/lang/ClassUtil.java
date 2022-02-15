@@ -1,14 +1,19 @@
 package com.github.relucent.base.common.lang;
 
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 
 import com.github.relucent.base.common.constant.ArrayConstant;
 import com.github.relucent.base.common.constant.StringConstant;
 
 /**
- * <h3>类工具类</h3><br>
+ * <h3>{@code Class}对象工具类</h3><br>
+ * @author YYL
  */
 public class ClassUtil {
 
@@ -164,6 +169,60 @@ public class ClassUtil {
         return object == null ? valueIfNull : object.getClass().getName();
     }
 
+    // Superclasses/Superinterfaces
+    // ----------------------------------------------------------------------
+    /**
+     * 获取指定类的的超类
+     * @param clazz 指定类
+     * @return 指定类的超类列表
+     */
+    public static Class<?>[] getAllSuperClasses(final Class<?> clazz) {
+        if (clazz == null) {
+            return null;
+        }
+        final List<Class<?>> classes = new ArrayList<>();
+        Class<?> superclass = clazz.getSuperclass();
+        while (superclass != null) {
+            classes.add(superclass);
+            superclass = superclass.getSuperclass();
+        }
+        return classes.toArray(ArrayConstant.EMPTY_CLASS_ARRAY);
+    }
+
+    /**
+     * 获取给定类及其超类实现的所有接口。<br>
+     * 顺序是通过依次查看源文件中声明的每个接口并遵循其层次结构来确定的。<br>
+     * @param clazz 指定类
+     * @return 指定类的接口列表
+     */
+    public static List<Class<?>> getAllInterfaces(final Class<?> clazz) {
+        if (clazz == null) {
+            return null;
+        }
+
+        final LinkedHashSet<Class<?>> interfacesFound = new LinkedHashSet<>();
+        getAllInterfaces(clazz, interfacesFound);
+
+        return new ArrayList<>(interfacesFound);
+    }
+
+    /**
+     * 获取指定类的接口
+     * @param clazz 指定类
+     * @return interfacesFound 接口列表（用来存放找到的接口）
+     */
+    private static void getAllInterfaces(Class<?> clazz, final Collection<Class<?>> interfacesFound) {
+        while (clazz != null) {
+            final Class<?>[] interfaces = clazz.getInterfaces();
+            for (final Class<?> i : interfaces) {
+                if (interfacesFound.add(i)) {
+                    getAllInterfaces(i, interfacesFound);
+                }
+            }
+            clazz = clazz.getSuperclass();
+        }
+    }
+
     // Package name
     // ----------------------------------------------------------------------
     /**
@@ -219,7 +278,7 @@ public class ClassUtil {
     // ----------------------------------------------------------------------
     /**
      * 检查一个{@code Class}是否可以分配给另一个{@code Class}的变量。<br>
-     * 与{@link Class#isAssignableFrom（java.lang.Class）}方法不同，该方法考虑了原始类型和{@code null}的扩展。<br>
+     * 与{@link Class#isAssignableFrom(java.lang.Class)}方法不同，该方法考虑了原始类型和{@code null}的扩展。<br>
      * 原始类型允许加宽转换，例如：将int指定给long、float或double，对于这些情况，此方法返回正确的结果。<br>
      * {@code Null}可以分配给任何引用类型。如果传入{@code null}，并且toClass 非原始类型，则此方法将返回{@code true}。<br>
      * 参考：<em><a href="http://docs.oracle.com/javase/specs/">The Java Language Specification</a></em>，第5.1.1、5.1.2和5.1.4节了解详细信息。
@@ -233,7 +292,7 @@ public class ClassUtil {
 
     /**
      * 检查一个{@code Class}是否可以分配给另一个{@code Class}的变量。<br>
-     * 与{@link Class#isAssignableFrom（java.lang.Class）}方法不同，该方法考虑了原始类型和{@code null}的扩展。<br>
+     * 与{@link Class#isAssignableFrom(java.lang.Class)}方法不同，该方法考虑了原始类型和{@code null}的扩展。<br>
      * 原始类型允许加宽转换，例如：将int指定给long、float或double，对于这些情况，此方法返回正确的结果。<br>
      * {@code Null}可以分配给任何引用类型。如果传入{@code null}，并且toClass 非原始类型，则此方法将返回{@code true}。<br>
      * 参考：<em><a href="http://docs.oracle.com/javase/specs/">The Java Language Specification</a></em>，第5.1.1、5.1.2和5.1.4节了解详细信息。
@@ -306,7 +365,7 @@ public class ClassUtil {
     /**
      * 检查一个类数组是否可以分配给另一个类数组。<br>
      * 此方法为对参数数组中的每个元素调用 {@link #isAssignable(Class, Class) isAssignable}， 用来检查一组参数（第一个参数）是否与一组方法参数类型（第二个参数）适当兼容。<br>
-     * 与{@link Class#isAssignableFrom（java.lang.Class）}方法不同，该方法考虑了原始类型和{@code null}的扩展。<br>
+     * 与{@link Class#isAssignableFrom(java.lang.Class)}方法不同，该方法考虑了原始类型和{@code null}的扩展。<br>
      * {@code Null}可以分配给任何引用类型。如果传入{@code null}，并且toClass 非原始类型，则此方法将返回{@code true}。<br>
      * 原始类型允许加宽转换，例如：将int指定给long、float或double，对于这些情况，此方法返回正确的结果。<br>
      * 参考：<em><a href="http://docs.oracle.com/javase/specs/">The Java Language Specification</a></em>，第5.1.1、5.1.2和5.1.4节了解详细信息。
@@ -321,7 +380,7 @@ public class ClassUtil {
     /**
      * 检查一个类数组是否可以分配给另一个类数组。<br>
      * 此方法为对参数数组中的每个元素调用 {@link #isAssignable(Class, Class) isAssignable}， 用来检查一组参数（第一个参数）是否与一组方法参数类型（第二个参数）适当兼容。<br>
-     * 与{@link Class#isAssignableFrom（java.lang.Class）}方法不同，该方法考虑了原始类型和{@code null}的扩展。<br>
+     * 与{@link Class#isAssignableFrom(java.lang.Class)}方法不同，该方法考虑了原始类型和{@code null}的扩展。<br>
      * {@code Null}可以分配给任何引用类型。如果传入{@code null}，并且toClass 非原始类型，则此方法将返回{@code true}。<br>
      * 原始类型允许加宽转换，例如：将int指定给long、float或double，对于这些情况，此方法返回正确的结果。<br>
      * 参考：<em><a href="http://docs.oracle.com/javase/specs/">The Java Language Specification</a></em>，第5.1.1、5.1.2和5.1.4节了解详细信息。
@@ -369,6 +428,27 @@ public class ClassUtil {
      */
     public static Class<?> wrapperToPrimitive(final Class<?> cls) {
         return WRAPPER_PRIMITIVE_MAP.get(cls);
+    }
+
+    // ----------------------------------------------------------------------
+    /**
+     * 将中的{@code Object}数组转换为{@code Class}对象数组。如果这些对象中的任何一个为null，则会在数组中插入null元素。<br>
+     * 如果输入数组法为{@code null}则返回{@code null}
+     * @param array {@code Object}数据
+     * @return {@code Class} 数据
+     */
+    public static Class<?>[] toClass(final Object... array) {
+        if (array == null) {
+            return null;
+        }
+        if (array.length == 0) {
+            return ArrayConstant.EMPTY_CLASS_ARRAY;
+        }
+        final Class<?>[] classes = new Class[array.length];
+        for (int i = 0; i < array.length; i++) {
+            classes[i] = array[i] == null ? null : array[i].getClass();
+        }
+        return classes;
     }
 
     // Inner class

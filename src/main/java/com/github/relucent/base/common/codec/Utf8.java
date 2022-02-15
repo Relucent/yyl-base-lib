@@ -15,6 +15,12 @@ public final class Utf8 {
     private static final Charset CHARSET = StandardCharsets.UTF_8;
 
     /**
+     * 工具类私有构造
+     */
+    protected Utf8() {
+    }
+
+    /**
      * 获得字符串的 UTF-8 编码字节数组
      * @param string 字符串的
      * @return 字节数组
@@ -60,8 +66,10 @@ public final class Utf8 {
      * @return 编码的字节数
      */
     public static long size(String string, int beginIndex, int endIndex) {
-        if (string == null) throw new IllegalArgumentException("string == null");
-        if (beginIndex < 0) throw new IllegalArgumentException("beginIndex < 0: " + beginIndex);
+        if (string == null)
+            throw new IllegalArgumentException("string == null");
+        if (beginIndex < 0)
+            throw new IllegalArgumentException("beginIndex < 0: " + beginIndex);
         if (endIndex < beginIndex) {
             throw new IllegalArgumentException("endIndex < beginIndex: " + endIndex + " < " + beginIndex);
         }

@@ -11,6 +11,7 @@ import com.github.relucent.base.common.constant.StringConstant;
 
 /**
  * 字符串工具类
+ * @author YYL
  */
 public class StringUtil {
 
@@ -48,16 +49,16 @@ public class StringUtil {
      * 检查字符序列是否为空或者空白，空白由{@link Character#isWhitespace(char)}定义。
      * 
      * <pre>
-     * StringUtils.isBlank(null)        = true
-     * StringUtils.isBlank("")          = true
-     * StringUtils.isBlank(" ")         = true
-     * StringUtils.isBlank("hello")     = false
-     * StringUtils.isBlank("h e l l o") = false
-     * StringUtils.isBlank("  hello  ") = false
+     * StringUtil.isBlank(null)        = true
+     * StringUtil.isBlank("")          = true
+     * StringUtil.isBlank(" ")         = true
+     * StringUtil.isBlank("hello")     = false
+     * StringUtil.isBlank("h e l l o") = false
+     * StringUtil.isBlank("  hello  ") = false
      * </pre>
      * 
      * @param cs 要检查的字符序列
-     * @return 如果字符序列为 null或者空白，则返回 {@code true}
+     * @return 如果字符序列为 {@code null}或者空白，则返回 {@code true}
      */
     public static boolean isBlank(final CharSequence cs) {
         final int length = length(cs);
@@ -70,6 +71,27 @@ public class StringUtil {
             }
         }
         return true;
+    }
+
+    /**
+     * 检查字符序列是否不是空白，空白由{@link Character#isWhitespace(char)}定义。
+     * 
+     * <pre>
+     * StringUtil.isNotBlank(null)        = false
+     * StringUtil.isNotBlank("")          = false
+     * StringUtil.isNotBlank(" ")         = false
+     * StringUtil.isNotBlank("hello")     = true
+     * StringUtil.isNotBlank("h e l l o") = true
+     * StringUtil.isNotBlank("  hello  ") = true
+     * </pre>
+     * 
+     * @param cs 要检查的字符序列
+     * @return 如果字符序列为 null或者空白，则返回 {@code true}
+     * @param cs the CharSequence to check, may be null
+     * @return 如果字符序列不为{@code null}、且不为空白，则返回 {@code true}
+     */
+    public static boolean isNotBlank(final CharSequence cs) {
+        return !isBlank(cs);
     }
 
     /**

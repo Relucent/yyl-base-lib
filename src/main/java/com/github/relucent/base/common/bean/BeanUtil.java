@@ -15,7 +15,7 @@ import com.github.relucent.base.common.bean.mapping.BeanMapper;
 import com.github.relucent.base.common.logging.Logger;
 
 /**
- * BEAN操作工具类，扩展Apache Commons BeanUtils，提供一些反射方面缺失的封装。
+ * JavaBean 工具类：用于实例化bean，检查bean属性类型、复制bean属性等。<br>
  * @author YYL
  */
 public class BeanUtil {

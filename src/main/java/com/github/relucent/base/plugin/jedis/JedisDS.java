@@ -14,12 +14,14 @@ import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 
 import com.github.relucent.base.common.io.IoUtil;
 import com.github.relucent.base.common.lang.ArrayUtil;
+import com.github.relucent.base.common.lang.Assert;
 import com.github.relucent.base.common.lock.DistributedLockFactory;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.Protocol;
+import redis.clients.jedis.params.SetParams;
 
 /**
  * Redis 数据源 (基于Jedis封装)
@@ -126,8 +128,22 @@ public class JedisDS implements DistributedLockFactory, Closeable {
      * @param value 值
      */
     public void setString(String key, String value) {
+        Assert.notNull(key, "non null key required");
         try (Jedis jedis = getJedis()) {
             jedis.set(key, value);
+        }
+    }
+
+    /**
+     * 设置指定键的值
+     * @param key 键
+     * @param value 值
+     * @param expire 有效时间
+     */
+    public void setString(String key, String value, Duration expire) {
+        Assert.notNull(key, "non null key required");
+        try (Jedis jedis = getJedis()) {
+            jedis.set(key, value, SetParams.setParams().px(expire.toMillis()));
         }
     }
 
@@ -137,6 +153,7 @@ public class JedisDS implements DistributedLockFactory, Closeable {
      * @return 值
      */
     public String getString(String key) {
+        Assert.notNull(key, "non null key required");
         try (Jedis jedis = getJedis()) {
             return jedis.get(key);
         }

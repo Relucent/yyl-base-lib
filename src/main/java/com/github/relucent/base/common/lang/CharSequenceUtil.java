@@ -3,7 +3,9 @@ package com.github.relucent.base.common.lang;
 import com.github.relucent.base.common.constant.ArrayConstant;
 
 /**
- * 字符序列{@link CharSequence}工具类
+ * 字符序列{@link CharSequence}工具类<br>
+ * @author YYL
+ * @see StringUtil
  */
 public class CharSequenceUtil {
 

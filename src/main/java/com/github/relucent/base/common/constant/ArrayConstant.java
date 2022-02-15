@@ -1,5 +1,8 @@
 package com.github.relucent.base.common.constant;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+
 /**
  * 常量数组
  */
@@ -81,6 +84,16 @@ public class ArrayConstant {
      * An empty immutable {@code Character} array.
      */
     public static final Character[] EMPTY_CHARACTER_OBJECT_ARRAY = new Character[0];
+
+    /**
+     * An empty immutable {@code Field} array.
+     */
+    public static final Field[] EMPTY_FIELD_ARRAY = new Field[0];
+
+    /**
+     * An empty immutable {@code Method} array.
+     */
+    public static final Method[] EMPTY_METHOD_ARRAY = new Method[0];
 
     private ArrayConstant() {
     }
