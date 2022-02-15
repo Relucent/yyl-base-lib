@@ -43,6 +43,7 @@ public class SerializationUtil {
 
     /**
      * 将字节数组反序列化为对象
+     * @param <T> 对象类型泛型
      * @param bytes 对象序列化的字节数组
      * @return 反序列化字节的结果对象
      */

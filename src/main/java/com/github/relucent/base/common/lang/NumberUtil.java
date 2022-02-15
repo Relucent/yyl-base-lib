@@ -6,6 +6,10 @@ import java.math.RoundingMode;
 
 import com.github.relucent.base.common.constant.NumberConstant;
 
+/**
+ * 数字工具类
+ * @author YYL
+ */
 public class NumberUtil {
 
     // ==============================Fields===========================================

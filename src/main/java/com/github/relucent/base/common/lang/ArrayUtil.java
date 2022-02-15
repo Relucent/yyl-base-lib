@@ -1,10 +1,15 @@
 package com.github.relucent.base.common.lang;
 
 import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Predicate;
+
+import com.github.relucent.base.common.constant.ArrayConstant;
 
 /**
  * 数组工具类
- * @author _yyl
+ * @author YYL
  */
 public class ArrayUtil {
     /**
@@ -982,6 +987,608 @@ public class ArrayUtil {
         return indexOf(array, valueToFind) != INDEX_NOT_FOUND;
     }
 
+    /**
+     * 将{@code null}更改为空数组引用。<br>
+     * 作为一种内存优化技术，传入的空数组将被静态常量类{@code ArrayConstant.EMPTY_OBJECT_ARRAY}引用覆盖<br>
+     * @param array 可能为{@code null}的数组
+     * @return 如果数组为{@code null}或者是一个空数组，则返回空数组引用，否则原样返回
+     */
+    public static Object[] nullToEmpty(final Object[] array) {
+        if (isEmpty(array)) {
+            return ArrayConstant.EMPTY_OBJECT_ARRAY;
+        }
+        return array;
+    }
+
+    /**
+     * 将{@code null}更改为空数组引用。<br>
+     * 作为一种内存优化技术，传入的空数组将被静态常量类{@code ArrayConstant.EMPTY_CLASS_ARRAY}引用覆盖<br>
+     * @param array 可能为{@code null}的数组
+     * @return 如果数组为{@code null}或者是一个空数组，则返回空数组引用，否则原样返回
+     */
+    public static Class<?>[] nullToEmpty(final Class<?>[] array) {
+        if (isEmpty(array)) {
+            return ArrayConstant.EMPTY_CLASS_ARRAY;
+        }
+        return array;
+    }
+
+    // To Wrapper Object
+    // -----------------------------------------------------------------------
+    /**
+     * 将布尔值基础类型数组转换为对象数组。<br>
+     * 对于{@code null}输入数组，此方法返回{@code null}。
+     * @param array {@code boolean}数组
+     * @return {@code Boolean} 数组
+     */
+    public static Boolean[] toObject(final boolean[] array) {
+        if (array == null) {
+            return null;
+        } else if (array.length == 0) {
+            return ArrayConstant.EMPTY_BOOLEAN_OBJECT_ARRAY;
+        }
+        final Boolean[] result = new Boolean[array.length];
+        for (int i = 0; i < array.length; i++) {
+            result[i] = (array[i] ? Boolean.TRUE : Boolean.FALSE);
+        }
+        return result;
+    }
+
+    /**
+     * 将字节基础类型数组转换为对象数组。<br>
+     * 对于{@code null}输入数组，此方法返回{@code null}。
+     * @param array {@code byte}数组
+     * @return {@code Byte} 数组
+     */
+    public static Byte[] toObject(final byte[] array) {
+        if (array == null) {
+            return null;
+        } else if (array.length == 0) {
+            return ArrayConstant.EMPTY_BYTE_OBJECT_ARRAY;
+        }
+        final Byte[] result = new Byte[array.length];
+        for (int i = 0; i < array.length; i++) {
+            result[i] = Byte.valueOf(array[i]);
+        }
+        return result;
+    }
+
+    /**
+     * 将字符基础类型数组转换为对象数组。<br>
+     * 对于{@code null}输入数组，此方法返回{@code null}。
+     * @param array {@code Character}数组
+     * @return {@code char} 数组
+     */
+    public static Character[] toObject(final char[] array) {
+        if (array == null) {
+            return null;
+        } else if (array.length == 0) {
+            return ArrayConstant.EMPTY_CHARACTER_OBJECT_ARRAY;
+        }
+        final Character[] result = new Character[array.length];
+        for (int i = 0; i < array.length; i++) {
+            result[i] = Character.valueOf(array[i]);
+        }
+        return result;
+    }
+
+    /**
+     * 将双精度浮点基础类型数组转换为对象数组。<br>
+     * 对于{@code null}输入数组，此方法返回{@code null}。
+     * @param array {@code Double}数组
+     * @return {@code double} 数组
+     */
+    public static Double[] toObject(final double[] array) {
+        if (array == null) {
+            return null;
+        } else if (array.length == 0) {
+            return ArrayConstant.EMPTY_DOUBLE_OBJECT_ARRAY;
+        }
+        final Double[] result = new Double[array.length];
+        for (int i = 0; i < array.length; i++) {
+            result[i] = Double.valueOf(array[i]);
+        }
+        return result;
+    }
+
+    /**
+     * 将浮点基础类型数组转换为对象数组。<br>
+     * 对于{@code null}输入数组，此方法返回{@code null}。
+     * @param array {@code Float}数组
+     * @return {@code float} 数组
+     */
+    public static Float[] toObject(final float[] array) {
+        if (array == null) {
+            return null;
+        } else if (array.length == 0) {
+            return ArrayConstant.EMPTY_FLOAT_OBJECT_ARRAY;
+        }
+        final Float[] result = new Float[array.length];
+        for (int i = 0; i < array.length; i++) {
+            result[i] = Float.valueOf(array[i]);
+        }
+        return result;
+    }
+
+    /**
+     * 将整型基础类型数组转换为对象数组。<br>
+     * 对于{@code null}输入数组，此方法返回{@code null}。
+     * @param array {@code Integer}数组
+     * @return {@code int} 数组
+     */
+    public static Integer[] toObject(final int[] array) {
+        if (array == null) {
+            return null;
+        } else if (array.length == 0) {
+            return ArrayConstant.EMPTY_INTEGER_OBJECT_ARRAY;
+        }
+        final Integer[] result = new Integer[array.length];
+        for (int i = 0; i < array.length; i++) {
+            result[i] = Integer.valueOf(array[i]);
+        }
+        return result;
+    }
+
+    /**
+     * 将长整型基础类型数组转换为对象数组。<br>
+     * 对于{@code null}输入数组，此方法返回{@code null}。
+     * @param array {@code Long}数组
+     * @return {@code long} 数组
+     */
+    public static Long[] toObject(final long[] array) {
+        if (array == null) {
+            return null;
+        } else if (array.length == 0) {
+            return ArrayConstant.EMPTY_LONG_OBJECT_ARRAY;
+        }
+        final Long[] result = new Long[array.length];
+        for (int i = 0; i < array.length; i++) {
+            result[i] = Long.valueOf(array[i]);
+        }
+        return result;
+    }
+
+    /**
+     * 将短整型基础类型数组转换为对象数组。<br>
+     * 对于{@code null}输入数组，此方法返回{@code null}。
+     * @param array {@code Short}数组
+     * @return {@code short} 数组
+     */
+    public static Short[] toObject(final short[] array) {
+        if (array == null) {
+            return null;
+        } else if (array.length == 0) {
+            return ArrayConstant.EMPTY_SHORT_OBJECT_ARRAY;
+        }
+        final Short[] result = new Short[array.length];
+        for (int i = 0; i < array.length; i++) {
+            result[i] = Short.valueOf(array[i]);
+        }
+        return result;
+    }
+
+    // Array toPrimitive
+    // ----------------------------------------------------------------------
+
+    /**
+     * 将布尔对象数组({@code Boolean[]})转换为布尔基础类型数组({@code boolean[]})。<br>
+     * 对于{@code null}输入数组，此方法返回{@code null}。
+     * @param array {@code Boolean}数组
+     * @return {@code boolean} 数组, 如果输入数组为{@code null} 则返回 {@code null}
+     * @throws NullPointerException 如果数组元素为{@code null}
+     */
+    public static boolean[] toPrimitive(final Boolean[] array) {
+        if (array == null) {
+            return null;
+        }
+        if (array.length == 0) {
+            return ArrayConstant.EMPTY_BOOLEAN_ARRAY;
+        }
+        final boolean[] result = new boolean[array.length];
+        for (int i = 0; i < array.length; i++) {
+            result[i] = array[i].booleanValue();
+        }
+        return result;
+    }
+
+    /**
+     * 将布尔对象数组({@code Boolean[]})转换为布尔基础类型数组({@code boolean[]})。<br>
+     * 对于{@code null}输入数组，此方法返回{@code null}。
+     * @param array {@code Boolean}数组
+     * @param valueForNull 当数组元素为{@code null}时，要插入的值
+     * @return {@code boolean} 数组, 如果输入数组为{@code null} 则返回 {@code null}
+     */
+    public static boolean[] toPrimitive(final Boolean[] array, final boolean valueForNull) {
+        if (array == null) {
+            return null;
+        }
+        if (array.length == 0) {
+            return ArrayConstant.EMPTY_BOOLEAN_ARRAY;
+        }
+        final boolean[] result = new boolean[array.length];
+        for (int i = 0; i < array.length; i++) {
+            final Boolean b = array[i];
+            result[i] = (b == null ? valueForNull : b.booleanValue());
+        }
+        return result;
+    }
+
+    /**
+     * 将字节对象数组({@code Byte[]})转换为字节基础类型数组({@code byte[]})。<br>
+     * 对于{@code null}输入数组，此方法返回{@code null}。
+     * @param array {@code Byte}数组
+     * @param array a {@code Byte} array, may be {@code null}
+     * @return {@code byte} 数组
+     * @throws NullPointerException 如果数组元素为{@code null}
+     */
+    public static byte[] toPrimitive(final Byte[] array) {
+        if (array == null) {
+            return null;
+        }
+        if (array.length == 0) {
+            return ArrayConstant.EMPTY_BYTE_ARRAY;
+        }
+        final byte[] result = new byte[array.length];
+        for (int i = 0; i < array.length; i++) {
+            result[i] = array[i].byteValue();
+        }
+        return result;
+    }
+
+    /**
+     * 将字节对象数组({@code Byte[]})转换为字节基础类型数组({@code byte[]})。<br>
+     * 对于{@code null}输入数组，此方法返回{@code null}。
+     * @param array {@code Byte}数组
+     * @param valueForNull 当数组元素为{@code null}时，要插入的值
+     * @return {@code byte} 数组
+     */
+    public static byte[] toPrimitive(final Byte[] array, final byte valueForNull) {
+        if (array == null) {
+            return null;
+        }
+        if (array.length == 0) {
+            return ArrayConstant.EMPTY_BYTE_ARRAY;
+        }
+        final byte[] result = new byte[array.length];
+        for (int i = 0; i < array.length; i++) {
+            final Byte b = array[i];
+            result[i] = (b == null ? valueForNull : b.byteValue());
+        }
+        return result;
+    }
+
+    /**
+     * 将字符对象数组({@code Character[]})转换为字符基础类型数组({@code char[]})。<br>
+     * 对于{@code null}输入数组，此方法返回{@code null}。
+     * @param array {@code Character} 数组
+     * @return a {@code char} 数组
+     * @throws NullPointerException 如果数组元素为{@code null}
+     */
+    public static char[] toPrimitive(final Character[] array) {
+        if (array == null) {
+            return null;
+        }
+        if (array.length == 0) {
+            return ArrayConstant.EMPTY_CHAR_ARRAY;
+        }
+        final char[] result = new char[array.length];
+        for (int i = 0; i < array.length; i++) {
+            result[i] = array[i].charValue();
+        }
+        return result;
+    }
+
+    /**
+     * 将字符对象数组({@code Character[]})转换为字符基础类型数组({@code char[]})。<br>
+     * 对于{@code null}输入数组，此方法返回{@code null}。
+     * @param array {@code Character} 数组
+     * @param valueForNull 当数组元素为{@code null}时，要插入的值
+     * @return a {@code char} 数组
+     */
+    public static char[] toPrimitive(final Character[] array, final char valueForNull) {
+        if (array == null) {
+            return null;
+        }
+        if (array.length == 0) {
+            return ArrayConstant.EMPTY_CHAR_ARRAY;
+        }
+        final char[] result = new char[array.length];
+        for (int i = 0; i < array.length; i++) {
+            final Character b = array[i];
+            result[i] = (b == null ? valueForNull : b.charValue());
+        }
+        return result;
+    }
+
+    /**
+     * 将整型对象数组({@code Integer[]})转换为长整型基础类型数组({@code int[]})。<br>
+     * 对于{@code null}输入数组，此方法返回{@code null}。
+     * @param array {@code Integer} 数组
+     * @return {@code int} 数组
+     * @throws NullPointerException 如果数组元素为{@code null}
+     */
+    public static int[] toPrimitive(final Integer[] array) {
+        if (array == null) {
+            return null;
+        } else if (array.length == 0) {
+            return ArrayConstant.EMPTY_INT_ARRAY;
+        }
+        final int[] result = new int[array.length];
+        for (int i = 0; i < array.length; i++) {
+            result[i] = array[i].intValue();
+        }
+        return result;
+    }
+
+    /**
+     * 将整型对象数组({@code Long[]})转换为长整型基础类型数组({@code long[]})。<br>
+     * 对于{@code null}输入数组，此方法返回{@code null}。
+     * @param array {@code Long} 数组
+     * @param valueForNull 当数组元素为{@code null}时，要插入的值
+     * @return {@code long} 数组
+     */
+    public static long[] toPrimitive(final Long[] array, final long valueForNull) {
+        if (array == null) {
+            return null;
+        } else if (array.length == 0) {
+            return ArrayConstant.EMPTY_LONG_ARRAY;
+        }
+        final long[] result = new long[array.length];
+        for (int i = 0; i < array.length; i++) {
+            final Long b = array[i];
+            result[i] = (b == null ? valueForNull : b.longValue());
+        }
+        return result;
+    }
+
+    /**
+     * 将长整型对象数组({@code Long[]})转换为整型基础类型数组({@code long[]})。<br>
+     * 对于{@code null}输入数组，此方法返回{@code null}。
+     * @param array {@code Long} 数组
+     * @return {@code long} 数组
+     * @throws NullPointerException 如果数组元素为{@code null}
+     */
+    public static long[] toPrimitive(final Long[] array) {
+        if (array == null) {
+            return null;
+        } else if (array.length == 0) {
+            return ArrayConstant.EMPTY_LONG_ARRAY;
+        }
+        final long[] result = new long[array.length];
+        for (int i = 0; i < array.length; i++) {
+            result[i] = array[i].longValue();
+        }
+        return result;
+    }
+
+    /**
+     * 将长整型对象数组({@code Integer[]})转换为整型基础类型数组({@code int[]})。<br>
+     * 对于{@code null}输入数组，此方法返回{@code null}。
+     * @param array {@code Integer} 数组
+     * @param valueForNull 当数组元素为{@code null}时，要插入的值
+     * @return {@code int} 数组
+     */
+    public static int[] toPrimitive(final Integer[] array, final int valueForNull) {
+        if (array == null) {
+            return null;
+        } else if (array.length == 0) {
+            return ArrayConstant.EMPTY_INT_ARRAY;
+        }
+        final int[] result = new int[array.length];
+        for (int i = 0; i < array.length; i++) {
+            final Integer b = array[i];
+            result[i] = (b == null ? valueForNull : b.intValue());
+        }
+        return result;
+    }
+
+    /**
+     * 将短整型对象数组({@code Short[]})转换为短整型基础类型数组({@code short[]})。<br>
+     * 对于{@code null}输入数组，此方法返回{@code null}。
+     * @param array {@code Short} 数组
+     * @return {@code short} 数组
+     * @throws NullPointerException 如果数组元素为{@code null}
+     */
+    public static short[] toPrimitive(final Short[] array) {
+        if (array == null) {
+            return null;
+        }
+        if (array.length == 0) {
+            return ArrayConstant.EMPTY_SHORT_ARRAY;
+        }
+        final short[] result = new short[array.length];
+        for (int i = 0; i < array.length; i++) {
+            result[i] = array[i].shortValue();
+        }
+        return result;
+    }
+
+    /**
+     * 将短整型对象数组({@code Short[]})转换为短整型基础类型数组({@code short[]})。<br>
+     * 对于{@code null}输入数组，此方法返回{@code null}。
+     * @param array {@code Short} 数组
+     * @param valueForNull 当数组元素为{@code null}时，要插入的值
+     * @return {@code short} 数组
+     */
+    public static short[] toPrimitive(final Short[] array, final short valueForNull) {
+        if (array == null) {
+            return null;
+        }
+        if (array.length == 0) {
+            return ArrayConstant.EMPTY_SHORT_ARRAY;
+        }
+        final short[] result = new short[array.length];
+        for (int i = 0; i < array.length; i++) {
+            final Short b = array[i];
+            result[i] = (b == null ? valueForNull : b.shortValue());
+        }
+        return result;
+    }
+
+    /**
+     * 将双精度浮点对象数组({@code Double[]})转换为双精度浮点基础类型数组({@code double[]})。<br>
+     * 对于{@code null}输入数组，此方法返回{@code null}。
+     * @param array {@code Double} 数组
+     * @return {@code double} 数组
+     * @throws NullPointerException 如果数组元素为{@code null}
+     */
+    public static double[] toPrimitive(final Double[] array) {
+        if (array == null) {
+            return null;
+        }
+        if (array.length == 0) {
+            return ArrayConstant.EMPTY_DOUBLE_ARRAY;
+        }
+        final double[] result = new double[array.length];
+        for (int i = 0; i < array.length; i++) {
+            result[i] = array[i].doubleValue();
+        }
+        return result;
+    }
+
+    /**
+     * 将双精度浮点对象数组({@code Double[]})转换为双精度浮点基础类型数组({@code double[]})。<br>
+     * 对于{@code null}输入数组，此方法返回{@code null}。
+     * @param array {@code Double} 数组
+     * @param valueForNull 当数组元素为{@code null}时，要插入的值
+     * @return {@code double} 数组
+     */
+    public static double[] toPrimitive(final Double[] array, final double valueForNull) {
+        if (array == null) {
+            return null;
+        }
+        if (array.length == 0) {
+            return ArrayConstant.EMPTY_DOUBLE_ARRAY;
+        }
+        final double[] result = new double[array.length];
+        for (int i = 0; i < array.length; i++) {
+            final Double b = array[i];
+            result[i] = (b == null ? valueForNull : b.doubleValue());
+        }
+        return result;
+    }
+
+    /**
+     * 将浮点对象数组({@code Float[]})转换为浮点基础类型数组({@code float[]})。<br>
+     * 对于{@code null}输入数组，此方法返回{@code null}。
+     * @param array {@code Float} 数组
+     * @return {@code float} 数组
+     * @throws NullPointerException 如果数组元素为{@code null}
+     */
+    public static float[] toPrimitive(final Float[] array) {
+        if (array == null) {
+            return null;
+        }
+        if (array.length == 0) {
+            return ArrayConstant.EMPTY_FLOAT_ARRAY;
+        }
+        final float[] result = new float[array.length];
+        for (int i = 0; i < array.length; i++) {
+            result[i] = array[i].floatValue();
+        }
+        return result;
+    }
+
+    /**
+     * 将浮点对象数组({@code Float[]})转换为浮点基础类型数组({@code float[]})。<br>
+     * 对于{@code null}输入数组，此方法返回{@code null}。
+     * @param array {@code Float} 数组
+     * @param valueForNull 当数组元素为{@code null}时，要插入的值
+     * @return {@code float} 数组
+     */
+    public static float[] toPrimitive(final Float[] array, final float valueForNull) {
+        if (array == null) {
+            return null;
+        }
+        if (array.length == 0) {
+            return ArrayConstant.EMPTY_FLOAT_ARRAY;
+        }
+        final float[] result = new float[array.length];
+        for (int i = 0; i < array.length; i++) {
+            final Float b = array[i];
+            result[i] = (b == null ? valueForNull : b.floatValue());
+        }
+        return result;
+    }
+
+    /**
+     * 从包装器类型数组创建基元类型数组。<br>
+     * 此方法为{@code null}输入数组返回{@code null}。<br>
+     * @param array 包装器对象的数组
+     * @return 对应基元类型的数组，或原始数组
+     */
+    public static Object toPrimitive(final Object array) {
+        if (array == null) {
+            return null;
+        }
+        final Class<?> ct = array.getClass().getComponentType();
+        final Class<?> pt = ClassUtil.wrapperToPrimitive(ct);
+        if (Boolean.TYPE.equals(pt)) {
+            return toPrimitive((Boolean[]) array);
+        }
+        if (Byte.TYPE.equals(pt)) {
+            return toPrimitive((Byte[]) array);
+        }
+        if (Character.TYPE.equals(pt)) {
+            return toPrimitive((Character[]) array);
+        }
+        if (Long.TYPE.equals(pt)) {
+            return toPrimitive((Long[]) array);
+        }
+        if (Integer.TYPE.equals(pt)) {
+            return toPrimitive((Integer[]) array);
+        }
+        if (Short.TYPE.equals(pt)) {
+            return toPrimitive((Short[]) array);
+        }
+        if (Double.TYPE.equals(pt)) {
+            return toPrimitive((Double[]) array);
+        }
+        if (Float.TYPE.equals(pt)) {
+            return toPrimitive((Float[]) array);
+        }
+        return array;
+    }
+
+    // Array Edit
+    // ----------------------------------------------------------------------
+    /**
+     * 过滤过程通过传入的Filter实现来过滤返回需要的元素内容
+     * @param <T> 数组元素类型
+     * @param array 数组
+     * @param filter 过滤器接口，用于定义过滤规则，{@code null}返回原集合
+     * @return 过滤后的数组
+     */
+    public static <T> T[] filter(T[] array, Predicate<T> filter) {
+        if (array == null || filter == null) {
+            return array;
+        }
+        List<T> result = new ArrayList<>();
+        for (T element : array) {
+            if (filter.test(element)) {
+                result.add(element);
+            }
+        }
+        Class<?> componentType = array.getClass().getComponentType();
+        T[] newArray = newArray(componentType, result.size());
+        return result.toArray(newArray);
+    }
+
+    /**
+     * 创建具有指定组件类型和长度的新数组
+     * @param <T> 数组元素类型
+     * @param componentType 数组元素类型
+     * @param length 数组长度
+     * @return 新数组
+     * @see Array#newInstance(Class, int)
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T[] newArray(Class<?> componentType, int length) {
+        return (T[]) Array.newInstance(componentType, length);
+    }
+
+    // Generic array
+    // ----------------------------------------------------------------------
     /**
      * 将可变参数转换为数组
      * @param <T> 元素类型

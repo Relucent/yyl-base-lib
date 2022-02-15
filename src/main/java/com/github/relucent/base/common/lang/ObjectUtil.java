@@ -6,6 +6,7 @@ import java.util.function.Supplier;
 
 /**
  * 对象工具类
+ * @author YYL
  */
 public class ObjectUtil {
 
@@ -42,6 +43,7 @@ public class ObjectUtil {
      * ObjectUtil.orElse("bat", "NULL") = "bat"
      * </pre>
      * 
+     * @param <T> 对象类型
      * @param value 要检查的对象
      * @param defaultValue 默认对象
      * @return 传入的对象，如果是{@code null}，则返回默认对象{@code defaultValue}.
@@ -52,6 +54,7 @@ public class ObjectUtil {
 
     /**
      * 如果传入的对象不为{@code null}，则直接返回，否则调用{@code defaultSupplier}并返回该调用的结果。
+     * @param <T> 对象类型
      * @param value 要检查的对象
      * @param defaultSupplier {@code Supplier}，如果不存在值，则返回其结果
      * @return 传入的对象，如果是{@code null}，则返回{@code defaultSupplier}调用的结果。
@@ -62,8 +65,8 @@ public class ObjectUtil {
 
     /**
      * 转换对象元素
-     * @param <T> 对象元素
-     * @param <R> 新对象元素
+     * @param <T> 对象元素类型
+     * @param <R> 新对象元素类型
      * @param object 对象元素
      * @param mapper 转换方式
      * @param other 新集对象构造器
