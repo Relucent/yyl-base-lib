@@ -1,8 +1,14 @@
 package com.github.relucent.base.plugin.jedis;
 
 import java.io.Closeable;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
@@ -12,10 +18,15 @@ import javax.net.ssl.SSLSocketFactory;
 
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 
+import com.github.relucent.base.common.constant.StringConstant;
+import com.github.relucent.base.common.convert.ConvertUtil;
 import com.github.relucent.base.common.io.IoUtil;
 import com.github.relucent.base.common.lang.ArrayUtil;
 import com.github.relucent.base.common.lang.Assert;
 import com.github.relucent.base.common.lock.DistributedLockFactory;
+import com.github.relucent.base.common.logging.Logger;
+import com.github.relucent.base.plugin.redis.RedisConstant;
+import com.github.relucent.base.plugin.redis.RedisInfoEntry;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -29,7 +40,8 @@ import redis.clients.jedis.params.SetParams;
  */
 public class JedisDS implements DistributedLockFactory, Closeable {
 
-    // ==============================ConstantFields===================================
+    // ==============================StaticFields====================================
+    private static final Logger LOG = Logger.getLogger(JedisDS.class);
 
     // ==============================StaticMethods====================================
     /**
@@ -203,6 +215,34 @@ public class JedisDS implements DistributedLockFactory, Closeable {
     @Override
     public JedisDistributedLock getLock(String name) {
         return distributedLockMap.computeIfAbsent(name, k -> new JedisDistributedLock(pool, pubSubs, name));
+    }
+
+    /**
+     * 获得 _Redis详细信息
+     * @return _Redis 详细条目列表
+     */
+    public List<RedisInfoEntry> getRedisInfo() {
+        try (Jedis jedis = getJedis()) {
+            Properties properties = new Properties();
+            try (Reader reader = new StringReader(jedis.info())) {
+                properties.load(reader);
+            } catch (IOException e) {
+                LOG.error("redis.info()", e);
+            }
+            List<RedisInfoEntry> info = new ArrayList<>();
+            for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+                String name = ConvertUtil.toString(entry.getKey(), StringConstant.EMPTY);
+                String value = ConvertUtil.toString(entry.getValue(), StringConstant.EMPTY);
+                String description = RedisConstant.getInfoDescription(name);
+
+                RedisInfoEntry infoEntry = new RedisInfoEntry();
+                infoEntry.setName(name);
+                infoEntry.setValue(value);
+                infoEntry.setDescription(description);
+                info.add(infoEntry);
+            }
+            return info;
+        }
     }
 
     /**
