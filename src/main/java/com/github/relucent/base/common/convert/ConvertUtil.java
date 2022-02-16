@@ -304,6 +304,17 @@ public class ConvertUtil {
      * @param <T> 转换类型泛型
      * @param obj 对象转换
      * @param toType 转换的目标类型
+     * @return 转换类型后的对象，无法正确转换类型则返回 {@code null}
+     */
+    public static <T> T convert(Object obj, Class<T> toType) {
+        return convert(obj, toType, null);
+    }
+
+    /**
+     * 将对象转换为指定的类型
+     * @param <T> 转换类型泛型
+     * @param obj 对象转换
+     * @param toType 转换的目标类型
      * @param defaultValue 默认值
      * @return 转换类型后的对象(无法正确转换类型则返回默认值)
      */

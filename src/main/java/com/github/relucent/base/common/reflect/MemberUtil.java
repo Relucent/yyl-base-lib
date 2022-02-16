@@ -3,9 +3,11 @@ package com.github.relucent.base.common.reflect;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.UndeclaredThrowableException;
 
 import com.github.relucent.base.common.lang.ClassUtil;
 
@@ -141,6 +143,49 @@ public class MemberUtil {
             }
         }
         return accessibleObject;
+    }
+
+    /**
+     * 处理给定反射异常，仅当目标方法预期不会引发选中的异常时才应调用。 如果InvocationTargetException具有这样的根本原因，则引发底层RuntimeException或错误。抛出一个 带有适当消息的IllegalStateException或未声明的HrowableException。 IllegalStateException with an appropriate message or UndeclaredThrowableException otherwise.
+     * @param ex the reflection exception to handle
+     */
+    static void handleReflectionException(Exception ex) {
+        if (ex instanceof NoSuchMethodException) {
+            throw new IllegalStateException("Method not found: " + ex.getMessage());
+        }
+        if (ex instanceof IllegalAccessException) {
+            throw new IllegalStateException("Could not access method: " + ex.getMessage());
+        }
+        if (ex instanceof InvocationTargetException) {
+            handleInvocationTargetException((InvocationTargetException) ex);
+        }
+        if (ex instanceof RuntimeException) {
+            throw (RuntimeException) ex;
+        }
+        throw new UndeclaredThrowableException(ex);
+    }
+
+    /**
+     * 处理调用目标异常（该异常一般是反射调用的方法的内部抛出了异常而没有被捕获时包装抛出的异常）
+     * @param ex 调用目标异常
+     */
+    static void handleInvocationTargetException(InvocationTargetException ex) {
+        rethrowRuntimeException(ex.getTargetException());
+    }
+
+    /**
+     * 重新包装异常，将一般异常转换为运行时异常（{@code RuntimeException}）抛出
+     * @param ex 异常
+     * @throws 重新抛出的运行时异常（{@code RuntimeException}）
+     */
+    static void rethrowRuntimeException(Throwable ex) {
+        if (ex instanceof RuntimeException) {
+            throw (RuntimeException) ex;
+        }
+        if (ex instanceof Error) {
+            throw (Error) ex;
+        }
+        throw new UndeclaredThrowableException(ex);
     }
 
     // =================================ToolMethods============================================

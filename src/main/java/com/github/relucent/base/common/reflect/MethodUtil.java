@@ -11,6 +11,7 @@ import java.util.Objects;
 
 import com.github.relucent.base.common.collection.CollectionUtil;
 import com.github.relucent.base.common.constant.ArrayConstant;
+import com.github.relucent.base.common.convert.ConvertUtil;
 import com.github.relucent.base.common.lang.ArrayUtil;
 import com.github.relucent.base.common.lang.ClassUtil;
 import com.github.relucent.base.common.lang.StringUtil;
@@ -367,13 +368,24 @@ public class MethodUtil {
         final Class<?> varArgComponentType = methodParameterTypes[methodParameterTypes.length - 1].getComponentType();
         final int varArgLength = args.length - methodParameterTypes.length + 1;
 
-        Object varArgsArray = Array.newInstance(ClassUtil.primitiveToWrapper(varArgComponentType), varArgLength);
-        // 将可变参数复制到可变参数数组中
-        System.arraycopy(args, methodParameterTypes.length - 1, varArgsArray, 0, varArgLength);
-
-        // 最后参数是基本类型，需要从包装器类型拆箱到基元类型
+        Object varArgsArray = null;
+        // 可变参数部分是基本类型
         if (varArgComponentType.isPrimitive()) {
+            varArgsArray = Array.newInstance(ClassUtil.primitiveToWrapper(varArgComponentType), varArgLength);
+            // 将可变参数复制到可变参数数组中，考虑到基本类型的隐式转换
+            for (int i = 0, j = methodParameterTypes.length - 1; i < varArgLength; i++) {
+                Object value = Array.get(args, j + i);
+                value = ConvertUtil.convert(value, varArgComponentType, null);
+                Array.set(varArgsArray, i, value);
+            }
+            // 最后参数是基本类型，需要从包装器类型拆箱到基元类型
             varArgsArray = ArrayUtil.toPrimitive(varArgsArray);
+        }
+        // 可变参数部分是对象类型
+        else {
+            varArgsArray = Array.newInstance(varArgComponentType, varArgLength);
+            // 将可变参数复制到可变参数数组中
+            System.arraycopy(args, methodParameterTypes.length - 1, varArgsArray, 0, varArgLength);
         }
 
         // 将可变参数数组(VarArgs)存储到要返回的数组的最后一个位置

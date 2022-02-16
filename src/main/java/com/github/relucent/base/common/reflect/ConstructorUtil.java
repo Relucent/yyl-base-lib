@@ -86,7 +86,7 @@ public class ConstructorUtil {
             // Ignore
         }
 
-        final Constructor<?>[] constructors = clazz.getConstructors();
+        final Constructor<?>[] constructors = clazz.getDeclaredConstructors();
         Constructor<T> result = null;
 
         // 返回最佳匹配
@@ -111,25 +111,21 @@ public class ConstructorUtil {
      * @param parameterTypes 参数的类型数组, {@code null} 被视为没有参数
      * @return {@code clazz}的新实例
      * @throws NullPointerException 如果 {@code clazz} 为 {@code null}
-     * @throws NoSuchMethodException 如果找不到匹配的构造函数
-     * @throws IllegalAccessException 如果安全性不允许调用
-     * @throws InvocationTargetException 如果调用时发生错误
-     * @throws InstantiationException 如果实例化时发生错误
+     * @throws RuntimeException 如果调用时发生错误
      * @see Constructor#newInstance
      */
-    public static <T> T invokeConstructor(final Class<T> clazz, Object[] args, Class<?>[] parameterTypes)
-            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+    public static <T> T invokeConstructor(final Class<T> clazz, Object[] args, Class<?>[] parameterTypes) {
         args = ArrayUtil.nullToEmpty(args);
         parameterTypes = ArrayUtil.nullToEmpty(parameterTypes);
         final Constructor<T> constructor = getMatchingConstructor(clazz, parameterTypes);
         if (constructor == null) {
-            throw new NoSuchMethodException("No such accessible constructor on object: " + clazz.getName());
+            throw new IllegalStateException("No such accessible constructor on object: " + clazz.getName());
         }
         if (constructor.isVarArgs()) {
             final Class<?>[] methodParameterTypes = constructor.getParameterTypes();
             args = MethodUtil.getVarArgs(args, methodParameterTypes);
         }
-        return constructor.newInstance(args);
+        return invokeConstructor(constructor, args);
     }
 
     /**
@@ -138,13 +134,9 @@ public class ConstructorUtil {
      * @param clazz 要构造的类，不能为{@code null}
      * @param args 实际参数数组，可能为null（这将导致调用默认构造函数）
      * @return 对象实例
-     * @throws NoSuchMethodException 如果找不到构造函数
-     * @throws IllegalAccessException 如果访问构造函数时出错
-     * @throws InvocationTargetException 如果调用构造函数时发生错误
-     * @throws InstantiationException 如果实例化类时发生错误
+     * @throws RuntimeException 如果调用时发生错误
      */
-    public static <T> T invokeConstructor(final Class<T> clazz, Object[] args)
-            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+    public static <T> T invokeConstructor(final Class<T> clazz, Object[] args) {
         final Class<?>[] parameterTypes = ClassUtil.toClass(ArrayUtil.nullToEmpty(args));
         return invokeConstructor(clazz, args, parameterTypes);
     }
@@ -156,10 +148,7 @@ public class ConstructorUtil {
      * @param clazz 要构造的类，不能为{@code null}
      * @param args 参数数组, {@code null} 被视为没有参数
      * @return 对象实例
-     * @throws NoSuchMethodException 如果找不到构造函数
-     * @throws IllegalAccessException 如果访问构造函数时出错
-     * @throws InvocationTargetException 如果调用构造函数时发生错误
-     * @throws InstantiationException 如果实例化类时发生错误
+     * @throws RuntimeException 如果调用时发生错误
      */
     public static <T> T invokeExactConstructor(final Class<T> clazz, Object... args)
             throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
@@ -176,11 +165,7 @@ public class ConstructorUtil {
      * @param args 参数数组, {@code null} 被视为没有参数
      * @param parameterTypes 参数的类型数组, {@code null} 被视为没有参数
      * @return 对象实例
-     * @throws NoSuchMethodException 如果找不到构造函数
-     * @throws IllegalAccessException 如果访问构造函数时出错
-     * @throws InvocationTargetException 如果调用构造函数时发生错误
-     * @throws InstantiationException 如果实例化类时发生错误
-     * @see Constructor#newInstance
+     * @throws RuntimeException 如果调用时发生错误
      */
     public static <T> T invokeExactConstructor(final Class<T> clazz, Object[] args, Class<?>[] parameterTypes)
             throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
@@ -190,6 +175,22 @@ public class ConstructorUtil {
         if (constructor == null) {
             throw new NoSuchMethodException("No such accessible constructor on object: " + clazz.getName());
         }
-        return constructor.newInstance(args);
+        return invokeConstructor(constructor, args);
+    }
+
+    /**
+     * 调用构造函数返回类的新实例<br>
+     * @param constructor 构造函数
+     * @param args 参数数组, {@code null} 被视为没有参数
+     * @return 类的新实例
+     * @see Constructor#newInstance
+     */
+    public static <T> T invokeConstructor(Constructor<T> constructor, Object... args) {
+        try {
+            return constructor.newInstance(args);
+        } catch (Exception ex) {
+            MemberUtil.handleReflectionException(ex);
+        }
+        throw new IllegalStateException("Should never get here");
     }
 }
