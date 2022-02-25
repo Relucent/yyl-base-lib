@@ -1,5 +1,8 @@
 package com.github.relucent.base.common.thread;
 
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
+
 /**
  * 线程工具类，提供一些线程方法
  */
@@ -37,6 +40,35 @@ public class ThreadUtil {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
+    }
+
+    /**
+     * 获得当前线程堆栈列表
+     * @return 线程堆栈列表
+     */
+    public static StackTraceElement[] getStackTrace() {
+        return Thread.currentThread().getStackTrace();
+    }
+
+    /**
+     * 异步执行任务，并返回异步结果。<br>
+     * Future代表一个异步执行的操作，通过get()方法可以获得操作的结果，如果异步操作还没有完成，则，get()会使当前线程阻塞
+     * @param task 执行的任务
+     * @return 异步结果（{@link Future}）
+     */
+    public static Future<?> runAsync(Runnable task) {
+        return GlobalThreadPool.getInstance().submit(task);
+    }
+
+    /**
+     * 异步执行任务，并返回异步结果。<br>
+     * Future代表一个异步执行的操作，通过get()方法可以获得操作的结果，如果异步操作还没有完成，则，get()会使当前线程阻塞
+     * @param <T> 任务返回的结果类型
+     * @param task 执行的任务
+     * @return 异步结果（{@link Future}）
+     */
+    public static <T> Future<T> runAsync(Callable<T> task) {
+        return GlobalThreadPool.getInstance().submit(task);
     }
 
     /**
