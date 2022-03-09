@@ -14,4 +14,12 @@ public class RegexUtilTest {
         System.out.println(actual);
         Assert.assertEquals(expected, actual);
     }
+
+    @Test
+    public void testReplaceAll2() {
+        String actual = RegexUtil.replaceAll("A1B2C3D4", Pattern.compile("(\\d)"), "#$1");
+        String expected = "A#1B#2C#3D#4";
+        System.out.println(actual);
+        Assert.assertEquals(expected, actual);
+    }
 }
