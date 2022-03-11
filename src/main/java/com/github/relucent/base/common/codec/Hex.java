@@ -39,7 +39,7 @@ public class Hex {
         for (int i = 0; i < len; i++) {
             char ch = data.charAt(i);
             // ![0-9a-fA-F]
-            if (!('0' <= ch && ch <= '9' || 'a' <= ch && ch <= 'a' || 'A' <= ch && ch <= 'F')) {
+            if (!('0' <= ch && ch <= '9' || 'a' <= ch && ch <= 'f' || 'A' <= ch && ch <= 'F')) {
                 return false;
             }
         }

@@ -40,8 +40,8 @@ public class RegexUtil {
      * 替换所有正则匹配的文本，并使用自定义函数决定如何替换。<br>
      * replacement可以通过{@link Matcher} 提取出匹配到的内容的不同部分，然后经过处理，返回需要替换的内容放回原位。
      * 
-     * <pre class="code">
-     * RegexUtil.replaceAll("a1b2c3d4", Pattern.compile("\\d+"), matcher -> Integer.toString(Integer.parseInt(matcher.group(0)) + 1))
+     * <pre>
+     * RegexUtil.replaceAll("a1b2c3d4", Pattern.compile("\\d+"), matcher -&gt; Integer.toString(Integer.parseInt(matcher.group(0)) + 1))
      * // 结果为："a2b3c4d5"
      * </pre>
      * 

@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 
 import com.github.relucent.base.common.constant.ArrayConstant;
+import com.github.relucent.base.common.exception.ExceptionHelper;
 import com.github.relucent.base.common.lang.Assert;
 import com.github.relucent.base.common.lang.ClassUtil;
 import com.github.relucent.base.common.lang.StringUtil;
@@ -111,10 +112,9 @@ public class FieldUtil {
      * @param fieldName 字段名称
      * @param forceAccess 如果为{@code true}会匹配所有字段（{@code public}、{@code protected}、 default(package)和 {@code private}方法）；{@code false}只会匹配{@code public}字段。 如果为{@code fasle}则只匹配{@code public}字段
      * @return 字段的值
-     * @throws IllegalArgumentException 没有找到匹配的字段
-     * @throws IllegalAccessException 如果无法访问该字段
+     * @throws RuntimeException 没有找到匹配的字段，或者该字段不能访问
      */
-    public static Object readField(final Object target, final String fieldName, final boolean forceAccess) throws IllegalAccessException {
+    public static Object readField(final Object target, final String fieldName, final boolean forceAccess) {
         Assert.notNull(target, "target object must not be null");
         final Class<?> cls = target.getClass();
         final Field field = getField(cls, fieldName, forceAccess);
@@ -127,13 +127,16 @@ public class FieldUtil {
      * @param field 字段
      * @param target 要调用的对象，如果是{@code null}则表示是{@code static}字段
      * @return 字段值
-     * @throws IllegalArgumentException 传入字段为{@code null}
-     * @throws IllegalAccessException 如果无法访问该字段
+     * @throws RuntimeException 传入字段为{@code null}，或者无法访问该字段
      */
-    public static Object readField(final Field field, final Object target) throws IllegalAccessException {
+    public static Object readField(final Field field, final Object target) {
         Assert.notNull(field, "The field must not be null");
         MemberUtil.setAccessible(field);
-        return field.get(target);
+        try {
+            return field.get(target);
+        } catch (Exception e) {
+            throw ExceptionHelper.propagate(e);
+        }
     }
 
     /**
@@ -141,8 +144,7 @@ public class FieldUtil {
      * @param clazz 类
      * @param fieldName 字段名
      * @return 字段值
-     * @throws IllegalArgumentException 没有找到匹配的字段
-     * @throws IllegalAccessException 如果无法访问该字段
+     * @throws RuntimeException 没有找到匹配的字段，或者该字段不能访问
      */
     public static Object readStaticField(final Class<?> clazz, final String fieldName) throws IllegalAccessException {
         final Field field = getField(clazz, fieldName, true);
@@ -154,8 +156,7 @@ public class FieldUtil {
      * 从静态字段读取值
      * @param field 字段
      * @return 字段值
-     * @throws IllegalArgumentException 传入字段为{@code null}
-     * @throws IllegalAccessException 如果无法访问该字段
+     * @throws RuntimeException 传入字段错误，没有找到匹配的字段，或者该字段不能访问
      */
     public static Object readStaticField(final Field field) throws IllegalAccessException {
         Assert.notNull(field, "The field must not be null");
@@ -169,10 +170,9 @@ public class FieldUtil {
      * @param fieldName 字段名称
      * @param value 字段值
      * @param forceAccess 如果为{@code true}会匹配所有字段（{@code public}、{@code protected}、 default(package)和 {@code private}方法）；{@code false}只会匹配{@code public}字段。 如果为{@code fasle}则只匹配{@code public}字段
-     * @throws IllegalAccessException 如果无法访问该字段
+     * @throws RuntimeException 如果无法访问该字段
      */
-    public static void writeField(final Object target, final String fieldName, final Object value, final boolean forceAccess)
-            throws IllegalAccessException {
+    public static void writeField(final Object target, final String fieldName, final Object value, final boolean forceAccess) {
         Assert.notNull(target, "target object must not be null");
         final Class<?> cls = target.getClass();
         final Field field = getField(cls, fieldName, forceAccess);
@@ -185,12 +185,16 @@ public class FieldUtil {
      * @param field 需要写入值的字段 to write
      * @param target 需要写入值的对象，{@code null}表示是一个{@code static} 字段
      * @param value 字段值
-     * @throws IllegalAccessException 如果无法访问该字段
+     * @throws RuntimeException 如果无法访问该字段
      */
-    public static void writeField(final Field field, final Object target, final Object value) throws IllegalAccessException {
+    public static void writeField(final Field field, final Object target, final Object value) {
         Assert.notNull(field, "The field must not be null");
         MemberUtil.setAccessible(field);
-        field.set(target, value);
+        try {
+            field.set(target, value);
+        } catch (Exception e) {
+            throw ExceptionHelper.propagate(e);
+        }
     }
 
     /**
@@ -198,10 +202,9 @@ public class FieldUtil {
      * @param clazz 类
      * @param fieldName 字段名称
      * @param forceAccess 如果为{@code true}会匹配所有字段（{@code public}、{@code protected}、 default(package)和 {@code private}方法）；{@code false}只会匹配{@code public}字段。 如果为{@code fasle}则只匹配{@code public}字段
-     * @throws IllegalAccessException 如果无法访问该字段
+     * @throws RuntimeException 如果无法访问该字段
      */
-    public static void writeStaticField(final Class<?> clazz, final String fieldName, final Object value, final boolean forceAccess)
-            throws IllegalAccessException {
+    public static void writeStaticField(final Class<?> clazz, final String fieldName, final Object value, final boolean forceAccess) {
         final Field field = getField(clazz, fieldName, forceAccess);
         Assert.isTrue(field != null, String.format("Cannot locate declared field %s.%s", clazz.getName(), fieldName));
         writeStaticField(field, value);
@@ -211,9 +214,9 @@ public class FieldUtil {
      * 将值写入静态字段
      * @param field 需要写入值的字段 to write
      * @param value 字段值
-     * @throws IllegalAccessException 如果无法访问该字段
+     * @throws RuntimeException 如果无法访问该字段
      */
-    public static void writeStaticField(final Field field, final Object value) throws IllegalAccessException {
+    public static void writeStaticField(final Field field, final Object value) {
         writeField(field, (Object) null, value);
     }
 

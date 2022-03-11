@@ -1,5 +1,7 @@
 package com.github.relucent.base.common.lang;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -152,6 +154,62 @@ public class StringUtil {
      */
     public static String defaultString(final String string, final String defaultString) {
         return string == null ? defaultString : string;
+    }
+
+    /**
+     * 将字符串转为字节数组，使用UTF8编码
+     * @param text 字符串
+     * @return 字节数组
+     */
+    public static byte[] getBytes(final String text) {
+        if (text == null) {
+            return null;
+        }
+        return text.getBytes(StandardCharsets.UTF_8);
+    }
+
+    /**
+     * 将字符串转为字节数组
+     * @param text 字符串
+     * @param charset 编码
+     * @return 字节数组
+     */
+    public static byte[] getBytes(final String text, Charset charset) {
+        if (text == null) {
+            return null;
+        }
+        if (charset == null) {
+            return text.getBytes();
+        }
+        return text.getBytes(charset);
+    }
+
+    /**
+     * 将字节数组转为字符串
+     * @param bytes 字节数组
+     * @param charset 编码
+     * @return 字符串
+     */
+    public static String toString(final byte[] bytes, Charset charset) {
+        if (bytes == null) {
+            return null;
+        }
+        if (charset == null) {
+            return new String(bytes);
+        }
+        return new String(bytes, charset);
+    }
+
+    /**
+     * 将字节数组转为字符串，使用UTF8编码
+     * @param bytes 字节数组
+     * @return 字符串
+     */
+    public static String toString(final byte[] bytes) {
+        if (bytes == null) {
+            return null;
+        }
+        return new String(bytes, StandardCharsets.UTF_8);
     }
 
     /**
