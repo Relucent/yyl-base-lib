@@ -1,8 +1,8 @@
 package com.github.relucent.base.common.reflect;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 
+import com.github.relucent.base.common.exception.GeneralException;
 import com.github.relucent.base.common.lang.ArrayUtil;
 import com.github.relucent.base.common.lang.Assert;
 import com.github.relucent.base.common.lang.ClassUtil;
@@ -119,7 +119,7 @@ public class ConstructorUtil {
         parameterTypes = ArrayUtil.nullToEmpty(parameterTypes);
         final Constructor<T> constructor = getMatchingConstructor(clazz, parameterTypes);
         if (constructor == null) {
-            throw new IllegalStateException("No such accessible constructor on object: " + clazz.getName());
+            throw new GeneralException("No such accessible constructor on object: " + clazz.getName());
         }
         if (constructor.isVarArgs()) {
             final Class<?>[] methodParameterTypes = constructor.getParameterTypes();
@@ -150,8 +150,7 @@ public class ConstructorUtil {
      * @return 对象实例
      * @throws RuntimeException 如果调用时发生错误
      */
-    public static <T> T invokeExactConstructor(final Class<T> clazz, Object... args)
-            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+    public static <T> T invokeExactConstructor(final Class<T> clazz, Object... args) {
         args = ArrayUtil.nullToEmpty(args);
         final Class<?> parameterTypes[] = ClassUtil.toClass(args);
         return invokeExactConstructor(clazz, args, parameterTypes);
@@ -167,13 +166,12 @@ public class ConstructorUtil {
      * @return 对象实例
      * @throws RuntimeException 如果调用时发生错误
      */
-    public static <T> T invokeExactConstructor(final Class<T> clazz, Object[] args, Class<?>[] parameterTypes)
-            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+    public static <T> T invokeExactConstructor(final Class<T> clazz, Object[] args, Class<?>[] parameterTypes) {
         args = ArrayUtil.nullToEmpty(args);
         parameterTypes = ArrayUtil.nullToEmpty(parameterTypes);
         final Constructor<T> constructor = getConstructor(clazz, parameterTypes);
         if (constructor == null) {
-            throw new NoSuchMethodException("No such accessible constructor on object: " + clazz.getName());
+            throw new GeneralException("No such accessible constructor on object: " + clazz.getName());
         }
         return invokeConstructor(constructor, args);
     }
@@ -191,6 +189,6 @@ public class ConstructorUtil {
         } catch (Exception ex) {
             MemberUtil.handleReflectionException(ex);
         }
-        throw new IllegalStateException("Should never get here");
+        throw new GeneralException("Should never get here");
     }
 }

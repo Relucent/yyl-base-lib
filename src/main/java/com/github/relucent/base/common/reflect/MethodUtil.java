@@ -1,7 +1,6 @@
 package com.github.relucent.base.common.reflect;
 
 import java.lang.reflect.Array;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,6 +11,7 @@ import java.util.Objects;
 import com.github.relucent.base.common.collection.CollectionUtil;
 import com.github.relucent.base.common.constant.ArrayConstant;
 import com.github.relucent.base.common.convert.ConvertUtil;
+import com.github.relucent.base.common.exception.ExceptionHelper;
 import com.github.relucent.base.common.lang.ArrayUtil;
 import com.github.relucent.base.common.lang.ClassUtil;
 import com.github.relucent.base.common.lang.StringUtil;
@@ -180,12 +180,9 @@ public class MethodUtil {
      * @param forceAccess 是否强制访问调用方法，即使它不可访问
      * @param methodName 方法名称
      * @return 调用的方法返回的值
-     * @throws NoSuchMethodException 如果没有找到可访问的方法
-     * @throws InvocationTargetException 包装由调用的方法引发的异常
-     * @throws IllegalAccessException 如果请求的方法无法通过反射访问
+     * @throws RuntimeException 如果请求的方法无法通过反射访问或者调用失败
      */
-    public static Object invokeMethod(final Object object, final boolean forceAccess, final String methodName)
-            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    public static Object invokeMethod(final Object object, final boolean forceAccess, final String methodName) {
         return invokeMethod(object, forceAccess, methodName, ArrayConstant.EMPTY_OBJECT_ARRAY, ArrayConstant.EMPTY_CLASS_ARRAY);
     }
 
@@ -196,12 +193,9 @@ public class MethodUtil {
      * @param methodName 方法名称
      * @param args 参数数组, {@code null} 被视为没有参数
      * @return 调用的方法返回的值
-     * @throws NoSuchMethodException 如果没有找到可访问的方法
-     * @throws InvocationTargetException 包装由调用的方法引发的异常
-     * @throws IllegalAccessException 如果请求的方法无法通过反射访问
+     * @throws RuntimeException 如果请求的方法无法通过反射访问或者调用失败
      */
-    public static Object invokeMethod(final Object object, final boolean forceAccess, final String methodName, Object... args)
-            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    public static Object invokeMethod(final Object object, final boolean forceAccess, final String methodName, Object... args) {
         args = ArrayUtil.nullToEmpty(args);
         final Class<?>[] parameterTypes = ClassUtil.toClass(args);
         return invokeMethod(object, forceAccess, methodName, args, parameterTypes);
@@ -215,12 +209,10 @@ public class MethodUtil {
      * @param args 参数数组, {@code null} 被视为没有参数
      * @param parameterTypes 参数的类型数组, {@code null} 被视为没有参数
      * @return 调用的方法返回的值
-     * @throws NoSuchMethodException 如果没有找到可访问的方法
-     * @throws InvocationTargetException 包装由调用的方法引发的异常
-     * @throws IllegalAccessException 如果请求的方法无法通过反射访问
+     * @throws RuntimeException 如果请求的方法无法通过反射访问或者调用失败
      */
     public static Object invokeMethod(final Object object, final boolean forceAccess, final String methodName, Object[] args,
-            Class<?>[] parameterTypes) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+            Class<?>[] parameterTypes) {
         args = ArrayUtil.nullToEmpty(args);
         parameterTypes = ArrayUtil.nullToEmpty(parameterTypes);
 
@@ -239,11 +231,11 @@ public class MethodUtil {
         }
 
         if (method == null) {
-            throw new NoSuchMethodException(messagePrefix + methodName + "() on object: " + object.getClass().getName());
+            throw ExceptionHelper.error(messagePrefix + methodName + "() on object: " + object.getClass().getName());
         }
         args = toVarArgs(method, args);
 
-        return method.invoke(object, args);
+        return invoke(method, object, args);
     }
 
     /**
@@ -253,19 +245,16 @@ public class MethodUtil {
      * @param args 方法的参数数组，{@code null}视为空数组
      * @param parameterTypes 方法的参数类型数组，{@code null}视为空数组
      * @return 调用的方法返回的值
-     * @throws NoSuchMethodException 如果找到对应方法
-     * @throws InvocationTargetException 包装由调用的方法引发的异常
-     * @throws IllegalAccessException 如果请求的方法无法通过反射访问
+     * @throws RuntimeException 如果请求的方法无法通过反射访问或者调用失败
      */
-    public static Object invokeExactMethod(final Object object, final String methodName, Object[] args, Class<?>[] parameterTypes)
-            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    public static Object invokeExactMethod(final Object object, final String methodName, Object[] args, Class<?>[] parameterTypes) {
         args = ArrayUtil.nullToEmpty(args);
         parameterTypes = ArrayUtil.nullToEmpty(parameterTypes);
         final Method method = getPublicMethod(object.getClass(), methodName, parameterTypes);
         if (method == null) {
-            throw new NoSuchMethodException("No such accessible method: " + methodName + "() on class: " + object.getClass());
+            throw ExceptionHelper.error("No such accessible method: " + methodName + "() on class: " + object.getClass());
         }
-        return method.invoke(object, args);
+        return invoke(method, object, args);
     }
 
     /**
@@ -274,12 +263,9 @@ public class MethodUtil {
      * @param methodName 方法名称
      * @param args 方法的参数数组，{@code null}视为空数组
      * @return 调用的方法返回的值
-     * @throws NoSuchMethodException 如果没有这种可访问的方法
-     * @throws InvocationTargetException 包装由调用的方法引发的异常
-     * @throws IllegalAccessException 如果请求的方法无法通过反射访问
+     * @throws RuntimeException 如果请求的方法无法通过反射访问或者调用失败
      */
-    public static Object invokeStaticMethod(final Class<?> clazz, final String methodName, Object... args)
-            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    public static Object invokeStaticMethod(final Class<?> clazz, final String methodName, Object... args) {
         args = ArrayUtil.nullToEmpty(args);
         final Class<?>[] parameterTypes = ClassUtil.toClass(args);
         return invokeStaticMethod(clazz, methodName, args, parameterTypes);
@@ -292,20 +278,17 @@ public class MethodUtil {
      * @param args 方法的参数数组，{@code null}视为空数组
      * @param parameterTypes 方法的参数类型数组，{@code null}视为空数组
      * @return 调用的方法返回的值
-     * @throws NoSuchMethodException 如果没有这种可访问的方法
-     * @throws InvocationTargetException 包装由调用的方法引发的异常
-     * @throws IllegalAccessException 如果请求的方法无法通过反射访问
+     * @throws RuntimeException 如果请求的方法无法通过反射访问或者调用失败
      */
-    public static Object invokeStaticMethod(final Class<?> clazz, final String methodName, Object[] args, Class<?>[] parameterTypes)
-            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    public static Object invokeStaticMethod(final Class<?> clazz, final String methodName, Object[] args, Class<?>[] parameterTypes) {
         args = ArrayUtil.nullToEmpty(args);
         parameterTypes = ArrayUtil.nullToEmpty(parameterTypes);
         final Method method = getMatchingPublicMethod(clazz, methodName, parameterTypes);
         if (method == null) {
-            throw new NoSuchMethodException("No such accessible method: " + methodName + "() on class: " + clazz.getName());
+            throw ExceptionHelper.error("No such accessible method: " + methodName + "() on class: " + clazz.getName());
         }
         args = toVarArgs(method, args);
-        return method.invoke(null, args);
+        return invoke(method, null, args);
     }
 
     /**
@@ -315,19 +298,16 @@ public class MethodUtil {
      * @param args 方法的参数数组，{@code null}视为空数组
      * @param parameterTypes 方法的参数类型数组，{@code null}视为空数组
      * @return 调用的方法返回的值
-     * @throws NoSuchMethodException 如果找到对应方法
-     * @throws InvocationTargetException 包装由调用的方法引发的异常
-     * @throws IllegalAccessException 如果请求的方法无法通过反射访问
+     * @throws RuntimeException 如果请求的方法无法通过反射访问或者调用失败
      */
-    public static Object invokeExactStaticMethod(final Class<?> clazz, final String methodName, Object[] args, Class<?>[] parameterTypes)
-            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    public static Object invokeExactStaticMethod(final Class<?> clazz, final String methodName, Object[] args, Class<?>[] parameterTypes) {
         args = ArrayUtil.nullToEmpty(args);
         parameterTypes = ArrayUtil.nullToEmpty(parameterTypes);
         final Method method = getPublicMethod(clazz, methodName, parameterTypes);
         if (method == null) {
-            throw new NoSuchMethodException("No such accessible method: " + methodName + "() on class: " + clazz.getName());
+            throw ExceptionHelper.error("No such accessible method: " + methodName + "() on class: " + clazz.getName());
         }
-        return method.invoke(null, args);
+        return invoke(method, null, args);
     }
 
     // ----------------------------------------------------------------------
@@ -427,4 +407,21 @@ public class MethodUtil {
         return answer;
     }
 
+    // invoke
+    // ----------------------------------------------------------------------
+    /**
+     * 调用方法
+     * @param method 调用的方法
+     * @param object 调用方法的对象
+     * @param args 方法的参数数组，{@code null}视为空数组
+     * @return 调用的方法返回的值
+     * @throws RuntimeException 如果请求的方法无法通过反射访问或者调用失败
+     */
+    private static Object invoke(final Method method, final Object object, final Object[] args) {
+        try {
+            return method.invoke(null, args);
+        } catch (Exception e) {
+            throw ExceptionHelper.propagate(e);
+        }
+    }
 }

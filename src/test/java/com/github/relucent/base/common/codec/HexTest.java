@@ -6,7 +6,7 @@ import java.io.IOException;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.github.relucent.base.common.codec.Hex;
+import com.github.relucent.base.common.lang.StringUtil;
 
 public class HexTest {
 
@@ -39,5 +39,14 @@ public class HexTest {
         Assert.assertArrayEquals(decoded2, original);
         Assert.assertArrayEquals(decoded3, original);
         Assert.assertArrayEquals(decoded4, original);
+    }
+
+    @Test
+    public void test() {
+        String expected = "hello world";
+        String code = Hex.encodeHexString(StringUtil.getBytes(expected));
+        Assert.assertTrue(Hex.isHex(code));
+        String actual = StringUtil.toString(Hex.decodeHex(code));
+        Assert.assertEquals(expected, actual);
     }
 }
