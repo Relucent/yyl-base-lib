@@ -342,8 +342,8 @@ public class NumberUtil {
      * @throws IllegalArgumentException 如果数组{@code array} 为{@code null} 或者空
      */
     private static void validateArray(final Object array) {
-        Assert.notNull(array, "The Array must not be null");
-        Assert.isTrue(Array.getLength(array) != 0, "Array cannot be empty.");
+        AssertUtil.notNull(array, "The Array must not be null");
+        AssertUtil.isTrue(Array.getLength(array) != 0, "Array cannot be empty.");
     }
     // // -----------------------------------------------------------------------
 

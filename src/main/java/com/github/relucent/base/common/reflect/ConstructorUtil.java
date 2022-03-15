@@ -4,7 +4,7 @@ import java.lang.reflect.Constructor;
 
 import com.github.relucent.base.common.exception.GeneralException;
 import com.github.relucent.base.common.lang.ArrayUtil;
-import com.github.relucent.base.common.lang.Assert;
+import com.github.relucent.base.common.lang.AssertUtil;
 import com.github.relucent.base.common.lang.ClassUtil;
 
 /**
@@ -53,7 +53,7 @@ public class ConstructorUtil {
      * @see Class#getConstructor
      */
     public static <T> Constructor<T> getConstructor(final Class<T> clazz, final Class<?>... parameterTypes) {
-        Assert.notNull(clazz, "class cannot be null");
+        AssertUtil.notNull(clazz, "class cannot be null");
         try {
             Constructor<T> constructor = clazz.getDeclaredConstructor(parameterTypes);
             MemberUtil.setAccessible(constructor);
@@ -74,7 +74,7 @@ public class ConstructorUtil {
      */
     @SuppressWarnings("unchecked")
     public static <T> Constructor<T> getMatchingConstructor(final Class<T> clazz, final Class<?>... parameterTypes) {
-        Assert.notNull(clazz, "class cannot be null");
+        AssertUtil.notNull(clazz, "class cannot be null");
 
         // 检查是否有一个构造函数与确切的签名匹配，多数情况下可以直接找到构造器
         try {

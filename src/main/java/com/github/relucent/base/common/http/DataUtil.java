@@ -11,7 +11,7 @@ import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.github.relucent.base.common.lang.Assert;
+import com.github.relucent.base.common.lang.AssertUtil;
 
 /**
  * 用于处理数据的工具类
@@ -35,7 +35,7 @@ public final class DataUtil {
      * @throws IOException 如果从输入流读取时发生异常
      */
     static ByteBuffer readToByteBuffer(InputStream inStream, int maxSize) throws IOException {
-        Assert.isTrue(maxSize >= 0, "maxSize must be 0 (unlimited) or larger");
+        AssertUtil.isTrue(maxSize >= 0, "maxSize must be 0 (unlimited) or larger");
         final boolean capped = maxSize > 0;
         byte[] buffer = new byte[BUFFER_SIZE];
         ByteArrayOutputStream outStream = new ByteArrayOutputStream(BUFFER_SIZE);
