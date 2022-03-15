@@ -4,12 +4,12 @@ package com.github.relucent.base.common.lang;
  * 断言，断言某些对象或值是否符合规定，否则抛出异常。主要用于做变量检查。
  * @author YYL
  */
-public class Assert {
+public class AssertUtil {
 
     /**
      * 工具类方法，实例不应在标准编程中构造。
      */
-    protected Assert() {
+    protected AssertUtil() {
     }
 
     public static void isNull(Object object) {

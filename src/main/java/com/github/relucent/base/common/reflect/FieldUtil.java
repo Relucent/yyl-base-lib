@@ -9,7 +9,7 @@ import java.util.List;
 
 import com.github.relucent.base.common.constant.ArrayConstant;
 import com.github.relucent.base.common.exception.ExceptionHelper;
-import com.github.relucent.base.common.lang.Assert;
+import com.github.relucent.base.common.lang.AssertUtil;
 import com.github.relucent.base.common.lang.ClassUtil;
 import com.github.relucent.base.common.lang.StringUtil;
 
@@ -35,7 +35,7 @@ public class FieldUtil {
      * @throws IllegalArgumentException 如果类为{@code null}
      */
     public static Field[] getAllFields(final Class<?> clazz) {
-        Assert.notNull(clazz, "The class must not be null");
+        AssertUtil.notNull(clazz, "The class must not be null");
         final List<Field> allFields = getAllFieldList(clazz);
         return allFields.toArray(ArrayConstant.EMPTY_FIELD_ARRAY);
     }
@@ -49,8 +49,8 @@ public class FieldUtil {
      * @throws IllegalArgumentException 传入 class 参数为{@code null},或者方法名为空
      */
     public static Field getField(final Class<?> clazz, final String fieldName, final boolean forceAccess) {
-        Assert.notNull(clazz, "The class must not be null");
-        Assert.isTrue(StringUtil.isBlank(fieldName), "The field name must not be blank/empty");
+        AssertUtil.notNull(clazz, "The class must not be null");
+        AssertUtil.isTrue(StringUtil.isBlank(fieldName), "The field name must not be blank/empty");
 
         for (Class<?> klass = clazz; klass != null; klass = klass.getSuperclass()) {
             try {
@@ -73,7 +73,7 @@ public class FieldUtil {
         for (final Class<?> klass : ClassUtil.getAllInterfaces(clazz)) {
             try {
                 final Field test = klass.getField(fieldName);
-                Assert.isTrue(match == null,
+                AssertUtil.isTrue(match == null,
                         String.format(
                                 "Reference to field %s is ambiguous relative to %s; a matching field exists on two or more implemented interfaces.", //
                                 fieldName, clazz));
@@ -93,7 +93,7 @@ public class FieldUtil {
      * @throws IllegalArgumentException 如果类或注释为{@code null}
      */
     public static Field[] getFieldsWithAnnotation(final Class<?> clazz, final Class<? extends Annotation> annotationType) {
-        Assert.notNull(annotationType, "The annotation class must not be null");
+        AssertUtil.notNull(annotationType, "The annotation class must not be null");
         final Field[] allFields = getAllFields(clazz);
         final List<Field> annotatedFields = new ArrayList<>();
         for (final Field field : allFields) {
@@ -115,10 +115,10 @@ public class FieldUtil {
      * @throws RuntimeException 没有找到匹配的字段，或者该字段不能访问
      */
     public static Object readField(final Object target, final String fieldName, final boolean forceAccess) {
-        Assert.notNull(target, "target object must not be null");
+        AssertUtil.notNull(target, "target object must not be null");
         final Class<?> cls = target.getClass();
         final Field field = getField(cls, fieldName, forceAccess);
-        Assert.isTrue(field != null, String.format("Cannot locate field %s on %s", fieldName, cls));
+        AssertUtil.isTrue(field != null, String.format("Cannot locate field %s on %s", fieldName, cls));
         return readField(field, target);
     }
 
@@ -130,7 +130,7 @@ public class FieldUtil {
      * @throws RuntimeException 传入字段为{@code null}，或者无法访问该字段
      */
     public static Object readField(final Field field, final Object target) {
-        Assert.notNull(field, "The field must not be null");
+        AssertUtil.notNull(field, "The field must not be null");
         MemberUtil.setAccessible(field);
         try {
             return field.get(target);
@@ -148,7 +148,7 @@ public class FieldUtil {
      */
     public static Object readStaticField(final Class<?> clazz, final String fieldName) throws IllegalAccessException {
         final Field field = getField(clazz, fieldName, true);
-        Assert.notNull(field, String.format("Cannot locate field '%s' on %s", fieldName, clazz));
+        AssertUtil.notNull(field, String.format("Cannot locate field '%s' on %s", fieldName, clazz));
         return readStaticField(field);
     }
 
@@ -159,7 +159,7 @@ public class FieldUtil {
      * @throws RuntimeException 传入字段错误，没有找到匹配的字段，或者该字段不能访问
      */
     public static Object readStaticField(final Field field) throws IllegalAccessException {
-        Assert.notNull(field, "The field must not be null");
+        AssertUtil.notNull(field, "The field must not be null");
         MemberUtil.setAccessible(field);
         return readField(field, (Object) null);
     }
@@ -173,10 +173,10 @@ public class FieldUtil {
      * @throws RuntimeException 如果无法访问该字段
      */
     public static void writeField(final Object target, final String fieldName, final Object value, final boolean forceAccess) {
-        Assert.notNull(target, "target object must not be null");
+        AssertUtil.notNull(target, "target object must not be null");
         final Class<?> cls = target.getClass();
         final Field field = getField(cls, fieldName, forceAccess);
-        Assert.isTrue(field != null, String.format("Cannot locate declared field %s.%s", cls.getName(), fieldName));
+        AssertUtil.isTrue(field != null, String.format("Cannot locate declared field %s.%s", cls.getName(), fieldName));
         writeField(field, target, value);
     }
 
@@ -188,7 +188,7 @@ public class FieldUtil {
      * @throws RuntimeException 如果无法访问该字段
      */
     public static void writeField(final Field field, final Object target, final Object value) {
-        Assert.notNull(field, "The field must not be null");
+        AssertUtil.notNull(field, "The field must not be null");
         MemberUtil.setAccessible(field);
         try {
             field.set(target, value);
@@ -206,7 +206,7 @@ public class FieldUtil {
      */
     public static void writeStaticField(final Class<?> clazz, final String fieldName, final Object value, final boolean forceAccess) {
         final Field field = getField(clazz, fieldName, forceAccess);
-        Assert.isTrue(field != null, String.format("Cannot locate declared field %s.%s", clazz.getName(), fieldName));
+        AssertUtil.isTrue(field != null, String.format("Cannot locate declared field %s.%s", clazz.getName(), fieldName));
         writeStaticField(field, value);
     }
 
@@ -229,7 +229,7 @@ public class FieldUtil {
      * @throws IllegalArgumentException 如果类为{@code null}
      */
     private static List<Field> getAllFieldList(final Class<?> clzss) {
-        Assert.notNull(clzss, "The class must not be null");
+        AssertUtil.notNull(clzss, "The class must not be null");
         final List<Field> allFields = new ArrayList<>();
         Class<?> currentClass = clzss;
         while (currentClass != null) {

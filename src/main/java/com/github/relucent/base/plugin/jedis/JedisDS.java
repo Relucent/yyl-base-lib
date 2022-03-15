@@ -22,7 +22,7 @@ import com.github.relucent.base.common.constant.StringConstant;
 import com.github.relucent.base.common.convert.ConvertUtil;
 import com.github.relucent.base.common.io.IoUtil;
 import com.github.relucent.base.common.lang.ArrayUtil;
-import com.github.relucent.base.common.lang.Assert;
+import com.github.relucent.base.common.lang.AssertUtil;
 import com.github.relucent.base.common.lock.DistributedLockFactory;
 import com.github.relucent.base.common.logging.Logger;
 import com.github.relucent.base.plugin.redis.RedisConstant;
@@ -140,7 +140,7 @@ public class JedisDS implements DistributedLockFactory, Closeable {
      * @param value 值
      */
     public void setString(String key, String value) {
-        Assert.notNull(key, "non null key required");
+        AssertUtil.notNull(key, "non null key required");
         try (Jedis jedis = getJedis()) {
             jedis.set(key, value);
         }
@@ -153,7 +153,7 @@ public class JedisDS implements DistributedLockFactory, Closeable {
      * @param expire 有效时间
      */
     public void setString(String key, String value, Duration expire) {
-        Assert.notNull(key, "non null key required");
+        AssertUtil.notNull(key, "non null key required");
         try (Jedis jedis = getJedis()) {
             jedis.set(key, value, SetParams.setParams().px(expire.toMillis()));
         }
@@ -165,7 +165,7 @@ public class JedisDS implements DistributedLockFactory, Closeable {
      * @return 值
      */
     public String getString(String key) {
-        Assert.notNull(key, "non null key required");
+        AssertUtil.notNull(key, "non null key required");
         try (Jedis jedis = getJedis()) {
             return jedis.get(key);
         }

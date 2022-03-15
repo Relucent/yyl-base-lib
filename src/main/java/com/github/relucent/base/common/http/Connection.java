@@ -36,7 +36,7 @@ import javax.net.ssl.X509TrustManager;
 import javax.xml.bind.DatatypeConverter;
 
 import com.github.relucent.base.common.io.IoUtil;
-import com.github.relucent.base.common.lang.Assert;
+import com.github.relucent.base.common.lang.AssertUtil;
 
 /**
  * HTTP连接的实现类
@@ -85,7 +85,7 @@ public class Connection {
      * @return 当前连接对象
      */
     public Connection url(String url) {
-        Assert.notEmpty(url, "Must supply a valid URL");
+        AssertUtil.notEmpty(url, "Must supply a valid URL");
         try {
             request.url(new URL(DataUtil.encodeUrl(url)));
         } catch (MalformedURLException e) {
@@ -148,7 +148,7 @@ public class Connection {
      * @return 当前连接对象
      */
     public Connection userAgent(String userAgent) {
-        Assert.notNull(userAgent, "User agent must not be null");
+        AssertUtil.notNull(userAgent, "User agent must not be null");
         request.header("User-Agent", userAgent);
         return this;
     }
@@ -221,7 +221,7 @@ public class Connection {
      * @return 当前连接对象
      */
     public Connection referrer(String referrer) {
-        Assert.notNull(referrer, "Referrer must not be null");
+        AssertUtil.notNull(referrer, "Referrer must not be null");
         request.header("Referer", referrer);
         return this;
     }
@@ -299,7 +299,7 @@ public class Connection {
      * @return 当前连接对象
      */
     public Connection data(Map<String, String> data) {
-        Assert.notNull(data, "Data map must not be null");
+        AssertUtil.notNull(data, "Data map must not be null");
         for (Map.Entry<String, String> entry : data.entrySet()) {
             request.data(KeyValue.create(entry.getKey(), entry.getValue()));
         }
@@ -312,7 +312,7 @@ public class Connection {
      * @return 当前连接对象
      */
     public Connection data(Collection<KeyValue> data) {
-        Assert.notNull(data, "Data collection must not be null");
+        AssertUtil.notNull(data, "Data collection must not be null");
         for (KeyValue entry : data) {
             request.data(entry);
         }
@@ -325,7 +325,7 @@ public class Connection {
      * @return 参数值
      */
     public KeyValue data(String key) {
-        Assert.notEmpty(key, "Data key must not be empty");
+        AssertUtil.notEmpty(key, "Data key must not be empty");
         for (KeyValue keyVal : request().data()) {
             if (keyVal.key().equals(key)) {
                 return keyVal;
@@ -373,7 +373,7 @@ public class Connection {
      * @return 当前连接对象
      */
     public Connection cookies(Map<String, String> cookies) {
-        Assert.notNull(cookies, "Cookie map must not be null");
+        AssertUtil.notNull(cookies, "Cookie map must not be null");
         for (Map.Entry<String, String> entry : cookies.entrySet()) {
             request.cookie(entry.getKey(), entry.getValue());
         }
@@ -458,7 +458,7 @@ public class Connection {
         }
 
         public T url(URL url) {
-            Assert.notNull(url, "URL must not be null");
+            AssertUtil.notNull(url, "URL must not be null");
             this.url = url;
             return (T) this;
         }
@@ -468,26 +468,26 @@ public class Connection {
         }
 
         public T method(Method method) {
-            Assert.notNull(method, "Method must not be null");
+            AssertUtil.notNull(method, "Method must not be null");
             this.method = method;
             return (T) this;
         }
 
         public String header(String name) {
-            Assert.notNull(name, "Header name must not be null");
+            AssertUtil.notNull(name, "Header name must not be null");
             return getHeaderCaseInsensitive(name);
         }
 
         public T header(String name, String value) {
-            Assert.notEmpty(name, "Header name must not be empty");
-            Assert.notNull(value, "Header value must not be null");
+            AssertUtil.notEmpty(name, "Header name must not be empty");
+            AssertUtil.notNull(value, "Header value must not be null");
             removeHeader(name); // ensures we don't get an "accept-encoding" and a "Accept-Encoding"
             headers.put(name, value);
             return (T) this;
         }
 
         public boolean hasHeader(String name) {
-            Assert.notEmpty(name, "Header name must not be empty");
+            AssertUtil.notEmpty(name, "Header name must not be empty");
             return getHeaderCaseInsensitive(name) != null;
         }
 
@@ -496,7 +496,7 @@ public class Connection {
         }
 
         public T removeHeader(String name) {
-            Assert.notEmpty(name, "Header name must not be empty");
+            AssertUtil.notEmpty(name, "Header name must not be empty");
             Map.Entry<String, String> entry = scanHeaders(name); // remove is case insensitive too
             if (entry != null)
                 headers.remove(entry.getKey()); // ensures correct case
@@ -508,7 +508,7 @@ public class Connection {
         }
 
         private String getHeaderCaseInsensitive(String name) {
-            Assert.notNull(name, "Header name must not be null");
+            AssertUtil.notNull(name, "Header name must not be null");
             // quick evals for common case of title case, lower case, then scan for mixed
             String value = headers.get(name);
             if (value == null)
@@ -531,24 +531,24 @@ public class Connection {
         }
 
         public String cookie(String name) {
-            Assert.notEmpty(name, "Cookie name must not be empty");
+            AssertUtil.notEmpty(name, "Cookie name must not be empty");
             return cookies.get(name);
         }
 
         public T cookie(String name, String value) {
-            Assert.notEmpty(name, "Cookie name must not be empty");
-            Assert.notNull(value, "Cookie value must not be null");
+            AssertUtil.notEmpty(name, "Cookie name must not be empty");
+            AssertUtil.notNull(value, "Cookie value must not be null");
             cookies.put(name, value);
             return (T) this;
         }
 
         public boolean hasCookie(String name) {
-            Assert.notEmpty(name, "Cookie name must not be empty");
+            AssertUtil.notEmpty(name, "Cookie name must not be empty");
             return cookies.containsKey(name);
         }
 
         public T removeCookie(String name) {
-            Assert.notEmpty(name, "Cookie name must not be empty");
+            AssertUtil.notEmpty(name, "Cookie name must not be empty");
             cookies.remove(name);
             return (T) this;
         }
@@ -603,7 +603,7 @@ public class Connection {
         }
 
         public Request connectTimeoutMillis(int millis) {
-            Assert.isTrue(millis >= 0, "Timeout milliseconds must be 0 (infinite) or greater");
+            AssertUtil.isTrue(millis >= 0, "Timeout milliseconds must be 0 (infinite) or greater");
             connectTimeoutMillis = millis;
             return this;
         }
@@ -613,7 +613,7 @@ public class Connection {
         }
 
         public Request readTimeoutMillis(int millis) {
-            Assert.isTrue(millis >= 0, "Timeout milliseconds must be 0 (infinite) or greater");
+            AssertUtil.isTrue(millis >= 0, "Timeout milliseconds must be 0 (infinite) or greater");
             readTimeoutMillis = millis;
             return this;
         }
@@ -623,7 +623,7 @@ public class Connection {
         }
 
         public Request maxBodySize(int bytes) {
-            Assert.isTrue(bytes >= 0, "maxSize must be 0 (unlimited) or larger");
+            AssertUtil.isTrue(bytes >= 0, "maxSize must be 0 (unlimited) or larger");
             maxBodySizeBytes = bytes;
             return this;
         }
@@ -664,7 +664,7 @@ public class Connection {
         }
 
         public Request data(KeyValue keyval) {
-            Assert.notNull(keyval, "Key val must not be null");
+            AssertUtil.notNull(keyval, "Key val must not be null");
             data.add(keyval);
             return this;
         }
@@ -683,7 +683,7 @@ public class Connection {
         }
 
         public Request postDataCharset(String charset) {
-            Assert.notNull(charset, "Charset must not be null");
+            AssertUtil.notNull(charset, "Charset must not be null");
             if (!Charset.isSupported(charset))
                 throw new IllegalCharsetNameException(charset);
             this.postDataCharset = charset;
@@ -730,14 +730,14 @@ public class Connection {
         }
 
         static Response execute(Request req, Response previousResponse) throws IOException {
-            Assert.notNull(req, "Request must not be null");
+            AssertUtil.notNull(req, "Request must not be null");
             String protocol = req.url().getProtocol();
             if (!protocol.equals("http") && !protocol.equals("https"))
                 throw new MalformedURLException("Only http & https protocols supported");
             final boolean methodHasBody = req.method().hasBody();
             final boolean hasRequestBody = req.requestBody() != null;
             if (!methodHasBody)
-                Assert.isFalse(hasRequestBody, "Cannot set a request body for HTTP method " + req.method());
+                AssertUtil.isFalse(hasRequestBody, "Cannot set a request body for HTTP method " + req.method());
 
             // set up the request for execution
             String mimeBoundary = null;
@@ -851,7 +851,7 @@ public class Connection {
         }
 
         public String body() {
-            Assert.isTrue(executed, "Request must be executed (with .execute(), .get(), or .post() before getting response body");
+            AssertUtil.isTrue(executed, "Request must be executed (with .execute(), .get(), or .post() before getting response body");
             // charset gets set from header on execute, and from meta-equiv on parse. parse may not
             // have happened yet
             String body;
@@ -864,7 +864,7 @@ public class Connection {
         }
 
         public byte[] bodyAsBytes() {
-            Assert.isTrue(executed, "Request must be executed (with .execute(), .get(), or .post() before getting response body");
+            AssertUtil.isTrue(executed, "Request must be executed (with .execute(), .get(), or .post() before getting response body");
             return byteData.array();
         }
 
@@ -1130,7 +1130,7 @@ public class Connection {
                 first = false;
             }
             for (KeyValue keyVal : req.data()) {
-                Assert.isFalse(keyVal.hasInputStream(), "InputStream data not supported in URL query string.");
+                AssertUtil.isFalse(keyVal.hasInputStream(), "InputStream data not supported in URL query string.");
                 if (!first)
                     url.append('&');
                 else
@@ -1189,7 +1189,7 @@ public class Connection {
         }
 
         public KeyValue key(String key) {
-            Assert.notEmpty(key, "Data key must not be empty");
+            AssertUtil.notEmpty(key, "Data key must not be empty");
             this.key = key;
             return this;
         }
@@ -1199,7 +1199,7 @@ public class Connection {
         }
 
         public KeyValue value(String value) {
-            Assert.notNull(value, "Data value must not be null");
+            AssertUtil.notNull(value, "Data value must not be null");
             this.value = value;
             return this;
         }
@@ -1209,7 +1209,7 @@ public class Connection {
         }
 
         public KeyValue inputStream(InputStream inputStream) {
-            Assert.notNull(value, "Data input stream must not be null");
+            AssertUtil.notNull(value, "Data input stream must not be null");
             this.stream = inputStream;
             return this;
         }
