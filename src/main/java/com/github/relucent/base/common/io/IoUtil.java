@@ -1,12 +1,14 @@
 package com.github.relucent.base.common.io;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -187,12 +189,41 @@ public class IoUtil {
     }
 
     /**
+     * 如果给定字符流是{@link BufferedWriter}，则返回该字符流，否则包装一个 BufferedWriter返回。
+     * @param reader 字符写入流
+     * @return {@link BufferedWriter}
+     */
+    public static BufferedWriter buffer(final Writer writer) {
+        return writer instanceof BufferedWriter ? (BufferedWriter) writer : new BufferedWriter(writer);
+    }
+
+    /**
      * 如果给定字符流是{@link BufferedReader}，则返回该字符流，否则包装一个 BufferedReader返回。
      * @param reader 字符读取流
      * @return {@link BufferedReader}
      */
-    public static BufferedReader toBufferedReader(final Reader reader) {
+    public static BufferedReader buffer(final Reader reader) {
         return reader instanceof BufferedReader ? (BufferedReader) reader : new BufferedReader(reader);
+    }
+
+    /**
+     * 转换字节流 {@code InputStream} 为字符流 {@code Writer}
+     * @param output 字节输出流
+     * @param charset 字符编码
+     * @throws 字符流({@code Writer})
+     */
+    public static Writer toWriter(final OutputStream output, final Charset charset) {
+        return new OutputStreamWriter(output, charset);
+    }
+
+    /**
+     * 转换字节流为字符流
+     * @param input 字节输入流
+     * @param charset 字符编码
+     * @throws 字符流(读取)
+     */
+    public static Reader toReader(final InputStream input, final Charset charset) {
+        return new InputStreamReader(input, charset);
     }
 
     /**
@@ -228,7 +259,7 @@ public class IoUtil {
      * @throws IOException 出现IO错误，抛出异常
      */
     public static List<String> readLines(final Reader input) throws IOException {
-        final BufferedReader reader = toBufferedReader(input);
+        final BufferedReader reader = buffer(input);
         final List<String> list = new ArrayList<>();
         String line = reader.readLine();
         while (line != null) {
