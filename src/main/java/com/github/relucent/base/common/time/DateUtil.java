@@ -8,6 +8,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.TimeZone;
 
+import com.github.relucent.base.common.lang.StringUtil;
+
 /**
  * 日期工具类
  */
@@ -101,14 +103,32 @@ public class DateUtil {
     /**
      * 根据字符串解析日期
      * @param source 日期字符串
-     * @return 日期对象
+     * @return 日期对象，如果不能正确解析返回 {@code null}
      */
     public static Date parseDate(String source) {
-        if (source == null || source.isEmpty()) {
+        if (StringUtil.isBlank(source)) {
             return null;
         }
         try {
             return forceParseDate(source);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /**
+     * 根据指定的日期格式解析日期
+     * @param source 日期字符串
+     * @param pattern 日期格式
+     * @return 日期对象，如果不能正确解析返回 {@code null}
+     */
+    public static Date parseDate(String source, String pattern) {
+        if (StringUtil.isBlank(source)) {
+            return null;
+        }
+        try {
+            SimpleDateFormat format = new SimpleDateFormat(pattern);
+            return format.parse(source);
         } catch (Exception e) {
             return null;
         }
@@ -144,11 +164,11 @@ public class DateUtil {
     /**
      * 格式化日期对象
      * @param date 日期对象
-     * @param format 格式
-     * @return 格式化后的日期对象
+     * @param pattern 日期格式
+     * @return 日期字符串
      */
-    public static String format(Date date, String format) {
-        return format(date, new SimpleDateFormat(format));
+    public static String format(Date date, String pattern) {
+        return format(date, new SimpleDateFormat(pattern));
     }
 
     /**
@@ -225,13 +245,15 @@ public class DateUtil {
     }
 
     /**
-     * 解析日期字符串
-     * @param source 日期字符串
+     * 通过尝试各种不同的解析器来解析表示日期的字符串。<br>
+     * 解析将依次尝试每个解析模式，只有解析整个输入字符串，解析才会被视为成功，解析器将对解析的日期保持宽容。<br>
+     * @param source 要分析的日期字符
      * @return 日期对象
+     * @throws ParseException 日期无法解析
      */
     private static Date forceParseDate(final String source) throws ParseException {
-        if (source == null) {
-            throw new IllegalArgumentException("date string must not be null");
+        if (StringUtil.isBlank(source)) {
+            throw new IllegalArgumentException("date string must not be blank");
         }
         SimpleDateFormat parser = new SimpleDateFormat();
         parser.setLenient(true);
