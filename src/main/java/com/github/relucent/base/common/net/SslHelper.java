@@ -77,19 +77,27 @@ public class SslHelper {
 	}
 
 	/**
-	 * 获得SSLSocket工厂类(该工厂类忽略SSL验证)
-	 * @return SSLSocket工厂类
+	 * 获得X509可信任证书管理器(忽略证书验证)
+	 * @return X509可信任证书管理器
 	 */
-	public static SSLSocketFactory getTrustAnySSLSocketFactory() {
-		return TRUST_ANY_SSL_SOCKET_FACTORY;
-	};
+	public static X509TrustManager getSkipX509TrustManager() {
+		return SKIP_X509_TRUST_MANAGER;
+	}
 
 	/**
-	 * 获得HTTPS域名校验(该类忽略SSL验证)
-	 * @return HTTPS域名校验
+	 * 获得域名校验器(忽略域名校验)
+	 * @return 域名校验器
 	 */
-	public static final HostnameVerifier getTrustAnyHostnameVerifier() {
-		return TRUST_ANY_HOSTNAME_VERIFIER;
+	public static HostnameVerifier getSkipHostnameVerifier() {
+		return SKIP_HOSTNAME_VERIFIER;
+	}
+
+	/**
+	 * 获得SSL套接字工厂(忽略SSL验证)
+	 * @return SSL套接字工厂
+	 */
+	public static SSLSocketFactory getSkipSSLSocketFactory() {
+		return SKIP_SSL_SOCKET_FACTORY;
 	}
 
 	/**
@@ -105,12 +113,27 @@ public class SslHelper {
 		}
 	}
 
-	/** HTTPS域名校验(信任所有) */
-	private static final HostnameVerifier TRUST_ANY_HOSTNAME_VERIFIER;
-	/** HTTPS证书管理(信任所有) */
-	private static final SSLSocketFactory TRUST_ANY_SSL_SOCKET_FACTORY;
+	/** X509可信任证书管理器 */
+	private static final X509TrustManager SKIP_X509_TRUST_MANAGER;
+	/** 域名校验器 */
+	private static final HostnameVerifier SKIP_HOSTNAME_VERIFIER;
+	/** SSL套接字工厂 */
+	private static final SSLSocketFactory SKIP_SSL_SOCKET_FACTORY;
 	static {
-		TRUST_ANY_HOSTNAME_VERIFIER = new HostnameVerifier() {
+		SKIP_X509_TRUST_MANAGER = new X509TrustManager() {
+			public X509Certificate[] getAcceptedIssuers() {
+				return new X509Certificate[0];
+			}
+
+			public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+			}
+
+			public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+			}
+		};
+	}
+	static {
+		SKIP_HOSTNAME_VERIFIER = new HostnameVerifier() {
 			public boolean verify(String hostname, SSLSession session) {
 				return true;
 			}
@@ -121,18 +144,8 @@ public class SslHelper {
 		String provider = "SunJSSE";
 		try {
 			SSLContext sslContext = SSLContext.getInstance(protocol, provider);
-			sslContext.init(null, new TrustManager[] { new X509TrustManager() {
-				public X509Certificate[] getAcceptedIssuers() {
-					return new X509Certificate[0];
-				}
-
-				public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-				}
-
-				public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-				}
-			} }, new java.security.SecureRandom());
-			TRUST_ANY_SSL_SOCKET_FACTORY = sslContext.getSocketFactory();
+			sslContext.init(null, new TrustManager[] { SKIP_X509_TRUST_MANAGER }, new java.security.SecureRandom());
+			SKIP_SSL_SOCKET_FACTORY = sslContext.getSocketFactory();
 		} catch (Exception e) {
 			throw new RuntimeException("Can't create unsecure trust manager", e);
 		}
