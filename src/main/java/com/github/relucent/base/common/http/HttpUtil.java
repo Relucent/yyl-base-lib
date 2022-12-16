@@ -16,7 +16,7 @@ import java.util.Map.Entry;
 import javax.net.ssl.HttpsURLConnection;
 
 import com.github.relucent.base.common.collection.CaseInsensitiveKeyMap;
-import com.github.relucent.base.common.net.SslHelper;
+import com.github.relucent.base.common.net.SslUtil;
 
 /**
  * HTTP工具类.
@@ -26,12 +26,13 @@ import com.github.relucent.base.common.net.SslHelper;
 public class HttpUtil {
 
 	// ==============================Fields===========================================
-	public static final String CONTENT_TYPE = "Content-Type";
-	public static final String CONTENT_LENGTH = "Content-Length";
-	public static final String USER_AGENT = "User-Agent";
+	public static final String HEADER_CONTENT_TYPE = "Content-Type";
+	public static final String HEADER_CONTENT_LENGTH = "Content-Length";
+	public static final String HEADER_USER_AGENT = "User-Agent";
 
-	public static final String TEXT_PLAIN = "text/plain";
-	public static final String FORM_URL_ENCODED = "application/x-www-form-urlencoded";
+	public static final String CONTENT_TYPE_TEXT_PLAIN = "text/plain";
+	public static final String CONTENT_TYPE_FORM_URL_ENCODED = "application/x-www-form-urlencoded";
+	public static final String CONTENT_TYPE_JSON = "application/json";
 
 	public static final String USER_AGENT_FOR_MOZILLA = ""//
 			+ "Mozilla/5.0 (Windows NT 6.3; WOW64) "//
@@ -40,6 +41,8 @@ public class HttpUtil {
 
 	private static final String GET = "GET";
 	private static final String POST = "POST";
+	private static final String PUT = "PUT";
+	private static final String DELETE = "DELETE";
 	private static final String UTF_8 = "UTF-8";
 	private static final int CONNECT_TIMEOUT = 5 * 1000;// 连接超时(单位毫秒)
 	private static final int READ_TIMEOUT = 30 * 1000;// 读取超时(单位毫秒)
@@ -84,7 +87,7 @@ public class HttpUtil {
 			url += (url.indexOf("?") == -1 ? "?" : "&") + query;
 		}
 		headers = castHeaderMap(headers);
-		return execute(url, "GET", null, headers);
+		return execute(url, GET, null, headers);
 	}
 
 	/**
@@ -130,6 +133,36 @@ public class HttpUtil {
 	}
 
 	/**
+	 * 发送PUT请求
+	 * @param url 请求地址
+	 * @param body 提交数据
+	 * @return 请求的结果
+	 */
+	public static String put(String url, String body) {
+		return put(url, body, null);
+	}
+
+	/**
+	 * 发送PUT请求
+	 * @param url 请求地址
+	 * @param body 提交数据
+	 * @param headers HTTP头数据
+	 * @return 请求的结果
+	 */
+	public static String put(String url, String body, Map<String, String> headers) {
+		return execute(url, PUT, body, headers);
+	}
+
+	/**
+	 * 发送DELETE请求
+	 * @param url 请求地址
+	 * @return 请求的结果
+	 */
+	public static String delete(String url) {
+		return execute(url, DELETE, null, null);
+	}
+
+	/**
 	 * 执行请求
 	 * @param url 请求地址
 	 * @param method 请求方法
@@ -142,7 +175,7 @@ public class HttpUtil {
 		try {
 			conn = getConnection(url, method, headers);
 			conn.connect();
-			if (POST.equals(method)) {
+			if (hasBodyForMethod(method)) {
 				writeAndClose(conn.getOutputStream(), body);
 			}
 			return readAndClose(conn.getInputStream());
@@ -165,20 +198,20 @@ public class HttpUtil {
 		HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
 		ignoreTLS(conn);
 		conn.setRequestMethod(method);
-		if (GET.equals(method)) {
-			conn.setDoOutput(false);// GET,DELETE,HEAD,OPTIONS,TRACE
-		} else {
+		if (hasBodyForMethod(method)) {
 			conn.setDoOutput(true);// POST,PUT,PATCH
+		} else {
+			conn.setDoOutput(false);// GET,DELETE,HEAD,OPTIONS,TRACE
 		}
 		conn.setDoInput(true);
 		conn.setConnectTimeout(CONNECT_TIMEOUT);
 		conn.setReadTimeout(READ_TIMEOUT);
 		headers = headers != null ? new CaseInsensitiveKeyMap<String>(headers) : new CaseInsensitiveKeyMap<String>();
-		if (!headers.containsKey(CONTENT_TYPE)) {
-			conn.setRequestProperty(CONTENT_TYPE, FORM_URL_ENCODED + "; charset=UTF-8");
+		if (!headers.containsKey(HEADER_CONTENT_TYPE)) {
+			conn.setRequestProperty(HEADER_CONTENT_TYPE, CONTENT_TYPE_FORM_URL_ENCODED + "; charset=UTF-8");
 		}
-		if (!headers.containsKey(USER_AGENT)) {
-			conn.setRequestProperty(USER_AGENT, USER_AGENT_FOR_MOZILLA);
+		if (!headers.containsKey(HEADER_USER_AGENT)) {
+			conn.setRequestProperty(HEADER_USER_AGENT, USER_AGENT_FOR_MOZILLA);
 		}
 		for (Entry<String, String> entry : headers.entrySet()) {
 			conn.setRequestProperty(entry.getKey(), entry.getValue());
@@ -192,8 +225,8 @@ public class HttpUtil {
 	 */
 	public static void ignoreTLS(HttpURLConnection conn) {
 		if (conn instanceof HttpsURLConnection) {
-			((HttpsURLConnection) conn).setSSLSocketFactory(SslHelper.getSkipSSLSocketFactory());
-			((HttpsURLConnection) conn).setHostnameVerifier(SslHelper.getSkipHostnameVerifier());
+			((HttpsURLConnection) conn).setSSLSocketFactory(SslUtil.SKIP_SSL_SOCKET_FACTORY);
+			((HttpsURLConnection) conn).setHostnameVerifier(SslUtil.SKIP_HOSTNAME_VERIFIER);
 		}
 	}
 
@@ -276,6 +309,15 @@ public class HttpUtil {
 			return (CaseInsensitiveKeyMap<String>) headers;
 		}
 		return new CaseInsensitiveKeyMap<String>(headers);
+	}
+
+	/**
+	 * 方法是否有请求体
+	 * @param method 方法名
+	 * @return 是否有请求体
+	 */
+	private static boolean hasBodyForMethod(String method) {
+		return POST.equals(method) || PUT.equals(method);
 	}
 
 	private static void writeAndClose(OutputStream output, String data) throws IOException {
