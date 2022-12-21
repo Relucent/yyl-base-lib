@@ -34,7 +34,7 @@ public class PemUtil {
 	 */
 	public static PrivateKey readPemPrivateKey(InputStream pemStream) {
 		return (PrivateKey) readPemKey(pemStream);
-	}
+    }
 
 	/**
 	 * 读取PEM格式的公钥

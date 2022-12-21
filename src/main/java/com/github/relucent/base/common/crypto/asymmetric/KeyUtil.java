@@ -35,7 +35,7 @@ public class KeyUtil {
 		private static final String EC = "EC";
 		/** ECDSA算法名称 */
 		private static final String ECDSA = "ECDSA";
-		/** SM2算法名称 */
+        /** SM2算法名称 */
 		private static final String SM2 = "SM2";
 	}
 

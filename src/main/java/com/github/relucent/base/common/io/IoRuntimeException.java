@@ -8,11 +8,11 @@ import java.io.IOException;
 @SuppressWarnings("serial")
 public class IoRuntimeException extends RuntimeException {
 
-	public IoRuntimeException(String message) {
-		super(message);
-	}
+    public IoRuntimeException(String message) {
+        super(message);
+    }
 
-	public IoRuntimeException(IOException cause) {
-		super(cause);
-	}
+    public IoRuntimeException(IOException cause) {
+        super(cause);
+    }
 }
