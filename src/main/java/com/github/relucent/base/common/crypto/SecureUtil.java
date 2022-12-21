@@ -22,8 +22,8 @@ public class SecureUtil {
 	 */
 	public static final String KEY_TYPE_JKS = "JKS";
 	/**
-	 * PKCS12是公钥加密标准，它规定了可包含所有私钥、公钥和证书。其以二进制格式存储，也称为 PFX 文件
-	 */
+     * PKCS12是公钥加密标准，它规定了可包含所有私钥、公钥和证书。其以二进制格式存储，也称为 PFX 文件
+     */
 	public static final String KEY_TYPE_PKCS12 = "pkcs12";
 	/**
 	 * Certification类型：X.509

@@ -15,7 +15,7 @@ public class Hex {
 	public static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
 	/** 十六进制输出(小写) */
 	private static final char[] DIGITS_LOWER = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
-	/** 十六进制输出(大写) */
+    /** 十六进制输出(大写) */
 	private static final char[] DIGITS_UPPER = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
 	// =================================Constructors===========================================
