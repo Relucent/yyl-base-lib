@@ -30,6 +30,14 @@ public class GeneralException extends RuntimeException {
 
     /**
      * 构造函数
+     * @param cause 原因异常，可以通过{@link #getCause()} 方法获取
+     */
+    public GeneralException(Throwable cause) {
+        this(0, cause.toString(), cause);
+    }
+
+    /**
+     * 构造函数
      * @param code 异常的编码， 可以使用{@link #getCode()} 方法获取
      * @param message 异常的详细信息， 可以使用{@link #getMessage()} 方法获取
      */
