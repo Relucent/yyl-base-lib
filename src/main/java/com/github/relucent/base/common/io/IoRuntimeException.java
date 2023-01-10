@@ -1,7 +1,5 @@
 package com.github.relucent.base.common.io;
 
-import java.io.IOException;
-
 /**
  * IO运行时异常，用于对IOException的包装
  */
@@ -12,7 +10,7 @@ public class IoRuntimeException extends RuntimeException {
         super(message);
     }
 
-    public IoRuntimeException(IOException cause) {
+    public IoRuntimeException(Exception cause) {
         super(cause);
     }
 }
