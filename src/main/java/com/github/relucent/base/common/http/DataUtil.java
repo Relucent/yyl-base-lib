@@ -118,4 +118,17 @@ public final class DataUtil {
             return null;
         return val.replaceAll("\"", "%22");
     }
+
+    static boolean needsMultipart(HttpRequest req) {
+        // multipart mode, for files. add the header if we see something with an inputstream, and
+        // return a non-null boundary
+        boolean needsMulti = false;
+        for (KeyValue keyVal : req.getData()) {
+            if (keyVal.hasInputStream()) {
+                needsMulti = true;
+                break;
+            }
+        }
+        return needsMulti;
+    }
 }
