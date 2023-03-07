@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.github.relucent.base.common.codec.Base64;
+import com.github.relucent.base.common.http.HttpMethod;
 import com.github.relucent.base.common.io.FilenameUtil;
 import com.github.relucent.base.common.lang.StringUtil;
 

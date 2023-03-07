@@ -1,4 +1,4 @@
-package com.github.relucent.base.common.web;
+package com.github.relucent.base.common.http;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -8,7 +8,7 @@ import java.util.Map;
  */
 public enum HttpMethod {
 
-    GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS, TRACE;
+    GET(false), POST(true), PUT(true), DELETE(false), PATCH(true), HEAD(false), OPTIONS(false), TRACE(false);
 
     private static final Map<String, HttpMethod> MAPPINGS = new HashMap<String, HttpMethod>(8);
 
@@ -25,6 +25,25 @@ public enum HttpMethod {
      */
     public static HttpMethod resolve(String method) {
         return (method != null ? MAPPINGS.get(method) : null);
+    }
+
+    /** 是否包含请求体 */
+    private final boolean hasBody;
+
+    /**
+     * 构造函数
+     * @param hasBody 是否包含请求体
+     */
+    HttpMethod(boolean hasBody) {
+        this.hasBody = hasBody;
+    }
+
+    /**
+     * 检查此HTTP方法是否包含请求体
+     * @return 是否包含请求体
+     */
+    public final boolean hasBody() {
+        return hasBody;
     }
 
     /**
