@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.Lock;
 import java.util.function.Function;
 
 import javax.net.ssl.HostnameVerifier;
@@ -23,7 +24,6 @@ import com.github.relucent.base.common.convert.ConvertUtil;
 import com.github.relucent.base.common.io.IoUtil;
 import com.github.relucent.base.common.lang.ArrayUtil;
 import com.github.relucent.base.common.lang.AssertUtil;
-import com.github.relucent.base.common.lock.DistributedLockFactory;
 import com.github.relucent.base.common.logging.Logger;
 import com.github.relucent.base.plugin.redis.RedisConstant;
 import com.github.relucent.base.plugin.redis.RedisInfoEntry;
@@ -38,7 +38,7 @@ import redis.clients.jedis.params.SetParams;
  * Redis 数据源 (基于Jedis封装)
  * @author YYL
  */
-public class JedisDS implements DistributedLockFactory, Closeable {
+public class JedisDS implements Closeable {
 
     // ==============================StaticFields====================================
     private static final Logger LOG = Logger.getLogger(JedisDS.class);
@@ -212,8 +212,7 @@ public class JedisDS implements DistributedLockFactory, Closeable {
      * @param name 锁名称
      * @return 分布式锁
      */
-    @Override
-    public JedisDistributedLock getLock(String name) {
+    public Lock getLock(String name) {
         return distributedLockMap.computeIfAbsent(name, k -> new JedisDistributedLock(pool, pubSubs, name));
     }
 

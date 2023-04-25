@@ -8,10 +8,10 @@ import java.util.TimerTask;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
 import java.util.function.Consumer;
 
 import com.github.relucent.base.common.identifier.IdUtil;
-import com.github.relucent.base.common.lock.DistributedLock;
 import com.github.relucent.base.common.logging.Logger;
 
 import redis.clients.jedis.Jedis;
@@ -20,7 +20,7 @@ import redis.clients.jedis.JedisPool;
 /**
  * 基于Redis(Jedis)的分布式锁实现
  */
-public class JedisDistributedLock implements DistributedLock {
+public class JedisDistributedLock implements Lock {
 
     private static final String LOCK_KEY_PREFIX = "_yyl__lock:";
     private static final String UNLOCK_MESSAGE = "~unlock";
