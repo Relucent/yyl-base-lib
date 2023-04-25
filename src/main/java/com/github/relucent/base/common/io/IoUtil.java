@@ -19,6 +19,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.github.relucent.base.common.constant.CharsetConstant;
 import com.github.relucent.base.common.constant.IoConstant;
 
 /**
@@ -255,6 +256,16 @@ public class IoUtil {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         copy(input, output);
         return output.toByteArray();
+    }
+
+    /**
+     * 以字符串形式获取<code>InputStream</code>的内容。
+     * @param input 输入流
+     * @return 字符串
+     * @throws IOException 出现IO异常时抛出
+     */
+    public static String toString(final InputStream input) throws IOException {
+        return toString(input, CharsetConstant.UTF_8);
     }
 
     /**

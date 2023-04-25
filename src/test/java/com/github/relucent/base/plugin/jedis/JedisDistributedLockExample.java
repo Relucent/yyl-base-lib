@@ -1,8 +1,7 @@
 package com.github.relucent.base.plugin.jedis;
 
 import java.util.concurrent.CountDownLatch;
-
-import com.github.relucent.base.common.lock.DistributedLock;
+import java.util.concurrent.locks.Lock;
 
 public class JedisDistributedLockExample {
 
@@ -13,7 +12,7 @@ public class JedisDistributedLockExample {
             System.out.println("Start");
             ds.ping();
 
-            DistributedLock lock = ds.getLock("test_lock");
+            Lock lock = ds.getLock("test_lock");
 
             int count = 5;
             CountDownLatch latch = new CountDownLatch(count);
