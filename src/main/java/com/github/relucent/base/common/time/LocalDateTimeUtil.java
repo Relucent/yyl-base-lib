@@ -43,6 +43,9 @@ public class LocalDateTimeUtil {
      * @return 日期时间类型{@code LocalDateTime}
      */
     public static LocalDateTime toLocalDateTime(Date date) {
+        if (date == null) {
+            return null;
+        }
         Instant instant = date.toInstant();
         ZoneId zone = ZoneId.systemDefault();
         return LocalDateTime.ofInstant(instant, zone);
