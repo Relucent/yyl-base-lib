@@ -117,28 +117,28 @@ class JsonTokener {
             char c = next();
             if (c == '/') {
                 switch (next()) {
-                    case '/':
-                        do {
-                            c = next();
-                        } while (c != '\n' && c != '\r' && c != 0);
-                        break;
-                    case '*':
-                        for (;;) {
-                            c = next();
-                            if (c == 0) {
-                                throw syntaxError("Unclosed comment");
-                            }
-                            if (c == '*') {
-                                if (next() == '/') {
-                                    break;
-                                }
-                                back();
-                            }
+                case '/':
+                    do {
+                        c = next();
+                    } while (c != '\n' && c != '\r' && c != 0);
+                    break;
+                case '*':
+                    for (;;) {
+                        c = next();
+                        if (c == 0) {
+                            throw syntaxError("Unclosed comment");
                         }
-                        break;
-                    default:
-                        back();
-                        return '/';
+                        if (c == '*') {
+                            if (next() == '/') {
+                                break;
+                            }
+                            back();
+                        }
+                    }
+                    break;
+                default:
+                    back();
+                    return '/';
                 }
             } else if (c == '#') {
                 do {
@@ -161,43 +161,43 @@ class JsonTokener {
         for (;;) {
             c = next();
             switch (c) {
-                case 0:
-                case '\n':
-                case '\r':
-                    throw syntaxError("Unterminated string");
-                case '\\':
-                    c = next();
-                    switch (c) {
-                        case 'b':
-                            sb.append('\b');
-                            break;
-                        case 't':
-                            sb.append('\t');
-                            break;
-                        case 'n':
-                            sb.append('\n');
-                            break;
-                        case 'f':
-                            sb.append('\f');
-                            break;
-                        case 'r':
-                            sb.append('\r');
-                            break;
-                        case 'u':
-                            sb.append((char) Integer.parseInt(next(4), 16));
-                            break;
-                        case 'x':
-                            sb.append((char) Integer.parseInt(next(2), 16));
-                            break;
-                        default:
-                            sb.append(c);
-                    }
+            case 0:
+            case '\n':
+            case '\r':
+                throw syntaxError("Unterminated string");
+            case '\\':
+                c = next();
+                switch (c) {
+                case 'b':
+                    sb.append('\b');
+                    break;
+                case 't':
+                    sb.append('\t');
+                    break;
+                case 'n':
+                    sb.append('\n');
+                    break;
+                case 'f':
+                    sb.append('\f');
+                    break;
+                case 'r':
+                    sb.append('\r');
+                    break;
+                case 'u':
+                    sb.append((char) Integer.parseInt(next(4), 16));
+                    break;
+                case 'x':
+                    sb.append((char) Integer.parseInt(next(2), 16));
                     break;
                 default:
-                    if (c == quote) {
-                        return sb.toString();
-                    }
                     sb.append(c);
+                }
+                break;
+            default:
+                if (c == quote) {
+                    return sb.toString();
+                }
+                sb.append(c);
             }
         }
     }
@@ -206,20 +206,20 @@ class JsonTokener {
      * 获取下一个值。该值可以是布尔型，数字，字符串，List，Map或null对象
      * @return 一个对象
      */
-    private Object nextValue() {
+    protected Object nextValue() {
 
         char c = nextClean();
         switch (c) {
-            case '"':
-            case '\'':
-                return nextString(c);
-            case '{':
-                back();
-                return nextMap();
-            case '[':
-            case '(':
-                back();
-                return nextList();
+        case '"':
+        case '\'':
+            return nextString(c);
+        case '{':
+            back();
+            return nextMap();
+        case '[':
+        case '(':
+            back();
+            return nextList();
         }
 
         /* 积累字符，直到文本的结尾或格式化字符 (积累的字符可能是true,false,number,null) */
@@ -256,8 +256,7 @@ class JsonTokener {
                     }
                 } else {
                     Long myLong = new Long((b == '0')// 0- 0x-
-                            ? ((s.length() > 2 && (s.charAt(1) == 'x' || s.charAt(1) == 'X'))
-                                    ? Long.parseLong(s.substring(2), 16)
+                            ? ((s.length() > 2 && (s.charAt(1) == 'x' || s.charAt(1) == 'X')) ? Long.parseLong(s.substring(2), 16)
                                     : Long.parseLong(s, 8))
                             : Long.parseLong(s));
                     if (myLong.longValue() == myLong.intValue()) {
@@ -298,13 +297,13 @@ class JsonTokener {
         for (;;) {
             c = nextClean();
             switch (c) {
-                case 0:
-                    throw syntaxError("A JSON Object text must end with '}'");
-                case '}':
-                    return map;
-                default:
-                    back();
-                    key = nextValue().toString();
+            case 0:
+                throw syntaxError("A JSON Object text must end with '}'");
+            case '}':
+                return map;
+            default:
+                back();
+                key = nextValue().toString();
             }
 
             /* 键值对分割符号应该是 “:”，但是也容忍 '=' 和 '=>' */
@@ -320,17 +319,17 @@ class JsonTokener {
 
             /* 容忍多余的 ,和 ; */
             switch (nextClean()) {
-                case ';':
-                case ',':
-                    if (nextClean() == '}') {
-                        return map;
-                    }
-                    back();
-                    break;
-                case '}':
+            case ';':
+            case ',':
+                if (nextClean() == '}') {
                     return map;
-                default:
-                    throw syntaxError("Expected a ',' or '}'");
+                }
+                back();
+                break;
+            case '}':
+                return map;
+            default:
+                throw syntaxError("Expected a ',' or '}'");
             }
         }
     }
@@ -366,21 +365,21 @@ class JsonTokener {
             }
             c = nextClean();
             switch (c) {
-                case ';':
-                case ',':
-                    if (nextClean() == ']') {
-                        return list;
-                    }
-                    back();
-                    break;
-                case ']':
-                case ')':
-                    if (q != c) {
-                        throw syntaxError("Expected a '" + new Character(q) + "'");
-                    }
+            case ';':
+            case ',':
+                if (nextClean() == ']') {
                     return list;
-                default:
-                    throw syntaxError("Expected a ',' or ']'");
+                }
+                back();
+                break;
+            case ']':
+            case ')':
+                if (q != c) {
+                    throw syntaxError("Expected a '" + new Character(q) + "'");
+                }
+                return list;
+            default:
+                throw syntaxError("Expected a ',' or ']'");
             }
         }
     }

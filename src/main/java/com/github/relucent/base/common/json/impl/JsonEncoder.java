@@ -18,6 +18,7 @@ import com.github.relucent.base.common.time.DateUtil;
  * @author _yyl
  * @version 1.0
  */
+@Deprecated
 public class JsonEncoder {
 
     private static Set<String> excludeFields = new HashSet<String>();

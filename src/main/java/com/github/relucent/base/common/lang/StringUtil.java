@@ -1,14 +1,16 @@
 package com.github.relucent.base.common.lang;
 
+import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import com.github.relucent.base.common.constant.ArrayConstant;
 import com.github.relucent.base.common.constant.CharConstant;
+import com.github.relucent.base.common.constant.CharsetConstant;
 import com.github.relucent.base.common.constant.StringConstant;
 
 /**
@@ -17,11 +19,14 @@ import com.github.relucent.base.common.constant.StringConstant;
  */
 public class StringUtil {
 
+    // ==============================Fields===========================================
     /** 字符串构建器默认构建尺寸 */
     private static final int STRING_BUILDER_SIZE = 256;
 
     /** 表示未找到的索引 */
     private static final int INDEX_NOT_FOUND = -1;
+
+    // ==============================Constructors=====================================
 
     /**
      * 工具类方法，实例不应在标准编程中构造。
@@ -29,6 +34,7 @@ public class StringUtil {
     protected StringUtil() {
     }
 
+    // ==============================Methods==========================================
     /**
      * 字符串是否为空
      * @param cs 被检测的字符串
@@ -157,62 +163,6 @@ public class StringUtil {
     }
 
     /**
-     * 将字符串转为字节数组，使用UTF8编码
-     * @param text 字符串
-     * @return 字节数组
-     */
-    public static byte[] getBytes(final String text) {
-        if (text == null) {
-            return null;
-        }
-        return text.getBytes(StandardCharsets.UTF_8);
-    }
-
-    /**
-     * 将字符串转为字节数组
-     * @param text 字符串
-     * @param charset 编码
-     * @return 字节数组
-     */
-    public static byte[] getBytes(final String text, Charset charset) {
-        if (text == null) {
-            return null;
-        }
-        if (charset == null) {
-            return text.getBytes();
-        }
-        return text.getBytes(charset);
-    }
-
-    /**
-     * 将字节数组转为字符串
-     * @param bytes 字节数组
-     * @param charset 编码
-     * @return 字符串
-     */
-    public static String toString(final byte[] bytes, Charset charset) {
-        if (bytes == null) {
-            return null;
-        }
-        if (charset == null) {
-            return new String(bytes);
-        }
-        return new String(bytes, charset);
-    }
-
-    /**
-     * 将字节数组转为字符串，使用UTF8编码
-     * @param bytes 字节数组
-     * @return 字符串
-     */
-    public static String toString(final byte[] bytes) {
-        if (bytes == null) {
-            return null;
-        }
-        return new String(bytes, StandardCharsets.UTF_8);
-    }
-
-    /**
      * 删除字符串两端的空格
      * @param cs 字符串
      * @return 修剪后的字符串
@@ -251,6 +201,65 @@ public class StringUtil {
             buffer.append((char) c);
         }
         return buffer.toString();
+    }
+
+    /**
+     * 大写首字母<br>
+     * @param string 字符串
+     * @return 首字母大写的字符串
+     */
+    public static String upperFirst(CharSequence string) {
+        if (string == null) {
+            return null;
+        }
+        if (string.length() > 0) {
+            char firstChar = string.charAt(0);
+            if (Character.isLowerCase(firstChar)) {
+                return new StringBuilder()//
+                        .append(Character.toUpperCase(firstChar))//
+                        .append(string.subSequence(1, string.length()))//
+                        .toString();//
+            }
+        }
+        return string.toString();
+    }
+
+    /**
+     * 小写首字母<br>
+     * @param string 字符串
+     * @return 首字母小写的字符串
+     */
+    public static String lowerFirst(CharSequence string) {
+        if (string == null) {
+            return null;
+        }
+        if (string.length() > 0) {
+            char firstChar = string.charAt(0);
+            if (Character.isUpperCase(firstChar)) {
+                return new StringBuilder()//
+                        .append(Character.toLowerCase(firstChar))//
+                        .append(string.subSequence(1, string.length()))//
+                        .toString();//
+            }
+        }
+        return string.toString();
+    }
+
+    /**
+     * 去掉指定前缀
+     * @param string 字符串
+     * @param prefix 前缀
+     * @return 去掉指定前缀的字符串，若前缀不是 preffix， 返回原字符串
+     */
+    public static String removePrefix(CharSequence string, CharSequence prefix) {
+        if (isEmpty(string) || isEmpty(prefix)) {
+            return string.toString();
+        }
+        final String result = string.toString();
+        if (result.startsWith(prefix.toString())) {
+            return result.substring(prefix.length());
+        }
+        return result;
     }
 
     /**
@@ -871,5 +880,348 @@ public class StringUtil {
         }
         buf.append(text, start, text.length());
         return buf.toString();
+    }
+
+    // ==============================ModifyMethods====================================
+    /**
+     * 忽略大小写去掉指定前缀
+     * @param str 字符串
+     * @param prefix 前缀
+     * @return 切掉后的字符串，若前缀不是 prefix， 返回原字符串
+     */
+    public static String removePrefixIgnoreCase(CharSequence str, CharSequence prefix) {
+        if (isEmpty(str) || isEmpty(prefix)) {
+            return toString(str);
+        }
+
+        final String str2 = str.toString();
+        if (CharSequenceUtil.startWithIgnoreCase(str, prefix)) {
+            return str2.substring(prefix.length());
+        }
+        return str2;
+    }
+
+    /**
+     * 除去字符串头部的空白
+     * @param string 要处理的字符串
+     * @return 除去空白的字符串
+     */
+    public static String trimStart(String string) {
+        int st = 0;
+        int len = string.length();
+        while ((st < len) && (string.charAt(st) <= ' ')) {
+            st++;
+        }
+        return ((st > 0) || (len < string.length())) ? string.substring(st, len) : string;
+    }
+
+    /**
+     * 除去字符串尾部的空白
+     * @param string 要处理的字符串
+     * @return 除去空白的字符串
+     */
+    public static String trimEnd(String string) {
+        int st = 0;
+        int len = string.length();
+        while ((st < len) && (string.charAt(len - 1) <= ' ')) {
+            len--;
+        }
+        return ((st > 0) || (len < string.length())) ? string.substring(st, len) : string;
+    }
+
+    // ==============================ToStringMethods==================================
+    /**
+     * 将对象转为字符串
+     * @param obj 对象
+     * @return 字符串
+     */
+    public static String toString(Object obj) {
+        return toString(obj, CharsetConstant.DEFAULT);
+    }
+
+    /**
+     * 将对象转为字符串
+     * 
+     * <pre>
+     *   1、Byte数组和ByteBuffer会被转换为对应字符串的数组
+     *   2、对象数组会调用Arrays.toString方法
+     * </pre>
+     *
+     * @param obj 对象
+     * @param charset 字符集
+     * @return 字符串
+     */
+    public static String toString(Object obj, Charset charset) {
+        if (obj == null) {
+            return null;
+        }
+        if (obj instanceof String) {
+            return (String) obj;
+        }
+        if (obj instanceof byte[]) {
+            return toString((byte[]) obj, charset);
+        }
+        if (obj instanceof Byte[]) {
+            return toString((Byte[]) obj, charset);
+        }
+        if (obj instanceof ByteBuffer) {
+            return toString((ByteBuffer) obj, charset);
+        }
+        if (ArrayUtil.isArray(obj)) {
+            return ArrayUtil.toString(obj);
+        }
+        return obj.toString();
+    }
+
+    /**
+     * 将byte数组转为字符串
+     * @param bytes byte数组
+     * @param charset 字符集
+     * @return 字符串
+     */
+    public static String toString(byte[] bytes, String charset) {
+        return toString(bytes, getCharsetQuietly(charset));
+    }
+
+    /**
+     * 解码字节码
+     * @param data 字符串
+     * @param charset 字符集，如果此字段为空，则解码的结果取决于平台
+     * @return 解码后的字符串
+     */
+    public static String toString(byte[] data, Charset charset) {
+        if (data == null) {
+            return null;
+        }
+
+        if (charset == null) {
+            return new String(data);
+        }
+        return new String(data, charset);
+    }
+
+    /**
+     * 将Byte数组转为字符串
+     * @param bytes byte数组
+     * @param charset 字符集
+     * @return 字符串
+     */
+    public static String toString(Byte[] bytes, String charset) {
+        return toString(bytes, getCharsetQuietly(charset));
+    }
+
+    /**
+     * 将字节数组转为字符串，使用UTF8编码
+     * @param bytes 字节数组
+     * @return 字符串
+     */
+    public static String toString(final byte[] bytes) {
+        if (bytes == null) {
+            return null;
+        }
+        return new String(bytes, CharsetConstant.DEFAULT);
+    }
+
+    /**
+     * 解码字节码
+     * @param data 字符串
+     * @param charset 字符集，如果此字段为空，则解码的结果取决于平台
+     * @return 解码后的字符串
+     */
+    public static String toString(Byte[] data, Charset charset) {
+        if (data == null) {
+            return null;
+        }
+
+        byte[] bytes = new byte[data.length];
+        Byte dataByte;
+        for (int i = 0; i < data.length; i++) {
+            dataByte = data[i];
+            bytes[i] = (dataByte == null) ? -1 : dataByte;
+        }
+
+        return toString(bytes, charset);
+    }
+
+    /**
+     * 将编码的byteBuffer数据转换为字符串
+     * @param data 数据
+     * @param charset 字符集，如果为空使用当前系统字符集
+     * @return 字符串
+     */
+    public static String toString(ByteBuffer data, String charset) {
+        return data == null ? null : toString(data, getCharsetQuietly(charset));
+    }
+
+    /**
+     * 将编码的byteBuffer数据转换为字符串
+     * @param data 数据
+     * @param charset 字符集，如果为空使用当前系统字符集
+     * @return 字符串
+     */
+    public static String toString(ByteBuffer data, Charset charset) {
+        if (charset == null) {
+            charset = Charset.defaultCharset();
+        }
+        return charset.decode(data).toString();
+    }
+
+    // ==============================EncoderMethods===================================
+    /**
+     * 将字符串转为字节数组，使用UTF8编码
+     * @param text 字符串
+     * @return 字节数组
+     */
+    public static byte[] getBytes(final String text) {
+        return text == null ? null : text.getBytes(CharsetConstant.DEFAULT);
+    }
+
+    /**
+     * 将字符串转为字节数组
+     * @param text 字符串
+     * @param charset 编码
+     * @return 字节数组
+     */
+    public static byte[] getBytes(final String text, Charset charset) {
+        if (text == null) {
+            return null;
+        }
+        if (charset == null) {
+            return text.getBytes();
+        }
+        return text.getBytes(charset);
+    }
+
+    // ==============================FormatMethods====================================
+    /**
+     * 格式化字符串<br>
+     * 此方法只是简单将占位符 {} 按照顺序替换为参数<br>
+     * 如果想输出 {} 使用 \\转义 { 即可，如果想输出 {} 之前的 \ 使用双转义符 \\\\ 即可<br>
+     * 例：<br>
+     * 通常使用：format("this is {} for {}", "a", "b") =》 this is a for b<br>
+     * 转义{}： format("this is \\{} for {}", "a", "b") =》 this is \{} for a<br>
+     * 转义\： format("this is \\\\{} for {}", "a", "b") =》 this is \a for b<br>
+     * @param template 字符串模板
+     * @param args 参数列表
+     * @return 结果
+     */
+    public static String format(CharSequence template, Object... args) {
+        if (template == null) {
+            return StringConstant.NULL;
+        }
+        if (ArrayUtil.isEmpty(args) || isBlank(template)) {
+            return template.toString();
+        }
+        return formatWith(template.toString(), StringConstant.EMPTY_JSON_OBJECT, args);
+    }
+
+    /**
+     * 格式化字符串<br>
+     * 此方法只是简单将指定占位符 按照顺序替换为参数<br>
+     * 如果想输出占位符使用 \\转义即可，如果想输出占位符之前的 \ 使用双转义符 \\\\ 即可<br>
+     * 例：<br>
+     * 通常使用：format("this is {} for {}", "{}", "a", "b") =》 this is a for b<br>
+     * 转义{}： format("this is \\{} for {}", "{}", "a", "b") =》 this is {} for a<br>
+     * 转义\： format("this is \\\\{} for {}", "{}", "a", "b") =》 this is \a for b<br>
+     * @param template 字符串模板
+     * @param placeHolder 占位符，例如{}
+     * @param args 参数列表
+     * @return 结果
+     */
+    private static String formatWith(String template, String placeHolder, Object... args) {
+
+        if (StringUtil.isBlank(template) || StringUtil.isBlank(placeHolder) || ArrayUtil.isEmpty(args)) {
+            return template;
+        }
+
+        final int templateLength = template.length();
+        final int placeHolderLength = placeHolder.length();
+
+        // 初始化定义好的长度以获得更好的性能
+        final StringBuilder sbuf = new StringBuilder(templateLength + 1024);
+
+        int handledPosition = 0;// 记录已经处理到的位置
+        int delimIndex;// 占位符所在位置
+        for (int argIndex = 0; argIndex < args.length; argIndex++) {
+            delimIndex = template.indexOf(placeHolder, handledPosition);
+            if (delimIndex == -1) {// 剩余部分无占位符
+                if (handledPosition == 0) { // 不带占位符的模板直接返回
+                    return template;
+                }
+                // 字符串模板剩余部分不再包含占位符，加入剩余部分后返回结果
+                sbuf.append(template, handledPosition, templateLength);
+                return sbuf.toString();
+            }
+
+            // 转义符
+            if (delimIndex > 0 && template.charAt(delimIndex - 1) == CharConstant.BACKSLASH) {// 转义符
+                if (delimIndex > 1 && template.charAt(delimIndex - 2) == CharConstant.BACKSLASH) {// 双转义符
+                    // 转义符之前还有一个转义符，占位符依旧有效
+                    sbuf.append(template, handledPosition, delimIndex - 1);
+                    sbuf.append(StringUtil.toString(args[argIndex]));
+                    handledPosition = delimIndex + placeHolderLength;
+                } else {
+                    // 占位符被转义
+                    argIndex--;
+                    sbuf.append(template, handledPosition, delimIndex - 1);
+                    sbuf.append(placeHolder.charAt(0));
+                    handledPosition = delimIndex + 1;
+                }
+            } else {// 正常占位符
+                sbuf.append(template, handledPosition, delimIndex);
+                sbuf.append(StringUtil.toString(args[argIndex]));
+                handledPosition = delimIndex + placeHolderLength;
+            }
+        }
+
+        // 加入最后一个占位符后所有的字符
+        sbuf.append(template, handledPosition, templateLength);
+
+        return sbuf.toString();
+    }
+
+    /**
+     * 格式化文本，使用 {varName} 占位<br>
+     * map = {a: "aValue", b: "bValue"} format("{a} and {b}", map) ---=》 aValue and bValue
+     * @param template 文本模板，被替换的部分用 {key} 表示
+     * @param map 参数值对
+     * @param ignoreNull 是否忽略 {@code null} 值，忽略则 {@code null} 值对应的变量不被替换，否则替换为""
+     * @return 格式化后的文本
+     */
+    public static String format(CharSequence template, Map<?, ?> map, boolean ignoreNull) {
+        if (template == null) {
+            return null;
+        }
+        if (map == null || map.isEmpty()) {
+            return template.toString();
+        }
+
+        String template2 = template.toString();
+        String value;
+        for (Map.Entry<?, ?> entry : map.entrySet()) {
+            value = StringUtil.toString(entry.getValue());
+            if (value == null && ignoreNull) {
+                continue;
+            }
+            template2 = StringUtil.replace(template2, "{" + entry.getKey() + "}", value);
+        }
+        return template2;
+    }
+
+    // ==============================ToolMethods======================================
+    /**
+     * 转换为Charset对象
+     * @param charsetName 字符集
+     * @return Charset
+     */
+    private static Charset getCharsetQuietly(String charsetName) {
+        if (StringUtil.isNotBlank(charsetName)) {
+            try {
+                return Charset.forName(charsetName);
+            } catch (Exception e) {
+                // ignore
+            }
+        }
+        return CharsetConstant.DEFAULT;
     }
 }

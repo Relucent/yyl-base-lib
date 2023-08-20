@@ -1,7 +1,10 @@
 package com.github.relucent.base.common.io;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.IOException;
@@ -14,8 +17,8 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.URLConnection;
+import java.nio.CharBuffer;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,14 +42,18 @@ public class IoUtil {
      * @param output 输出流中
      * @param encoding 字符编码
      * @return 写入的字节数
-     * @throws IOException IO异常
      */
-    public static int write(String text, OutputStream output, Charset encoding) throws IOException {
+    public static int write(String text, OutputStream output, Charset encoding) {
         int length = 0;
         if (text != null) {
-            byte[] data = text.getBytes(encoding);
+            Charset charset = defaultEncoding(encoding);
+            byte[] data = text.getBytes(charset);
             length = data.length;
-            output.write(data);
+            try {
+                output.write(data);
+            } catch (IOException e) {
+                throw IoRuntimeException.wrap(e);
+            }
         }
         return length;
     }
@@ -59,10 +66,8 @@ public class IoUtil {
      * @param input 输入流
      * @param output 输出流
      * @return 拷贝的字节数，如果拷贝字节数大于 Integer.MAX_VALUE，则返回 -1
-     * @throws NullPointerException 如果输入输出参数为空
-     * @throws IOException 如果发生I/O错误
      */
-    public static int copy(InputStream input, OutputStream output) throws IOException {
+    public static int copy(InputStream input, OutputStream output) {
         long count = copyLarge(input, output);
         if (count > Integer.MAX_VALUE) {
             return -1;
@@ -75,10 +80,8 @@ public class IoUtil {
      * @param input 输入流
      * @param output 输出流 缓冲用于复制的缓冲区
      * @return 拷贝的字节数
-     * @throws NullPointerException 如果输入输出参数为空
-     * @throws IOException 如果发生I/O错误
      */
-    public static long copyLarge(InputStream input, OutputStream output) throws IOException {
+    public static long copyLarge(InputStream input, OutputStream output) {
         return copyLarge(input, output, new byte[IoConstant.DEFAULT_BUFFER_SIZE]);
     }
 
@@ -88,17 +91,19 @@ public class IoUtil {
      * @param output 输出流 缓冲用于复制的缓冲区
      * @param buffer 用于拷贝的缓冲区
      * @return 拷贝的字节数
-     * @throws NullPointerException 如果输入输出参数为空
-     * @throws IOException 如果发生I/O错误
      */
-    public static long copyLarge(InputStream input, OutputStream output, byte[] buffer) throws IOException {
-        long count = 0;
-        int n = 0;
-        while (IoConstant.EOF != (n = input.read(buffer))) {
-            output.write(buffer, 0, n);
-            count += n;
+    public static long copyLarge(InputStream input, OutputStream output, byte[] buffer) {
+        try {
+            long count = 0;
+            int n = 0;
+            while (IoConstant.EOF != (n = input.read(buffer))) {
+                output.write(buffer, 0, n);
+                count += n;
+            }
+            return count;
+        } catch (IOException e) {
+            throw IoRuntimeException.wrap(e);
         }
-        return count;
     }
 
     // copy from Reader
@@ -108,11 +113,9 @@ public class IoUtil {
      * 如果需要获得正确的拷贝字节数，应使用<code>copyLarge(Reader, Writer)</code>方法。<br>
      * @param input 读取字符流
      * @param output 写入字符流
-     * @return 贝的字符数，如果拷贝字符数大于 Integer.MAX_VALUE，则返回 -1
-     * @throws NullPointerException 如果输入输出参数为空
-     * @throws IOException 如果发生I/O错误
+     * @return 拷贝的字符数，如果拷贝字符数大于 Integer.MAX_VALUE，则返回 -1
      */
-    public static int copy(Reader input, Writer output) throws IOException {
+    public static int copy(Reader input, Writer output) {
         long count = copyLarge(input, output);
         if (count > Integer.MAX_VALUE) {
             return -1;
@@ -125,10 +128,8 @@ public class IoUtil {
      * @param input 读取字符流
      * @param output 写入字符流
      * @return 拷贝的字符数
-     * @throws NullPointerException 如果输入输出参数为空
-     * @throws IOException 如果发生I/O错误
      */
-    public static long copyLarge(Reader input, Writer output) throws IOException {
+    public static long copyLarge(Reader input, Writer output) {
         return copyLarge(input, output, new char[IoConstant.DEFAULT_BUFFER_SIZE]);
     }
 
@@ -138,17 +139,19 @@ public class IoUtil {
      * @param output 写入字符流
      * @param buffer 用于拷贝的缓冲区
      * @return 拷贝的字符数
-     * @throws NullPointerException 如果输入输出参数为空
-     * @throws IOException 如果发生I/O错误
      */
-    public static long copyLarge(Reader input, Writer output, char[] buffer) throws IOException {
-        long count = 0;
-        int n = 0;
-        while (IoConstant.EOF != (n = input.read(buffer))) {
-            output.write(buffer, 0, n);
-            count += n;
+    public static long copyLarge(Reader input, Writer output, char[] buffer) {
+        try {
+            long count = 0;
+            int n = 0;
+            while (IoConstant.EOF != (n = input.read(buffer))) {
+                output.write(buffer, 0, n);
+                count += n;
+            }
+            return count;
+        } catch (IOException e) {
+            throw IoRuntimeException.wrap(e);
         }
-        return count;
     }
 
     // close
@@ -209,22 +212,40 @@ public class IoUtil {
     }
 
     /**
+     * 转换为{@link BufferedOutputStream}
+     * @param output {@link OutputStream}
+     * @return {@link BufferedOutputStream}
+     */
+    public static BufferedOutputStream buffer(OutputStream output) {
+        return (output instanceof BufferedOutputStream) ? (BufferedOutputStream) output : new BufferedOutputStream(output);
+    }
+
+    /**
+     * 转换为{@link BufferedInputStream}
+     * @param input {@link InputStream}
+     * @return {@link BufferedInputStream}
+     */
+    public static BufferedInputStream buffer(InputStream input) {
+        return (input instanceof BufferedInputStream) ? (BufferedInputStream) input : new BufferedInputStream(input);
+    }
+
+    /**
      * 转换字节流 {@code OutputStream} 为字符流 {@code Writer}，字符集使用 UTF8
      * @param output 字节输出流
      * @return 字符流({@code Writer})
      */
     public static Writer toWriter(final OutputStream output) {
-        return toWriter(output, StandardCharsets.UTF_8);
+        return toWriter(output, CharsetConstant.DEFAULT);
     }
 
     /**
      * 转换字节流 {@code OutputStream} 为字符流 {@code Writer}
      * @param output 字节输出流
-     * @param charset 字符编码
+     * @param encoding 字符编码
      * @return 字符流({@code Writer})
      */
-    public static Writer toWriter(final OutputStream output, final Charset charset) {
-        return new OutputStreamWriter(output, charset);
+    public static Writer toWriter(final OutputStream output, final Charset encoding) {
+        return new OutputStreamWriter(output, encoding);
     }
 
     /**
@@ -233,17 +254,26 @@ public class IoUtil {
      * @return 字符流(读取)
      */
     public static Reader toReader(final InputStream input) {
-        return toReader(input, StandardCharsets.UTF_8);
+        return toReader(input, CharsetConstant.DEFAULT);
     }
 
     /**
      * 转换字节流 {@code InputStream} 为字符流 {@code Reader}
      * @param input 字节输入流
-     * @param charset 字符编码
+     * @param encoding 字符编码
      * @return 字符流(读取)
      */
-    public static Reader toReader(final InputStream input, final Charset charset) {
-        return new InputStreamReader(input, charset);
+    public static Reader toReader(final InputStream input, final Charset encoding) {
+        return input == null ? null : buffer(new InputStreamReader(input, defaultEncoding(encoding)));
+    }
+
+    /**
+     * 字节数组转为{@link InputStream}
+     * @param content 字节数组
+     * @return 字节流
+     */
+    public static ByteArrayInputStream toInputStream(byte[] content) {
+        return content == null ? null : new ByteArrayInputStream(content);
     }
 
     /**
@@ -265,37 +295,68 @@ public class IoUtil {
      * @throws IOException 出现IO异常时抛出
      */
     public static String toString(final InputStream input) throws IOException {
-        return toString(input, CharsetConstant.UTF_8);
+        return toString(input, CharsetConstant.DEFAULT);
     }
 
     /**
      * 以字符串形式获取<code>InputStream</code>的内容。
      * @param input 输入流
-     * @param charset 字符编码
+     * @param encoding 字符编码
      * @return 字符串
-     * @throws IOException 出现IO异常时抛出
      */
-    public static String toString(final InputStream input, final Charset charset) throws IOException {
+    public static String toString(final InputStream input, final Charset encoding) {
         try (final Writer writer = new StringWriter()) {
-            copyLarge(new InputStreamReader(input, charset), writer);
+            copyLarge(new InputStreamReader(input, defaultEncoding(encoding)), writer);
             return writer.toString();
+        } catch (IOException e) {
+            throw IoRuntimeException.wrap(e);
         }
+    }
+
+    /**
+     * 以字符串形式获取<code>Reader</code>的内容。
+     * @param input 字符读取流
+     * @return 字符串列表（不会为空）
+     */
+    public static String toString(final Reader input) {
+        final StringBuilder builder = new StringBuilder();
+        try {
+            final BufferedReader reader = buffer(input);
+            final CharBuffer buffer = CharBuffer.allocate(IoConstant.DEFAULT_BUFFER_SIZE);
+            while (-1 != reader.read(buffer)) {
+                builder.append(buffer.flip());
+            }
+        } catch (IOException e) {
+            throw IoRuntimeException.wrap(e);
+        }
+        return builder.toString();
     }
 
     /**
      * 获取读取器的内容作为字符串列表，每行一个条目。
      * @param input 字符读取流
      * @return 字符串列表（不会为空）
-     * @throws IOException 出现IO错误，抛出异常
      */
-    public static List<String> readLines(final Reader input) throws IOException {
-        final BufferedReader reader = buffer(input);
-        final List<String> list = new ArrayList<>();
-        String line = reader.readLine();
-        while (line != null) {
-            list.add(line);
-            line = reader.readLine();
+    public static List<String> readLines(final Reader input) {
+        try {
+            final BufferedReader reader = buffer(input);
+            final List<String> list = new ArrayList<>();
+            String line = reader.readLine();
+            while (line != null) {
+                list.add(line);
+                line = reader.readLine();
+            }
+            return list;
+        } catch (IOException e) {
+            throw IoRuntimeException.wrap(e);
         }
-        return list;
+    }
+
+    /**
+     * 返回传入的字符编码，如果字符编码为{@code null}，则返回UTF_8编码
+     * @param encoding 字符编码
+     */
+    static Charset defaultEncoding(final Charset encoding) {
+        return encoding == null ? CharsetConstant.DEFAULT : encoding;
     }
 }

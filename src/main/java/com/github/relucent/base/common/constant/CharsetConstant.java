@@ -9,6 +9,12 @@ import java.nio.charset.StandardCharsets;
 public class CharsetConstant {
 
     /**
+     * 默认字符集（UTF-8） <br>
+     * {@link java.nio.charset.StandardCharsets#UTF_8}
+     */
+    public static final Charset DEFAULT = StandardCharsets.UTF_8;
+
+    /**
      * UNICODE 字符集 <br>
      * {@link java.nio.charset.StandardCharsets#US_ASCII} instead.
      */

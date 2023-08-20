@@ -9,10 +9,12 @@ import java.util.List;
 import java.util.Objects;
 
 import com.github.relucent.base.common.collection.CollectionUtil;
+import com.github.relucent.base.common.collection.WeakConcurrentMap;
 import com.github.relucent.base.common.constant.ArrayConstant;
 import com.github.relucent.base.common.convert.ConvertUtil;
 import com.github.relucent.base.common.exception.ExceptionHelper;
 import com.github.relucent.base.common.lang.ArrayUtil;
+import com.github.relucent.base.common.lang.AssertUtil;
 import com.github.relucent.base.common.lang.ClassUtil;
 import com.github.relucent.base.common.lang.StringUtil;
 
@@ -22,7 +24,11 @@ import com.github.relucent.base.common.lang.StringUtil;
 public class MethodUtil {
 
     // =================================Fields================================================
+    /** 默认排序 */
     private static final Comparator<Method> METHOD_BY_SIGNATURE = (m1, m2) -> m1.toString().compareTo(m2.toString());
+
+    /** 方法缓存 */
+    private static final WeakConcurrentMap<Class<?>, Method[]> METHODS_CACHE = new WeakConcurrentMap<>();
 
     // =================================Constructors===========================================
     /**
@@ -30,7 +36,90 @@ public class MethodUtil {
      */
     protected MethodUtil() {
     }
+
     // =================================Methods================================================
+    /**
+     * 检查给定方法是否为Getter或者Setter方法，规则为：<br>
+     * <ul>
+     * <li>方法参数必须为0个或1个</li>
+     * <li>方法名称不能是getClass</li>
+     * <li>如果是无参方法，则判断是否以“get”或“is”开头</li>
+     * <li>如果方法参数1个，则判断是否以“set”开头</li>
+     * </ul>
+     * @param method 方法
+     * @return 是否为Getter或者Setter方法
+     */
+    public static boolean isGetterOrSetter(Method method) {
+        if (method == null) {
+            return false;
+        }
+
+        // 参数个数必须为0或1
+        final int parameterCount = method.getParameterCount();
+        if (parameterCount > 1) {
+            return false;
+        }
+
+        String name = method.getName();
+
+        // 跳过getClass
+        if ("getClass".equals(name)) {
+            return false;
+        }
+
+        switch (parameterCount) {
+        case 0:
+            return name.startsWith("get") || name.startsWith("is");
+        case 1:
+            return name.startsWith("set");
+        default:
+            return false;
+        }
+    }
+
+    /**
+     * 获得类的所有方法，直接反射获取<br>
+     * 接口获取方法和默认方法，获取的方法包括：
+     * <ul>
+     * <li>本类中的所有方法（包括static方法）</li>
+     * <li>父类中的所有方法（包括static方法）</li>
+     * <li>Object中（包括static方法）</li>
+     * </ul>
+     * @param clazz 类或接口
+     * @param withSupers 是否包括父类或接口的方法列表
+     * @param withMethodFromObject 是否包括Object中的方法
+     * @return 方法列表
+     */
+    public static Method[] getMethodsDirectly(Class<?> clazz, boolean withSupers, boolean withMethodFromObject) throws SecurityException {
+        AssertUtil.notNull(clazz);
+
+        // 对于接口
+        if (clazz.isInterface()) {
+            // 直接调用Class.getMethods方法获取所有方法，因为接口都是public方法
+            return withSupers ? clazz.getMethods() : clazz.getDeclaredMethods();
+        }
+
+        List<Method> methods = new ArrayList<>();
+        Class<?> searchType = clazz;
+        while (searchType != null) {
+            if (!withMethodFromObject && searchType == Object.class) {
+                break;
+            }
+            CollectionUtil.addAll(methods, searchType.getDeclaredMethods());
+            searchType = (withSupers && false == searchType.isInterface()) ? searchType.getSuperclass() : null;
+        }
+
+        return methods.toArray(ArrayConstant.EMPTY_METHOD_ARRAY);
+    }
+
+    /**
+     * 获得类的所有方法，包括类本身和继承来的所有{@code public}、{@code protected}、 default(package)和 {@code private}方法。
+     * @param clazz 方法所属的类
+     * @return 方法列表
+     */
+    public static Method[] getAllMethods(Class<?> clazz) {
+        return METHODS_CACHE.computeIfAbsent(clazz, () -> getMethodsDirectly(clazz, true, true));
+    }
 
     /**
      * 返回类的全部公共方法
@@ -54,21 +143,6 @@ public class MethodUtil {
         } catch (final NoSuchMethodException e) {
             return null;
         }
-    }
-
-    /**
-     * 获得类的所有方法，包括类本身和继承来的所有{@code public}、{@code protected}、 default(package)和 {@code private}方法。
-     * @param clazz 方法所属的类
-     * @return 方法列表
-     */
-    public static Method[] getAllMethods(Class<?> clazz) {
-        List<Method> methods = new ArrayList<>();
-        CollectionUtil.addAll(methods, clazz.getDeclaredMethods());
-        final Class<?>[] superclasses = ClassUtil.getAllSuperClasses(clazz);
-        for (final Class<?> klass : superclasses) {
-            CollectionUtil.addAll(methods, klass.getDeclaredMethods());
-        }
-        return methods.toArray(ArrayConstant.EMPTY_METHOD_ARRAY);
     }
 
     /**
@@ -172,8 +246,21 @@ public class MethodUtil {
         return inexactMatch;
     }
 
-    // Method Invoke
-    // ----------------------------------------------------------------------
+    // =================================InvokeMethods==========================================
+    /**
+     * 调用方法
+     * @param object 方法的所属对象
+     * @param method 方法
+     * @param args 参数数组, {@code null} 被视为没有参数
+     * @return 调用的方法返回的值
+     * @throws RuntimeException 如果请求的方法无法通过反射访问或者调用失败
+     */
+    public static Object invoke(final Object object, final Method method, final Object... args) {
+        Object[] arguments = toVarArgs(method, ArrayUtil.nullToEmpty(args));
+        setAccessible(method);
+        return invokeRaw(method, object, arguments);
+    }
+
     /**
      * 调用名称匹配不带参数的方法。
      * @param object 方法的所属对象
@@ -182,8 +269,8 @@ public class MethodUtil {
      * @return 调用的方法返回的值
      * @throws RuntimeException 如果请求的方法无法通过反射访问或者调用失败
      */
-    public static Object invokeMethod(final Object object, final boolean forceAccess, final String methodName) {
-        return invokeMethod(object, forceAccess, methodName, ArrayConstant.EMPTY_OBJECT_ARRAY, ArrayConstant.EMPTY_CLASS_ARRAY);
+    public static Object invoke(final Object object, final boolean forceAccess, final String methodName) {
+        return invoke(object, forceAccess, methodName, ArrayConstant.EMPTY_OBJECT_ARRAY, ArrayConstant.EMPTY_CLASS_ARRAY);
     }
 
     /**
@@ -195,10 +282,10 @@ public class MethodUtil {
      * @return 调用的方法返回的值
      * @throws RuntimeException 如果请求的方法无法通过反射访问或者调用失败
      */
-    public static Object invokeMethod(final Object object, final boolean forceAccess, final String methodName, Object... args) {
+    public static Object invoke(final Object object, final boolean forceAccess, final String methodName, Object... args) {
         args = ArrayUtil.nullToEmpty(args);
         final Class<?>[] parameterTypes = ClassUtil.toClass(args);
-        return invokeMethod(object, forceAccess, methodName, args, parameterTypes);
+        return invoke(object, forceAccess, methodName, args, parameterTypes);
     }
 
     /**
@@ -211,8 +298,7 @@ public class MethodUtil {
      * @return 调用的方法返回的值
      * @throws RuntimeException 如果请求的方法无法通过反射访问或者调用失败
      */
-    public static Object invokeMethod(final Object object, final boolean forceAccess, final String methodName, Object[] args,
-            Class<?>[] parameterTypes) {
+    public static Object invoke(final Object object, final boolean forceAccess, final String methodName, Object[] args, Class<?>[] parameterTypes) {
         args = ArrayUtil.nullToEmpty(args);
         parameterTypes = ArrayUtil.nullToEmpty(parameterTypes);
 
@@ -235,7 +321,7 @@ public class MethodUtil {
         }
         args = toVarArgs(method, args);
 
-        return invoke(method, object, args);
+        return invokeRaw(method, object, args);
     }
 
     /**
@@ -247,14 +333,14 @@ public class MethodUtil {
      * @return 调用的方法返回的值
      * @throws RuntimeException 如果请求的方法无法通过反射访问或者调用失败
      */
-    public static Object invokeExactMethod(final Object object, final String methodName, Object[] args, Class<?>[] parameterTypes) {
+    public static Object invokeExact(final Object object, final String methodName, Object[] args, Class<?>[] parameterTypes) {
         args = ArrayUtil.nullToEmpty(args);
         parameterTypes = ArrayUtil.nullToEmpty(parameterTypes);
         final Method method = getPublicMethod(object.getClass(), methodName, parameterTypes);
         if (method == null) {
             throw ExceptionHelper.error("No such accessible method: " + methodName + "() on class: " + object.getClass());
         }
-        return invoke(method, object, args);
+        return invokeRaw(method, object, args);
     }
 
     /**
@@ -265,10 +351,10 @@ public class MethodUtil {
      * @return 调用的方法返回的值
      * @throws RuntimeException 如果请求的方法无法通过反射访问或者调用失败
      */
-    public static Object invokeStaticMethod(final Class<?> clazz, final String methodName, Object... args) {
+    public static Object invokeStatic(final Class<?> clazz, final String methodName, Object... args) {
         args = ArrayUtil.nullToEmpty(args);
         final Class<?>[] parameterTypes = ClassUtil.toClass(args);
-        return invokeStaticMethod(clazz, methodName, args, parameterTypes);
+        return invokeStatic(clazz, methodName, args, parameterTypes);
     }
 
     /**
@@ -280,7 +366,7 @@ public class MethodUtil {
      * @return 调用的方法返回的值
      * @throws RuntimeException 如果请求的方法无法通过反射访问或者调用失败
      */
-    public static Object invokeStaticMethod(final Class<?> clazz, final String methodName, Object[] args, Class<?>[] parameterTypes) {
+    public static Object invokeStatic(final Class<?> clazz, final String methodName, Object[] args, Class<?>[] parameterTypes) {
         args = ArrayUtil.nullToEmpty(args);
         parameterTypes = ArrayUtil.nullToEmpty(parameterTypes);
         final Method method = getMatchingPublicMethod(clazz, methodName, parameterTypes);
@@ -288,7 +374,7 @@ public class MethodUtil {
             throw ExceptionHelper.error("No such accessible method: " + methodName + "() on class: " + clazz.getName());
         }
         args = toVarArgs(method, args);
-        return invoke(method, null, args);
+        return invokeRaw(method, null, args);
     }
 
     /**
@@ -300,14 +386,26 @@ public class MethodUtil {
      * @return 调用的方法返回的值
      * @throws RuntimeException 如果请求的方法无法通过反射访问或者调用失败
      */
-    public static Object invokeExactStaticMethod(final Class<?> clazz, final String methodName, Object[] args, Class<?>[] parameterTypes) {
+    public static Object invokeExactStatic(final Class<?> clazz, final String methodName, Object[] args, Class<?>[] parameterTypes) {
         args = ArrayUtil.nullToEmpty(args);
         parameterTypes = ArrayUtil.nullToEmpty(parameterTypes);
         final Method method = getPublicMethod(clazz, methodName, parameterTypes);
         if (method == null) {
             throw ExceptionHelper.error("No such accessible method: " + methodName + "() on class: " + clazz.getName());
         }
-        return invoke(method, null, args);
+        return invokeRaw(method, null, args);
+    }
+
+    /**
+     * 设置方法为可访问
+     * @param method 方法
+     * @return 方法
+     */
+    public static Method setAccessible(Method method) {
+        if (method != null && false == method.isAccessible()) {
+            method.setAccessible(true);
+        }
+        return method;
     }
 
     // ----------------------------------------------------------------------
@@ -417,9 +515,13 @@ public class MethodUtil {
      * @return 调用的方法返回的值
      * @throws RuntimeException 如果请求的方法无法通过反射访问或者调用失败
      */
-    private static Object invoke(final Method method, final Object object, final Object[] args) {
+    private static Object invokeRaw(final Method method, final Object object, final Object[] args) {
         try {
-            return method.invoke(null, args);
+            if (ModifierUtil.isStatic(method)) {
+                return method.invoke(null, args);
+            }
+            return method.invoke(object, args);
+
         } catch (Exception e) {
             throw ExceptionHelper.propagate(e);
         }

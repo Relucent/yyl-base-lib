@@ -2,6 +2,7 @@ package com.github.relucent.base.common.lang;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -22,6 +23,15 @@ public class ArrayUtil {
      * 工具类方法，实例不应在标准编程中构造。
      */
     protected ArrayUtil() {
+    }
+
+    /**
+     * 对象是否为数组对象
+     * @param obj 对象
+     * @return 是否为数组对象，如果为{@code null} 返回false
+     */
+    public static boolean isArray(Object obj) {
+        return obj != null && obj.getClass().isArray();
     }
 
     // ===# Object[]
@@ -188,7 +198,7 @@ public class ArrayUtil {
     public static <T> boolean hasNull(T[] array) {
         if (isNotEmpty(array)) {
             for (T element : array) {
-                if (null == element) {
+                if (element == null) {
                     return true;
                 }
             }
@@ -1564,7 +1574,7 @@ public class ArrayUtil {
         if (array == null || filter == null) {
             return array;
         }
-        List<T> result = new ArrayList<>();
+        List<T> result = new ArrayList<>(array.length);
         for (T element : array) {
             if (filter.test(element)) {
                 result.add(element);
@@ -1625,5 +1635,41 @@ public class ArrayUtil {
     @SafeVarargs
     public static <T> T[] asArray(T... varargs) {
         return varargs;
+    }
+
+    /**
+     * 数组或集合转String
+     * @param obj 集合或数组对象
+     * @return 数组字符串，与集合转字符串格式相同
+     */
+    public static String toString(Object obj) {
+        if (obj == null) {
+            return null;
+        }
+        if (obj instanceof long[]) {
+            return Arrays.toString((long[]) obj);
+        } else if (obj instanceof int[]) {
+            return Arrays.toString((int[]) obj);
+        } else if (obj instanceof short[]) {
+            return Arrays.toString((short[]) obj);
+        } else if (obj instanceof char[]) {
+            return Arrays.toString((char[]) obj);
+        } else if (obj instanceof byte[]) {
+            return Arrays.toString((byte[]) obj);
+        } else if (obj instanceof boolean[]) {
+            return Arrays.toString((boolean[]) obj);
+        } else if (obj instanceof float[]) {
+            return Arrays.toString((float[]) obj);
+        } else if (obj instanceof double[]) {
+            return Arrays.toString((double[]) obj);
+        } else if (isArray(obj)) {
+            // 对象数组
+            try {
+                return Arrays.deepToString((Object[]) obj);
+            } catch (Exception ignore) {
+                // ignore
+            }
+        }
+        return obj.toString();
     }
 }

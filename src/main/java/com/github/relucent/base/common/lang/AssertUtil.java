@@ -32,22 +32,32 @@ public class AssertUtil {
         }
     }
 
-    public static void isTrue(boolean expression) {
-        isTrue(expression, "[Assertion failed] - this expression must be true");
-    }
-
-    public static void isTrue(boolean expression, String message) {
-        if (!expression) {
+    public static void notBlank(CharSequence text, String message) {
+        if (StringUtil.isBlank(text)) {
             fail(message);
         }
     }
 
-    public static void isFalse(boolean expression) {
-        isFalse(expression, "[Assertion failed] - this expression must be false");
+    public static void notBlank(CharSequence text) throws IllegalArgumentException {
+        notBlank(text, "[Assertion failed] - this text must not be blank");
     }
 
-    public static void isFalse(boolean expression, String message) {
-        if (expression) {
+    public static void isTrue(boolean value) {
+        isTrue(value, "[Assertion failed] - this value must be true");
+    }
+
+    public static void isTrue(boolean value, String message) {
+        if (!value) {
+            fail(message);
+        }
+    }
+
+    public static void isFalse(boolean value) {
+        isFalse(value, "[Assertion failed] - this value must be false");
+    }
+
+    public static void isFalse(boolean value, String message) {
+        if (value) {
             fail(message);
         }
     }

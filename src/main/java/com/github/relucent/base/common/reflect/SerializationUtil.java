@@ -69,7 +69,7 @@ public class SerializationUtil {
      * @return 克隆后的对象
      */
     public static <T> T clone(T object) {
-        if (false == (object instanceof Serializable)) {
+        if (!(object instanceof Serializable)) {
             return null;
         }
         return deserialize(serialize(object));

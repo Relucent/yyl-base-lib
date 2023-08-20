@@ -269,7 +269,7 @@ public class UUID32 implements Serializable, Comparable<UUID32> {
      */
     @Override
     public boolean equals(Object obj) {
-        if ((null == obj) || (obj.getClass() != UUID32.class)) {
+        if (obj == null || obj.getClass() != UUID32.class) {
             return false;
         }
         UUID32 id = (UUID32) obj;

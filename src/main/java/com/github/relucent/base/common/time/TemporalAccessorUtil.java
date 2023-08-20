@@ -1,17 +1,22 @@
 package com.github.relucent.base.common.time;
 
+import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
+import java.time.MonthDay;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.chrono.Era;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
 import java.time.temporal.TemporalAccessor;
 import java.time.temporal.TemporalField;
+import java.time.temporal.UnsupportedTemporalTypeException;
 
 /**
  * {@link TemporalAccessor} 工具类
@@ -100,5 +105,43 @@ public class TemporalAccessorUtil {
         }
         // 先转换成 LocalDateTime，从而处理一些 Instant.from(temporalAccessor)不能处理的情况
         return toInstant(toLocalDateTime(temporalAccessor));
+    }
+
+    /**
+     * 格式化日期时间为指定格式<br>
+     * 如果为{@link Month}，调用{@link Month#toString()}
+     * @param time {@link TemporalAccessor}
+     * @param formatter 日期格式化器，预定义的格式见：{@link DateTimeFormatter}
+     * @return 格式化后的字符串
+     */
+    public static String format(TemporalAccessor time, DateTimeFormatter formatter) {
+
+        if (time == null) {
+            return null;
+        }
+
+        if (time instanceof DayOfWeek || time instanceof Month || time instanceof Era || time instanceof MonthDay) {
+            return time.toString();
+        }
+
+        if (formatter == null) {
+            formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+        }
+
+        try {
+            return formatter.format(time);
+        } catch (UnsupportedTemporalTypeException e) {
+            if (time instanceof LocalDate && e.getMessage().contains("HourOfDay")) {
+                // 用户传入LocalDate，但是要求格式化带有时间部分，转换为LocalDateTime重试
+                return formatter.format(((LocalDate) time).atStartOfDay());
+            } else if (time instanceof LocalTime && e.getMessage().contains("YearOfEra")) {
+                // 用户传入LocalTime，但是要求格式化带有日期部分，转换为LocalDateTime重试
+                return formatter.format(((LocalTime) time).atDate(LocalDate.now()));
+            } else if (time instanceof Instant) {
+                // 时间戳没有时区信息，赋予默认时区
+                return formatter.format(((Instant) time).atZone(ZoneId.systemDefault()));
+            }
+            throw e;
+        }
     }
 }
