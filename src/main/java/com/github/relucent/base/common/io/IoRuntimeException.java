@@ -13,4 +13,12 @@ public class IoRuntimeException extends RuntimeException {
     public IoRuntimeException(Exception cause) {
         super(cause);
     }
+
+    public IoRuntimeException(String message, Exception cause) {
+        super(message, cause);
+    }
+
+    public static IoRuntimeException wrap(Exception e) {
+        return e instanceof IoRuntimeException ? (IoRuntimeException) e : new IoRuntimeException(e.getMessage(), e);
+    }
 }

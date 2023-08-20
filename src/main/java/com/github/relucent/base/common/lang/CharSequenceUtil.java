@@ -32,6 +32,15 @@ public class CharSequenceUtil {
         return cs == null ? null : cs.subSequence(start, cs.length());
     }
 
+    /**
+     * 字符串是否为空
+     * @param cs 被检测的字符串
+     * @return 是否为空
+     */
+    public static boolean isEmpty(CharSequence cs) {
+        return cs == null || cs.length() == 0;
+    }
+
     // -----------------------------------------------------------------------
     /**
      * 返回字符在指定文本中第一次出现时的索引，从指定索引开始搜索
@@ -289,5 +298,95 @@ public class CharSequenceUtil {
         }
 
         return true;
+    }
+
+    /**
+     * 是否以指定字符串开头，忽略大小写
+     * @param str 被监测字符串
+     * @param prefix 开头字符串
+     * @return 是否以指定字符串开头
+     */
+    public static boolean startWithIgnoreCase(CharSequence str, CharSequence prefix) {
+        return startWith(str, prefix, true);
+    }
+
+    /**
+     * 字符串是否以给定字符开始
+     * @param cs 字符串
+     * @param c 字符
+     * @return 是否开始
+     */
+    public static boolean startWith(CharSequence cs, char c) {
+        return !isEmpty(cs) && c == cs.charAt(0);
+    }
+
+    /**
+     * 是否以指定字符串开头<br>
+     * 如果给定的字符串和开头字符串都为null则返回true，否则任意一个值为null返回false
+     * @param str 被监测字符串
+     * @param prefix 开头字符串
+     * @param ignoreCase 是否忽略大小写
+     * @return 是否以指定字符串开头
+     */
+    public static boolean startWith(CharSequence str, CharSequence prefix, boolean ignoreCase) {
+        return startWith(str, prefix, ignoreCase, false);
+    }
+
+    /**
+     * 是否以指定字符串开头<br>
+     * 如果给定的字符串和开头字符串都为null则返回true，否则任意一个值为null返回false<br>
+     * 
+     * <pre>
+     *     CharSequenceUtil.startWith("123", "123", false, true);   -- false
+     *     CharSequenceUtil.startWith("ABCDEF", "abc", true, true); -- true
+     *     CharSequenceUtil.startWith("abc", "abc", true, true);    -- false
+     * </pre>
+     *
+     * @param string 被监测字符串
+     * @param prefix 开头字符串
+     * @param ignoreCase 是否忽略大小写
+     * @param ignoreEquals 是否忽略字符串相等的情况
+     * @return 是否以指定字符串开头
+     */
+    public static boolean startWith(CharSequence string, CharSequence prefix, boolean ignoreCase, boolean ignoreEquals) {
+        if (string == null || prefix == null) {
+            if (ignoreEquals) {
+                return false;
+            }
+            return string == null && prefix == null;
+        }
+
+        boolean isStartWith = string.toString().regionMatches(ignoreCase, 0, prefix.toString(), 0, prefix.length());
+
+        if (isStartWith) {
+            return !ignoreEquals || !equals(string, prefix, ignoreCase);
+        }
+        return false;
+    }
+
+    /**
+     * 比较两个字符串是否相等，规则如下
+     * <ul>
+     * <li>str1和str2都为{@code null}</li>
+     * <li>忽略大小写使用{@link String#equalsIgnoreCase(String)}判断相等</li>
+     * <li>不忽略大小写使用{@link String#contentEquals(CharSequence)}判断相等</li>
+     * </ul>
+     * @param str1 要比较的字符串1
+     * @param str2 要比较的字符串2
+     * @param ignoreCase 是否忽略大小写
+     * @return 如果两个字符串相同，或者都是{@code null}，则返回{@code true}
+     */
+    public static boolean equals(CharSequence str1, CharSequence str2, boolean ignoreCase) {
+        if (str1 == null) {
+            return str2 == null;
+        }
+        if (str2 == null) {
+            return false;
+        }
+        if (ignoreCase) {
+            return str1.toString().equalsIgnoreCase(str2.toString());
+        } else {
+            return str1.toString().contentEquals(str2);
+        }
     }
 }

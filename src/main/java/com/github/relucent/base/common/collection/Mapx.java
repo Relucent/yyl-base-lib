@@ -6,12 +6,10 @@ import java.util.LinkedHashMap;
 import com.github.relucent.base.common.convert.ConvertUtil;
 
 /**
- * 增强版Map接口的实现类。<br>
- * 键为字符串类型，如果输入的键为{@code null}，将作为字符串"null"处理。
- * @author YYL
+ * JSON对象<br>
  */
 @SuppressWarnings("serial")
-public class Mapx extends MapWrapper<String, Object> {
+public class Mapx extends MapWrapper<String, Object> implements Cloneable {
 
     // ==============================Fields==============================================
     // ...
@@ -23,18 +21,40 @@ public class Mapx extends MapWrapper<String, Object> {
 
     // ==============================Methods=============================================
     @Override
-    public Object get(Object key) {
-        return super.get(convertKey(key));
+    public Mapx clone() throws CloneNotSupportedException {
+        return (Mapx) super.clone();
     }
 
+    // ==============================OverrideMethods=====================================
+    /**
+     * 设置键值对
+     * @param key 键
+     * @param value 值对象
+     * @return 旧值
+     */
     @Override
     public Object put(String key, Object value) {
         return super.put(convertKey(key), value);
     }
 
     @Override
+    public Object get(Object key) {
+        return super.get(convertKey(key));
+    }
+
+    @Override
     public Object remove(Object key) {
         return super.remove(convertKey(key));
+    }
+
+    // ==============================StandardMethods=====================================
+    /**
+     * 设置键值对
+     * @param key 键
+     * @param value 值对象
+     */
+    public void set(String key, Object value) {
+        put(key, value);
     }
 
     public Boolean getBoolean(String key) {
@@ -69,14 +89,6 @@ public class Mapx extends MapWrapper<String, Object> {
         return getEnum(key, enumType, null);
     }
 
-    public Mapx getMap(String key) {
-        return getMap(key, null);
-    }
-
-    public Listx getList(String key) {
-        return getList(key, null);
-    }
-
     public Boolean getBoolean(String key, Boolean defaultValue) {
         return ConvertUtil.toBoolean(get(key), defaultValue);
     }
@@ -109,14 +121,32 @@ public class Mapx extends MapWrapper<String, Object> {
         return ConvertUtil.toEnum(get(key), enumType, defaultValue);
     }
 
-    public Mapx getMap(String key, Mapx defaultValue) {
-        return ConvertUtil.toMap(get(key), defaultValue);
+    // ==============================ExtendMethods=======================================
+    public Mapx getJsonObject(String key) {
+        return getJsonObject(key, null);
     }
 
-    public Listx getList(String key, Listx defaultValue) {
-        return ConvertUtil.toList(get(key), defaultValue);
+    public Mapx getJsonObject(String key, Mapx defaultValue) {
+        Object value = get(key);
+        if (value instanceof Mapx) {
+            return (Mapx) value;
+        }
+        return defaultValue;
     }
 
+    public Listx getJsonArray(String key) {
+        return getJsonArray(key, null);
+    }
+
+    public Listx getJsonArray(String key, Listx defaultValue) {
+        Object value = get(key);
+        if (value instanceof Listx) {
+            return (Listx) value;
+        }
+        return defaultValue;
+    }
+
+    // ==============================PrivateMethods======================================
     /**
      * 将输入键转换为另一个对象以存储在Map中
      * @param key 键

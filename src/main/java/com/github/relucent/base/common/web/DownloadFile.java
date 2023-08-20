@@ -1,7 +1,6 @@
 package com.github.relucent.base.common.web;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -79,7 +78,7 @@ public class DownloadFile implements AutoCloseable {
     public void writeTo(OutputStream output) {
         try {
             IoUtil.copyLarge(input, output);
-        } catch (IOException e) {
+        } catch (Exception e) {
             // Ignore
         }
     }

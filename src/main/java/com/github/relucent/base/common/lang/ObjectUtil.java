@@ -1,5 +1,6 @@
 package com.github.relucent.base.common.lang;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -80,5 +81,15 @@ public class ObjectUtil {
             return other.get();
         }
         return Optional.ofNullable(object).map(mapper).orElseGet(other);
+    }
+
+    /**
+     * 比较两个对象是否相等
+     * @param a 对象
+     * @param b 对象比较的对象
+     * @return 是否相等
+     */
+    public static boolean equals(Object a, Object b) {
+        return Objects.equals(a, b);
     }
 }

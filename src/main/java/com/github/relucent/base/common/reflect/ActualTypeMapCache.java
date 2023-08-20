@@ -1,0 +1,93 @@
+package com.github.relucent.base.common.reflect;
+
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
+import java.util.HashMap;
+import java.util.Map;
+
+import com.github.relucent.base.common.collection.WeakConcurrentMap;
+
+/**
+ * 泛型变量和泛型实际类型映射关系缓存
+ */
+enum ActualTypeMapCache {
+
+    // =================================Instances==============================================
+    INSTANCE;
+
+    // =================================Fields=================================================
+    private final WeakConcurrentMap<Type, Map<Type, Type>> CACHE = new WeakConcurrentMap<>();
+    // =================================Methods================================================
+
+    /**
+     * 获取泛型变量和泛型实际类型的对应关系Map
+     * @param type 被解析的包含泛型参数的类
+     * @return 泛型对应关系Map
+     */
+    public Map<Type, Type> get(Type type) {
+        return CACHE.computeIfAbsent(type, (key) -> createTypeMap(type));
+    }
+
+    /**
+     * 获得泛型变量对应的泛型实际类型，如果此变量没有对应的实际类型，返回null
+     * @param type 类
+     * @param typeVariable 泛型变量，例如T等
+     * @return 实际类型，可能为Class等
+     */
+    public Type getActualType(Type type, TypeVariable<?> typeVariable) {
+        final Map<Type, Type> typeTypeMap = get(type);
+        Type result = typeTypeMap.get(typeVariable);
+        while (result instanceof TypeVariable) {
+            result = typeTypeMap.get(result);
+        }
+        return result;
+    }
+
+    /**
+     * 获取指定泛型变量对应的真实类型<br>
+     * 由于子类中泛型参数实现和父类（接口）中泛型定义位置是一一对应的，因此可以通过对应关系找到泛型实现类型<br>
+     * @param type 真实类型所在类，此类中记录了泛型参数对应的实际类型
+     * @param typeVariables 泛型变量，需要的实际类型对应的泛型参数
+     * @return 给定泛型参数对应的实际类型，如果无对应类型，对应位置返回null
+     */
+    public Type[] getActualTypes(Type type, Type... typeVariables) {
+        // 查找方法定义所在类或接口中此泛型参数的位置
+        final Type[] result = new Type[typeVariables.length];
+        for (int i = 0; i < typeVariables.length; i++) {
+            result[i] = (typeVariables[i] instanceof TypeVariable) ? getActualType(type, (TypeVariable<?>) typeVariables[i]) : typeVariables[i];
+        }
+        return result;
+    }
+
+    /**
+     * 创建类中所有的泛型变量和泛型实际类型的对应关系Map
+     * @param type 被解析的包含泛型参数的类
+     * @return 泛型对应关系Map
+     */
+    private Map<Type, Type> createTypeMap(Type type) {
+        final Map<Type, Type> typeMap = new HashMap<>();
+        while (type != null) {
+            final ParameterizedType parameterizedType = TypeUtil.toParameterizedType(type);
+            if (parameterizedType == null) {
+                break;
+            }
+            final Type[] typeArguments = parameterizedType.getActualTypeArguments();
+            final Class<?> rawType = (Class<?>) parameterizedType.getRawType();
+            final Type[] typeParameters = rawType.getTypeParameters();
+
+            Type value;
+            T: for (int i = 0; i < typeParameters.length; i++) {
+                value = typeArguments[i];
+                // 跳过泛型变量对应泛型变量的情况
+                if (value instanceof TypeVariable) {
+                    continue T;
+                }
+                typeMap.put(typeParameters[i], value);
+            }
+
+            type = rawType;
+        }
+        return typeMap;
+    }
+}

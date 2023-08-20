@@ -44,10 +44,7 @@ public class TemporalUtil {
      */
     @SuppressWarnings("unchecked")
     public static <T extends Temporal> T offset(T time, long amountToAdd, TemporalUnit unit) {
-        if (null == time) {
-            return null;
-        }
-        return (T) time.plus(amountToAdd, unit);
+        return time == null ? null : (T) time.plus(amountToAdd, unit);
     }
 
     /**

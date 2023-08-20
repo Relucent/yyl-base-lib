@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import com.github.relucent.base.common.reflect.TypeReference;
 
+@SuppressWarnings("deprecation")
 public class JsonUtilTest {
 
     private Sample[] samples;

@@ -10,6 +10,7 @@ import com.github.relucent.base.plugin.jackson.JacksonHandler;
 
 /**
  * JSON解析工具类<br>
+ * @deprecated 建议使用性能更好功能更强的JSON类库
  */
 public class JsonUtil {
 

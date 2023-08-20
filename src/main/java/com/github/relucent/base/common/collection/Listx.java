@@ -9,7 +9,7 @@ import com.github.relucent.base.common.convert.ConvertUtil;
  * 增强版List接口的实现类。<br>
  */
 @SuppressWarnings("serial")
-public class Listx extends ListWrapper<Object> {
+public class Listx extends ListWrapper<Object> implements Cloneable {
 
     // ==============================Fields==============================================
     // ...
@@ -20,6 +20,12 @@ public class Listx extends ListWrapper<Object> {
     }
 
     // ==============================Methods=============================================
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return (Listx) super.clone();
+    }
+
+    // ==============================StandardMethods=====================================
     public Boolean getBoolean(int index) {
         return getBoolean(index, null);
     }
@@ -50,14 +56,6 @@ public class Listx extends ListWrapper<Object> {
 
     public <T extends Enum<T>> T getEnum(int index, Class<T> enumType) {
         return getEnum(index, enumType, null);
-    }
-
-    public Mapx getMap(int index) {
-        return getMap(index, null);
-    }
-
-    public Listx getList(int index) {
-        return getList(index, null);
     }
 
     public Boolean getBoolean(int index, Boolean defaultValue) {
@@ -92,11 +90,28 @@ public class Listx extends ListWrapper<Object> {
         return ConvertUtil.toEnum(get(index), enumType, defaultEnum);
     }
 
+    // ==============================ExtendMethods=======================================
+    public Mapx getMap(int index) {
+        return getMap(index, null);
+    }
+
     public Mapx getMap(int index, Mapx defaultValue) {
-        return ConvertUtil.toMap(get(index), defaultValue);
+        Object value = get(index);
+        if (value instanceof Mapx) {
+            return (Mapx) value;
+        }
+        return defaultValue;
+    }
+
+    public Listx getList(int index) {
+        return getList(index, null);
     }
 
     public Listx getList(int index, Listx defaultValue) {
-        return ConvertUtil.toList(get(index), defaultValue);
+        Object value = get(index);
+        if (value instanceof Listx) {
+            return (Listx) value;
+        }
+        return defaultValue;
     }
 }

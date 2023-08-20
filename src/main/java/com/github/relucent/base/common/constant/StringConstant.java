@@ -50,6 +50,9 @@ public class StringConstant {
     /** 句号(点)[0x2E] */
     public static final String DOT = ".";
 
+    /** 字符串常量：双点 {@code ".."} */
+    public static final String DOUBLE_DOT = "..";
+
     /** 斜杠[0x2F] */
     public static final String SLASH = "/";
 
@@ -135,7 +138,7 @@ public class StringConstant {
     public static final String HTML_GT = "&gt;";
 
     /** JSON对象字符串({})，表示空对象 */
-    public static final String JSON_EMPTY_OBJECT = "{}";
+    public static final String EMPTY_JSON_OBJECT = "{}";
 
     private StringConstant() {
     }

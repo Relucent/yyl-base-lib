@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.github.relucent.base.common.bean.info.BeanDesc;
+import com.github.relucent.base.common.bean.info.BeanDescCache;
 import com.github.relucent.base.common.bean.mapping.BeanMapDescriber;
 import com.github.relucent.base.common.bean.mapping.BeanMapPopulater;
 import com.github.relucent.base.common.bean.mapping.BeanMapper;
@@ -50,6 +52,15 @@ public class BeanUtil {
 
     public static <T> T newBean(Class<T> beanClass, Map<String, Object> properties, MapConfig config) {
         return new BeanMapPopulater(config).newBean(beanClass, properties);
+    }
+
+    /**
+     * 获取{@link BeanDesc} Bean描述信息
+     * @param clazz Bean类
+     * @return {@link BeanDesc}
+     */
+    public static BeanDesc getBeanDesc(Class<?> clazz) {
+        return BeanDescCache.INSTANCE.getBeanDesc(clazz, () -> new BeanDesc(clazz));
     }
 
     /**

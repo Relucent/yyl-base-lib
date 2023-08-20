@@ -28,6 +28,8 @@ public class MapxTest {
         Assert.assertEquals(sample.getString("string"), "hello");
         Assert.assertEquals(sample.getString("nonexistent", "Default"), "Default");
         Assert.assertEquals(sample.getDate("date-now"), now);
+        
+        System.out.println(sample.getString(null));
         Assert.assertEquals(sample.getString(null), "NULL_STRING");
     }
 }

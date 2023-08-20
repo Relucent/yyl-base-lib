@@ -1,6 +1,7 @@
 package com.github.relucent.base.common.lang;
 
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -10,6 +11,7 @@ import java.util.Map;
 
 import com.github.relucent.base.common.constant.ArrayConstant;
 import com.github.relucent.base.common.constant.StringConstant;
+import com.github.relucent.base.common.reflect.TypeUtil;
 
 /**
  * <h3>{@code Class}对象工具类</h3><br>
@@ -62,7 +64,7 @@ public class ClassUtil {
      */
     @SuppressWarnings("unchecked")
     public static <T> Class<T> getClass(T object) {
-        return null == object ? null : (Class<T>) object.getClass();
+        return object == null ? null : (Class<T>) object.getClass();
     }
 
     /**
@@ -477,7 +479,7 @@ public class ClassUtil {
      * @return 是否为枚举类型
      */
     public static boolean isEnum(Class<?> type) {
-        return null != type && type.isEnum();
+        return type != null && type.isEnum();
     }
 
     /**
@@ -499,6 +501,26 @@ public class ClassUtil {
             return false;
         }
         return type.isPrimitive() || isPrimitiveWrapper(type);
+    }
+
+    /**
+     * 获得给定类的第一个泛型参数
+     * @param clazz 被检查的类，必须是已经确定泛型类型的类
+     * @return {@link Class}
+     */
+    public static Class<?> getTypeArgument(Class<?> clazz) {
+        return getTypeArgument(clazz, 0);
+    }
+
+    /**
+     * 获得给定类的泛型参数
+     * @param clazz 被检查的类，必须是已经确定泛型类型的类
+     * @param index 泛型类型的索引号，即第几个泛型类型
+     * @return {@link Class}
+     */
+    public static Class<?> getTypeArgument(Class<?> clazz, int index) {
+        final Type argumentType = TypeUtil.getTypeArgument(clazz, index);
+        return TypeUtil.getClass(argumentType);
     }
 
     /**
