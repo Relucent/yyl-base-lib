@@ -5,10 +5,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import com.github.relucent.base.common.exception.ExceptionHelper;
 import com.github.relucent.base.common.io.FileUtil;
@@ -21,35 +18,7 @@ import com.github.relucent.base.common.reflect.MethodUtil;
 public class JarClassLoader extends URLClassLoader {
 
     // ==============================Fields===========================================
-    /**
-     * 原始类型名和其class对应表
-     */
-    private static final Map<String, Class<?>> PRIMITIVE_TYPE_NAME_MAP = new ConcurrentHashMap<>();
-    static {
-        final List<Class<?>> primitiveTypes = new ArrayList<>();
-        // 加入原始类型
-        primitiveTypes.add(boolean.class);
-        primitiveTypes.add(byte.class);
-        primitiveTypes.add(char.class);
-        primitiveTypes.add(double.class);
-        primitiveTypes.add(float.class);
-        primitiveTypes.add(int.class);
-        primitiveTypes.add(long.class);
-        primitiveTypes.add(short.class);
-        // 加入原始类型数组类型
-        primitiveTypes.add(boolean[].class);
-        primitiveTypes.add(byte[].class);
-        primitiveTypes.add(char[].class);
-        primitiveTypes.add(double[].class);
-        primitiveTypes.add(float[].class);
-        primitiveTypes.add(int[].class);
-        primitiveTypes.add(long[].class);
-        primitiveTypes.add(short[].class);
-        primitiveTypes.add(void.class);
-        for (final Class<?> primitiveType : primitiveTypes) {
-            PRIMITIVE_TYPE_NAME_MAP.put(primitiveType.getName(), primitiveType);
-        }
-    }
+    // ...
 
     // ==============================StaticCreate=====================================
     /**

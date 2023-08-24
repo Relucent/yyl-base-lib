@@ -147,7 +147,7 @@ public class PathUtil {
      * @return 如果为目录true
      */
     public static boolean isExistsAndNotDirectory(final Path path, final boolean isFollowLinks) {
-        return exists(path, isFollowLinks) && false == isDirectory(path, isFollowLinks);
+        return exists(path, isFollowLinks) && !isDirectory(path, isFollowLinks);
     }
 
     /**

@@ -28,6 +28,7 @@ import com.github.relucent.base.common.reflect.MethodUtil;
 @SuppressWarnings("serial")
 public class BeanDesc implements Serializable {
 
+    // ==============================Fields===========================================
     /**
      * Bean类
      */
@@ -37,6 +38,7 @@ public class BeanDesc implements Serializable {
      */
     private final Map<String, PropDesc> propMap = new LinkedHashMap<>();
 
+    // ==============================Constructors=====================================
     /**
      * 构造
      * @param beanClass Bean类
@@ -47,7 +49,7 @@ public class BeanDesc implements Serializable {
         this.beanClass = beanClass;
 
         // 获取 Getter和Setter方法
-        final Method[] gettersAndSetters = ArrayUtil.filter(MethodUtil.getAllMethods(beanClass), MethodUtil::isGetterOrSetter);
+        final Method[] gettersAndSetters = ArrayUtil.filter(MethodUtil.getAllMethods(beanClass), MethodUtil::isGetterOrSetterIgnoreCase);
         // 获取全部字段，进行比较过滤
         for (Field field : FieldUtil.getFields(this.beanClass)) {
             // 排除静态属性和对象子类
@@ -59,6 +61,7 @@ public class BeanDesc implements Serializable {
         }
     }
 
+    // ==============================Methods==========================================
     /**
      * 获取Bean的全类名
      * @return Bean的类名
@@ -130,6 +133,7 @@ public class BeanDesc implements Serializable {
         return desc == null ? null : desc.getSetter();
     }
 
+    // ==============================PrivateMethods===================================
     /**
      * 根据字段创建属性描述<br>
      * 查找Getter和Setter方法时会：
@@ -145,57 +149,82 @@ public class BeanDesc implements Serializable {
      * @param methods 类中所有的方法
      * @return {@link PropDesc}
      */
-    private PropDesc createProp(Field field, Method[] methods) {
-        final PropDesc prop = findProp(field, methods, false);
-        // 忽略大小写重新匹配一次
-        if (prop.getter == null || prop.setter == null) {
-            final PropDesc propIgnoreCase = findProp(field, methods, true);
-            if (prop.getter == null) {
-                prop.getter = propIgnoreCase.getter;
-            }
-            if (prop.setter == null) {
-                prop.setter = propIgnoreCase.setter;
-            }
-        }
-        return prop;
+    private PropDesc createProp(final Field field, final Method[] methods) {
+        final Method getter = getGetterMethod(field, methods);
+        final Method setter = getSetterMethod(field, methods);
+        return new PropDesc(field, getter, setter);
     }
 
     /**
-     * 查找字段对应的Getter和Setter方法
+     * 查找字段对应的Getter方法
      * @param field 字段
-     * @param gettersOrSetters 类中所有的Getter或Setter方法
-     * @param ignoreCase 是否忽略大小写匹配
-     * @return PropDesc
+     * @param methods 方法列表
+     * @return 字段对应的Getter方法
      */
-    private PropDesc findProp(Field field, Method[] gettersOrSetters, boolean ignoreCase) {
+    private Method getGetterMethod(Field field, Method[] methods) {
         final String fieldName = field.getName();
         final Class<?> fieldType = field.getType();
         final boolean isBooleanField = fieldType == Boolean.class || fieldType == boolean.class;
-
-        Method getter = null;
-        Method setter = null;
-        String methodName;
-        for (Method method : gettersOrSetters) {
-            methodName = method.getName();
+        // 遍历匹配一次
+        for (Method method : methods) {
+            String methodName = method.getName();
+            // 无参数，可能为Getter方法
             if (method.getParameterCount() == 0) {
-                // 无参数，可能为Getter方法
-                if (isMatchGetter(methodName, fieldName, isBooleanField, ignoreCase)) {
-                    // 方法名与字段名匹配，则为Getter方法
-                    getter = method;
+                // 方法名与字段名匹配，则为Getter方法
+                if (isMatchGetter(methodName, fieldName, isBooleanField, false)) {
+                    return method;
                 }
-            } else if (isMatchSetter(methodName, fieldName, isBooleanField, ignoreCase)) {
-                // setter方法的参数类型和字段类型必须一致，或参数类型是字段类型的子类
-                if (fieldType.isAssignableFrom(method.getParameterTypes()[0])) {
-                    setter = method;
-                }
-            }
-            if (getter != null && setter != null) {
-                // 如果Getter和Setter方法都找到了，不再继续寻找
-                break;
             }
         }
+        // 忽略大小写重新匹配一次
+        for (Method method : methods) {
+            String methodName = method.getName();
+            // 无参数，可能为Getter方法
+            if (method.getParameterCount() == 0) {
+                // 方法名与字段名匹配（忽略大小写），则为Getter方法
+                if (isMatchGetter(methodName, fieldName, isBooleanField, true)) {
+                    return method;
+                }
+            }
+        }
+        // 没有对应的方法
+        return null;
+    }
 
-        return new PropDesc(field, getter, setter);
+    /**
+     * 查找字段对应的Setter方法
+     * @param field 字段
+     * @param methods 方法列表
+     * @return 字段对应的Setter方法
+     */
+    private Method getSetterMethod(Field field, Method[] methods) {
+        final String fieldName = field.getName();
+        final Class<?> fieldType = field.getType();
+        final boolean isBooleanField = fieldType == Boolean.class || fieldType == boolean.class;
+        // 遍历匹配一次
+        for (Method method : methods) {
+            String methodName = method.getName();
+            // 名称匹配
+            if (isMatchSetter(methodName, fieldName, isBooleanField, false)) {
+                // 参数类型和字段类型一致，或参数类型是字段类型的子类
+                if (fieldType.isAssignableFrom(method.getParameterTypes()[0])) {
+                    return method;
+                }
+            }
+        }
+        // 忽略大小写重新匹配一次
+        for (Method method : methods) {
+            String methodName = method.getName();
+            // 名称匹配（忽略大小写）
+            if (isMatchSetter(methodName, fieldName, isBooleanField, false)) {
+                // 参数类型和字段类型一致，或参数类型是字段类型的子类
+                if (fieldType.isAssignableFrom(method.getParameterTypes()[0])) {
+                    return method;
+                }
+            }
+        }
+        // 没有对应的方法
+        return null;
     }
 
     /**

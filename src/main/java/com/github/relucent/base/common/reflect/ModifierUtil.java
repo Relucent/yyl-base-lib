@@ -1,7 +1,7 @@
 package com.github.relucent.base.common.reflect;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
@@ -17,72 +17,136 @@ public class ModifierUtil {
     }
 
     // =================================Methods================================================
-
     /**
-     * 是否是Public类
+     * 是否包含{@code public}修饰符
      * @param clazz 类
-     * @return 是否是Public
+     * @return 是否包含{@code public}修饰符
      */
     public static boolean isPublic(Class<?> clazz) {
         return clazz != null && Modifier.isPublic(clazz.getModifiers());
     }
 
     /**
-     * 是否是Public构造
-     * @param constructor 构造
-     * @return 是否是Public
+     * 是否包含{@code public}修饰符
+     * @param member 类成员，{@code Constructor}、{@code Method}、{@code Field}
+     * @return 是否包含{@code public}修饰符
      */
-    public static boolean isPublic(Constructor<?> constructor) {
-        return constructor != null && Modifier.isPublic(constructor.getModifiers());
+    public static boolean isPublic(Member member) {
+        return member != null && Modifier.isPublic(member.getModifiers());
     }
 
     /**
-     * 是否是Public方法
-     * @param method 方法
-     * @return 是否是Public
-     */
-    public static boolean isPublic(Method method) {
-        return method != null && Modifier.isPublic(method.getModifiers());
-    }
-
-    /**
-     * 是否是Public字段
-     * @param field 字段
-     * @return 是否是Public
-     */
-    public static boolean isPublic(Field field) {
-        return field != null && Modifier.isPublic(field.getModifiers());
-    }
-
-    /**
-     * 是否是static类
+     * 是否包含{@code private}修饰符
      * @param clazz 类
-     * @return 是否是static
+     * @return 是否包含{@code private}修饰符
+     */
+    public static boolean isPrivate(Class<?> clazz) {
+        return clazz != null && Modifier.isPrivate(clazz.getModifiers());
+    }
+
+    /**
+     * 是否包含{@code private}修饰符
+     * @param member 类成员，{@code Constructor}、{@code Method}、{@code Field}
+     * @return 是否包含{@code private}修饰符
+     */
+    public static boolean isPrivate(Member member) {
+        return member != null && Modifier.isPrivate(member.getModifiers());
+    }
+
+    /**
+     * 是否包含{@code protected}修饰符
+     * @param clazz 类
+     * @return 是否是共有{@code protected}
+     */
+    public static boolean isProtected(Class<?> clazz) {
+        return clazz != null && Modifier.isProtected(clazz.getModifiers());
+    }
+
+    /**
+     * 是是否包含{@code protected}修饰符
+     * @param member 类成员，{@code Constructor}、{@code Method}、{@code Field}
+     * @return 是否包含{@code protected}修饰符
+     */
+    public static boolean isProtected(Member member) {
+        return member != null && Modifier.isProtected(member.getModifiers());
+    }
+
+    /**
+     * 是否包含{@code static}修饰符
+     * @param clazz 类
+     * @return是否包含{@code static}修饰符
      */
     public static boolean isStatic(Class<?> clazz) {
         return clazz != null && Modifier.isStatic(clazz.getModifiers());
     }
 
     /**
-     * 是否是static方法
+     * 是是否包含{@code static}修饰符
+     * @param member 类成员，{@code Constructor}、{@code Method}、{@code Field}
+     * @return 是否包含{@code static}修饰符
+     */
+    public static boolean isStatic(Member member) {
+        return member != null && Modifier.isStatic(member.getModifiers());
+    }
+
+    /**
+     * 是否抽象类，包含{@code abstract}修饰符
+     * @param clazz 类
+     * @return 是否包含{@code abstract}修饰符
+     */
+    public static boolean isAbstract(Class<?> clazz) {
+        return clazz != null && Modifier.isAbstract(clazz.getModifiers());
+    }
+
+    /**
+     * 是否抽象方法，包含{@code abstract}修饰符
      * @param method 方法
-     * @return 是否是static
+     * @return 是否包含{@code abstract}修饰符
      */
-    public static boolean isStatic(Method method) {
-        return method != null && Modifier.isStatic(method.getModifiers());
+    public static boolean isAbstract(Method method) {
+        return method != null && Modifier.isAbstract(method.getModifiers());
     }
 
     /**
-     * 是否是static字段
+     * 是否包含{@code final}修饰符
+     * @param clazz 类
+     * @return 是否包含{@code final}修饰符
+     */
+    public static boolean isFinal(Class<?> clazz) {
+        return clazz != null && Modifier.isFinal(clazz.getModifiers());
+    }
+
+    /**
+     * 是否包含{@code final}修饰符
+     * @param member 类成员，{@code Constructor}、{@code Method}、{@code Field}
+     * @return 是否包含{@code final}修饰符
+     */
+    public static boolean isFinal(Member member) {
+        return member != null && Modifier.isFinal(member.getModifiers());
+    }
+
+    /**
+     * 是否包含{@code volatile}修饰符
      * @param field 字段
-     * @return 是否是static
+     * @return 是否包含{@code volatile}修饰符
      */
-    public static boolean isStatic(Field field) {
-        return field != null && Modifier.isStatic(field.getModifiers());
+    public static boolean isVolatile(Field field) {
+        return field != null && Modifier.isFinal(field.getModifiers());
     }
 
     /**
-     * 是否是合成类（由java编译器生成的）
+     * 是否包含{@code transient}修饰符
+     * @param field 字段
+     * @return 是否包含{@code transient}修饰符
+     */
+    public static boolean isTransient(Field field) {
+        return field != null && Modifier.isTransient(field.getModifiers());
+    }
+
+    /**
+     * 是否是合成类（由java编译器生成的）<br>
+     * 合成类（synthetic class）是指由Java编译器自动生成的、在源代码中并不存在的类。<br>
+     * 它们通常用于实现内部类、匿名类、Lambda表达式和嵌套类等特性。
      * @param clazz 类
      * @return 是否是合成
      */
@@ -91,57 +155,13 @@ public class ModifierUtil {
     }
 
     /**
-     * 是否是合成方法（由java编译器生成的）
-     * @param method 方法
-     * @return 是否是合成方法
+     * 是否是合成成员 （由java编译器生成的）<br>
+     * 合成类（synthetic class）是指由Java编译器自动生成的、在源代码中并不存在的类。<br>
+     * 它们通常用于实现内部类、匿名类、Lambda表达式和嵌套类等特性。
+     * @param member 类成员，{@code Constructor}、{@code Method}、{@code Field}
+     * @return 是否是合成成员
      */
-    public static boolean isSynthetic(Method method) {
-        return method != null && method.isSynthetic();
+    public static boolean isSynthetic(Member member) {
+        return member != null && member.isSynthetic();
     }
-
-    /**
-     * 是否是合成字段（由java编译器生成的）
-     * @param field 字段
-     * @return 是否是合成字段
-     */
-    public static boolean isSynthetic(Field field) {
-        return field != null && field.isSynthetic();
-    }
-
-    /**
-     * 是否抽象类
-     * @param clazz 类
-     * @return 是否抽象方法
-     */
-    public static boolean isAbstract(Class<?> clazz) {
-        return clazz != null && Modifier.isAbstract(clazz.getModifiers());
-    }
-
-    /**
-     * 是否抽象方法
-     * @param method 方法
-     * @return 是否抽象方法
-     */
-    public static boolean isAbstract(Method method) {
-        return method != null && Modifier.isAbstract(method.getModifiers());
-    }
-
-    /**
-     * 是否临时性变量字段
-     * @param field 字段
-     * @return 是否临时性变量字段
-     */
-    public static boolean isTransient(Field field) {
-        return field != null && Modifier.isTransient(field.getModifiers());
-    }
-
-    /**
-     * 是否临时性变量方法
-     * @param method 方法
-     * @return 是否临时性变量方法
-     */
-    public static boolean isTransient(Method method) {
-        return method != null && Modifier.isTransient(method.getModifiers());
-    }
-
 }
