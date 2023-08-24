@@ -9,19 +9,21 @@ import com.github.relucent.base.common.constant.ArrayConstant;
  */
 public class CharSequenceUtil {
 
+    // ==============================Fields===========================================
     /** 表示未找到的索引 */
     private static final int NOT_FOUND = -1;
 
     /** 转换长度限制 */
     private static final int TO_STRING_LIMIT = 16;
 
+    // ==============================Constructors=====================================
     /**
      * 工具类方法，实例不应在标准编程中构造。
      */
     protected CharSequenceUtil() {
     }
 
-    // -----------------------------------------------------------------------
+    // ==============================Methods==========================================
     /**
      * 返回一个新的{@code CharSequence}，它是该序列的子序列，从指定索引处的{@code char}值开始。
      * @param cs 指定的序列
@@ -33,12 +35,161 @@ public class CharSequenceUtil {
     }
 
     /**
+     * 获取字符串的长度，如果为null返回0
+     * @param cs 字符串
+     * @return 字符串的长度，如果为null返回0
+     */
+    public static int length(CharSequence cs) {
+        return cs == null ? 0 : cs.length();
+    }
+
+    /**
      * 字符串是否为空
      * @param cs 被检测的字符串
      * @return 是否为空
      */
     public static boolean isEmpty(CharSequence cs) {
         return cs == null || cs.length() == 0;
+    }
+
+    /**
+     * 字符串是否以给定字符开始
+     * @param cs 字符串
+     * @param c 字符
+     * @return 是否开始
+     */
+    public static boolean startWith(CharSequence cs, char c) {
+        return !isEmpty(cs) && c == cs.charAt(0);
+    }
+
+    /**
+     * 测试此字符串是否以指定的前缀开头<br>
+     * 
+     * <pre>
+     *  CharSequenceUtil.startWith("123", "123");    -- true
+     *  CharSequenceUtil.startWith("abcdef", "abc"); -- true
+     *  CharSequenceUtil.startWith("ABCDEF", "abc"); -- false
+     *  CharSequenceUtil.startWith("ABCDEF", "def"); -- false
+     * </pre>
+     *
+     * @param string 检测的字符串
+     * @param prefix 比较的前缀
+     * @return 字符串是否以指定前缀开头
+     */
+    public static boolean startWith(CharSequence string, CharSequence prefix) {
+        return (string == null || prefix == null) ? false : string.toString().startsWith(prefix.toString());
+    }
+
+    /**
+     * 测试此字符串是否以指定的前缀开头，忽略大小写<br>
+     * 
+     * <pre>
+     *  CharSequenceUtil.startWith("123", "123");    -- true
+     *  CharSequenceUtil.startWith("abcdef", "abc"); -- true
+     *  CharSequenceUtil.startWith("ABCDEF", "abc"); -- true
+     *  CharSequenceUtil.startWith("ABCDEF", "def"); -- false
+     * </pre>
+     *
+     * @param string 检测的字符串
+     * @param prefix 比较的前缀
+     * @return 字符串是否以指定前缀开头（忽略大小写）
+     */
+    public static boolean startWithIgnoreCase(final CharSequence string, final CharSequence prefix) {
+        if (string == null || prefix == null) {
+            return false;
+        }
+        return regionMatches(string, true, 0, prefix, 0, prefix.length());
+    }
+
+    /**
+     * 比较两个CharSequences是否相同，区分大小写
+     * 
+     * <pre>
+     * #equals(null, null)   = true
+     * #.equals(null, "abc")  = false
+     * #.equals("abc", null)  = false
+     * #.equals("abc", "abc") = true
+     * #.equals("abc", "ABC") = false
+     * </pre>
+     *
+     * @param cs1 第一个CharSequence，可以是 {@code null}
+     * @param cs2 第二个CharSequence，可以是 {@code null}
+     * @return 如果两个CharSequences相同（区分大小写），或者都是{@code null}则返回{@code true}
+     * @see Object#equals(Object)
+     * @see #equalsIgnoreCase(CharSequence, CharSequence)
+     */
+    public static boolean equals(final CharSequence cs1, final CharSequence cs2) {
+        if (cs1 == cs2) {
+            return true;
+        }
+        if (cs1 == null || cs2 == null) {
+            return false;
+        }
+        if (cs1.length() != cs2.length()) {
+            return false;
+        }
+        if (cs1 instanceof String && cs2 instanceof String) {
+            return cs1.equals(cs2);
+        }
+        // 逐步比较
+        final int length = cs1.length();
+        for (int i = 0; i < length; i++) {
+            if (cs1.charAt(i) != cs2.charAt(i)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 比较两个CharSequences是否相同，忽略大小写
+     *
+     * <pre>
+     * #equalsIgnoreCase(null, null)   = true
+     * #equalsIgnoreCase(null, "abc")  = false
+     * #equalsIgnoreCase("abc", null)  = false
+     * #equalsIgnoreCase("abc", "abc") = true
+     * #equalsIgnoreCase("abc", "ABC") = true
+     * </pre>
+     * 
+     * @param cs1 第一个CharSequence，可以是 {@code null}
+     * @param cs2 第二个CharSequence，可以是 {@code null}
+     * @return 如果两个CharSequences相同（忽略大小写），或者都是{@code null}则返回{@code true}
+     * @see Object#equals(Object)
+     * @see #equalsIgnoreCase(CharSequence, CharSequence)
+     */
+    public static boolean equalsIgnoreCase(final CharSequence cs1, final CharSequence cs2) {
+        if (cs1 == cs2) {
+            return true;
+        }
+        if (cs1 == null || cs2 == null) {
+            return false;
+        }
+        if (cs1.length() != cs2.length()) {
+            return false;
+        }
+        return regionMatches(cs1, true, 0, cs2, 0, cs1.length());
+    }
+
+    /**
+     * 将 CharSequence转换为字符数组<br>
+     * 如果传入参数为{@code null}，则返回一个 0 长度的字符数组
+     * @param source 要处理的{@code CharSequence}
+     * @return 字符数组，不会为null.
+     */
+    public static char[] toCharArray(final CharSequence source) {
+        final int len = length(source);
+        if (len == 0) {
+            return ArrayConstant.EMPTY_CHAR_ARRAY;
+        }
+        if (source instanceof String) {
+            return ((String) source).toCharArray();
+        }
+        final char[] array = new char[len];
+        for (int i = 0; i < len; i++) {
+            array[i] = source.charAt(i);
+        }
+        return array;
     }
 
     // -----------------------------------------------------------------------
@@ -208,43 +359,6 @@ public class CharSequenceUtil {
     }
 
     /**
-     * 是否匹配
-     * @param cs 要处理的字符序列
-     * @param search 要检索的字符序列
-     * @param len2 匹配长度
-     * @param start1 匹配位置
-     * @return 是否匹配
-     */
-    private static boolean checkLaterThan(final CharSequence cs, final CharSequence search, final int len2, final int start1) {
-        for (int i = 1, j = len2 - 1; i <= j; i++, j--) {
-            if (cs.charAt(start1 + i) != search.charAt(i) || cs.charAt(start1 + j) != search.charAt(j)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * 将给定的CharSequence转换为char[]。
-     * @param source 要处理的{@code CharSequence}
-     * @return 结果字符数组，从不为null.
-     */
-    public static char[] toCharArray(final CharSequence source) {
-        final int len = StringUtil.length(source);
-        if (len == 0) {
-            return ArrayConstant.EMPTY_CHAR_ARRAY;
-        }
-        if (source instanceof String) {
-            return ((String) source).toCharArray();
-        }
-        final char[] array = new char[len];
-        for (int i = 0; i < len; i++) {
-            array[i] = source.charAt(i);
-        }
-        return array;
-    }
-
-    /**
      * 区域匹配
      * @param cs 要处理的字符序列 {@code CharSequence}
      * @param ignoreCase 是否不区分大小写
@@ -301,92 +415,19 @@ public class CharSequenceUtil {
     }
 
     /**
-     * 是否以指定字符串开头，忽略大小写
-     * @param str 被监测字符串
-     * @param prefix 开头字符串
-     * @return 是否以指定字符串开头
+     * 是否匹配
+     * @param cs 要处理的字符序列
+     * @param search 要检索的字符序列
+     * @param len2 匹配长度
+     * @param start1 匹配位置
+     * @return 是否匹配
      */
-    public static boolean startWithIgnoreCase(CharSequence str, CharSequence prefix) {
-        return startWith(str, prefix, true);
-    }
-
-    /**
-     * 字符串是否以给定字符开始
-     * @param cs 字符串
-     * @param c 字符
-     * @return 是否开始
-     */
-    public static boolean startWith(CharSequence cs, char c) {
-        return !isEmpty(cs) && c == cs.charAt(0);
-    }
-
-    /**
-     * 是否以指定字符串开头<br>
-     * 如果给定的字符串和开头字符串都为null则返回true，否则任意一个值为null返回false
-     * @param str 被监测字符串
-     * @param prefix 开头字符串
-     * @param ignoreCase 是否忽略大小写
-     * @return 是否以指定字符串开头
-     */
-    public static boolean startWith(CharSequence str, CharSequence prefix, boolean ignoreCase) {
-        return startWith(str, prefix, ignoreCase, false);
-    }
-
-    /**
-     * 是否以指定字符串开头<br>
-     * 如果给定的字符串和开头字符串都为null则返回true，否则任意一个值为null返回false<br>
-     * 
-     * <pre>
-     *     CharSequenceUtil.startWith("123", "123", false, true);   -- false
-     *     CharSequenceUtil.startWith("ABCDEF", "abc", true, true); -- true
-     *     CharSequenceUtil.startWith("abc", "abc", true, true);    -- false
-     * </pre>
-     *
-     * @param string 被监测字符串
-     * @param prefix 开头字符串
-     * @param ignoreCase 是否忽略大小写
-     * @param ignoreEquals 是否忽略字符串相等的情况
-     * @return 是否以指定字符串开头
-     */
-    public static boolean startWith(CharSequence string, CharSequence prefix, boolean ignoreCase, boolean ignoreEquals) {
-        if (string == null || prefix == null) {
-            if (ignoreEquals) {
+    private static boolean checkLaterThan(final CharSequence cs, final CharSequence search, final int len2, final int start1) {
+        for (int i = 1, j = len2 - 1; i <= j; i++, j--) {
+            if (cs.charAt(start1 + i) != search.charAt(i) || cs.charAt(start1 + j) != search.charAt(j)) {
                 return false;
             }
-            return string == null && prefix == null;
         }
-
-        boolean isStartWith = string.toString().regionMatches(ignoreCase, 0, prefix.toString(), 0, prefix.length());
-
-        if (isStartWith) {
-            return !ignoreEquals || !equals(string, prefix, ignoreCase);
-        }
-        return false;
-    }
-
-    /**
-     * 比较两个字符串是否相等，规则如下
-     * <ul>
-     * <li>str1和str2都为{@code null}</li>
-     * <li>忽略大小写使用{@link String#equalsIgnoreCase(String)}判断相等</li>
-     * <li>不忽略大小写使用{@link String#contentEquals(CharSequence)}判断相等</li>
-     * </ul>
-     * @param str1 要比较的字符串1
-     * @param str2 要比较的字符串2
-     * @param ignoreCase 是否忽略大小写
-     * @return 如果两个字符串相同，或者都是{@code null}，则返回{@code true}
-     */
-    public static boolean equals(CharSequence str1, CharSequence str2, boolean ignoreCase) {
-        if (str1 == null) {
-            return str2 == null;
-        }
-        if (str2 == null) {
-            return false;
-        }
-        if (ignoreCase) {
-            return str1.toString().equalsIgnoreCase(str2.toString());
-        } else {
-            return str1.toString().contentEquals(str2);
-        }
+        return true;
     }
 }

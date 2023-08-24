@@ -891,7 +891,7 @@ public class StringUtil {
      */
     public static String removePrefixIgnoreCase(CharSequence str, CharSequence prefix) {
         if (isEmpty(str) || isEmpty(prefix)) {
-            return toString(str);
+            return string(str);
         }
 
         final String str2 = str.toString();
@@ -929,43 +929,89 @@ public class StringUtil {
         return ((st > 0) || (len < string.length())) ? string.substring(st, len) : string;
     }
 
-    // ==============================ToStringMethods==================================
     /**
-     * 将对象转为字符串
-     * @param obj 对象
-     * @return 字符串
+     * 去除字符串中指定的多个字符，如有多个则全部去除<br>
+     * @param cs 字符串
+     * @param chars 字符列表
+     * @return 处理后的字符串
      */
-    public static String toString(Object obj) {
-        return toString(obj, CharsetConstant.DEFAULT);
+    public static String removeAll(CharSequence cs, char... chars) {
+        if (isEmpty(null) || ArrayUtil.isEmpty(chars)) {
+            return string(cs);
+        }
+        int length = cs.length();
+        if (length == 0) {
+            return StringConstant.EMPTY;
+        }
+        final StringBuilder builder = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            char c = cs.charAt(i);
+            if (!ArrayUtil.contains(chars, c)) {
+                builder.append(c);
+            }
+        }
+        return builder.toString();
     }
 
     /**
-     * 将对象转为字符串
+     * 去除所有换行符（ \r 和 \n）
+     * @param cs 字符串
+     * @return 处理后的字符串
+     */
+    public static String removeAllLineBreak(CharSequence cs) {
+        return removeAll(cs, CharConstant.CR, CharConstant.LF);
+    }
+
+    // ==============================ConvertStringMethods=============================
+    /**
+     * 将对象转为字符串<br>
      * 
      * <pre>
-     *   1、Byte数组和ByteBuffer会被转换为对应字符串的数组
-     *   2、对象数组会调用Arrays.toString方法
+     * 1、如果参数为{@code null}，则返回{@code null}
+     * 2、Byte数组和ByteBuffer会被转换为对应字符串的数组
+     * 3、对象数组会调用Arrays.toString方法
+     * 4、其余情况会直接调用对象的 toString 方法
+     * </pre>
+     * 
+     * @param obj 对象
+     * @return 字符串
+     */
+    public static String string(Object obj) {
+        return string(obj, CharsetConstant.DEFAULT);
+    }
+
+    /**
+     * 将对象转为字符串，如果参数为{@code null}，则返回{@code null}
+     * 
+     * <pre>
+     * 1、如果参数为{@code null}，则返回{@code null}
+     * 2、Byte数组和ByteBuffer会被转换为对应字符串的数组
+     * 3、对象数组会调用Arrays.toString方法
+     * 4、其余情况会直接调用对象的 toString 方法
      * </pre>
      *
      * @param obj 对象
-     * @param charset 字符集
+     * @param encoding 字符集
      * @return 字符串
      */
-    public static String toString(Object obj, Charset charset) {
+    public static String string(Object obj, Charset encoding) {
         if (obj == null) {
             return null;
         }
         if (obj instanceof String) {
             return (String) obj;
         }
+        if (obj instanceof CharSequence) {
+            return obj.toString();
+        }
         if (obj instanceof byte[]) {
-            return toString((byte[]) obj, charset);
+            return string((byte[]) obj, encoding);
         }
         if (obj instanceof Byte[]) {
-            return toString((Byte[]) obj, charset);
+            return string((Byte[]) obj, encoding);
         }
         if (obj instanceof ByteBuffer) {
-            return toString((ByteBuffer) obj, charset);
+            return string((ByteBuffer) obj, encoding);
         }
         if (ArrayUtil.isArray(obj)) {
             return ArrayUtil.toString(obj);
@@ -976,38 +1022,31 @@ public class StringUtil {
     /**
      * 将byte数组转为字符串
      * @param bytes byte数组
-     * @param charset 字符集
+     * @param encoding 字符集
      * @return 字符串
      */
-    public static String toString(byte[] bytes, String charset) {
-        return toString(bytes, getCharsetQuietly(charset));
+    public static String string(byte[] bytes, String encoding) {
+        return string(bytes, getCharsetQuietly(encoding));
     }
 
     /**
      * 解码字节码
      * @param data 字符串
-     * @param charset 字符集，如果此字段为空，则解码的结果取决于平台
+     * @param encoding 字符集，如果此字段为空，则解码的结果取决于平台
      * @return 解码后的字符串
      */
-    public static String toString(byte[] data, Charset charset) {
-        if (data == null) {
-            return null;
-        }
-
-        if (charset == null) {
-            return new String(data);
-        }
-        return new String(data, charset);
+    public static String string(byte[] data, Charset encoding) {
+        return data == null ? null : new String(data, ObjectUtil.defaultIfNull(encoding, CharsetConstant.DEFAULT));
     }
 
     /**
      * 将Byte数组转为字符串
      * @param bytes byte数组
-     * @param charset 字符集
+     * @param encoding 字符集
      * @return 字符串
      */
-    public static String toString(Byte[] bytes, String charset) {
-        return toString(bytes, getCharsetQuietly(charset));
+    public static String string(Byte[] bytes, String encoding) {
+        return string(bytes, getCharsetQuietly(encoding));
     }
 
     /**
@@ -1015,20 +1054,17 @@ public class StringUtil {
      * @param bytes 字节数组
      * @return 字符串
      */
-    public static String toString(final byte[] bytes) {
-        if (bytes == null) {
-            return null;
-        }
-        return new String(bytes, CharsetConstant.DEFAULT);
+    public static String string(final byte[] bytes) {
+        return bytes == null ? null : new String(bytes, CharsetConstant.DEFAULT);
     }
 
     /**
      * 解码字节码
      * @param data 字符串
-     * @param charset 字符集，如果此字段为空，则解码的结果取决于平台
+     * @param encoding 字符集，如果此字段为空，则解码的结果取决于平台
      * @return 解码后的字符串
      */
-    public static String toString(Byte[] data, Charset charset) {
+    public static String string(Byte[] data, Charset encoding) {
         if (data == null) {
             return null;
         }
@@ -1040,30 +1076,27 @@ public class StringUtil {
             bytes[i] = (dataByte == null) ? -1 : dataByte;
         }
 
-        return toString(bytes, charset);
+        return string(bytes, encoding);
     }
 
     /**
      * 将编码的byteBuffer数据转换为字符串
      * @param data 数据
-     * @param charset 字符集，如果为空使用当前系统字符集
+     * @param encoding 字符集，如果为空使用当前系统字符集
      * @return 字符串
      */
-    public static String toString(ByteBuffer data, String charset) {
-        return data == null ? null : toString(data, getCharsetQuietly(charset));
+    public static String string(ByteBuffer data, String encoding) {
+        return data == null ? null : string(data, getCharsetQuietly(encoding));
     }
 
     /**
      * 将编码的byteBuffer数据转换为字符串
      * @param data 数据
-     * @param charset 字符集，如果为空使用当前系统字符集
+     * @param encoding 字符集，如果为空使用当前系统字符集
      * @return 字符串
      */
-    public static String toString(ByteBuffer data, Charset charset) {
-        if (charset == null) {
-            charset = Charset.defaultCharset();
-        }
-        return charset.decode(data).toString();
+    public static String string(ByteBuffer data, Charset encoding) {
+        return ObjectUtil.defaultIfNull(encoding, CharsetConstant.DEFAULT).decode(data).toString();
     }
 
     // ==============================EncoderMethods===================================
@@ -1158,7 +1191,7 @@ public class StringUtil {
                 if (delimIndex > 1 && template.charAt(delimIndex - 2) == CharConstant.BACKSLASH) {// 双转义符
                     // 转义符之前还有一个转义符，占位符依旧有效
                     sbuf.append(template, handledPosition, delimIndex - 1);
-                    sbuf.append(StringUtil.toString(args[argIndex]));
+                    sbuf.append(StringUtil.string(args[argIndex]));
                     handledPosition = delimIndex + placeHolderLength;
                 } else {
                     // 占位符被转义
@@ -1169,7 +1202,7 @@ public class StringUtil {
                 }
             } else {// 正常占位符
                 sbuf.append(template, handledPosition, delimIndex);
-                sbuf.append(StringUtil.toString(args[argIndex]));
+                sbuf.append(StringUtil.string(args[argIndex]));
                 handledPosition = delimIndex + placeHolderLength;
             }
         }
@@ -1199,7 +1232,7 @@ public class StringUtil {
         String template2 = template.toString();
         String value;
         for (Map.Entry<?, ?> entry : map.entrySet()) {
-            value = StringUtil.toString(entry.getValue());
+            value = StringUtil.string(entry.getValue());
             if (value == null && ignoreNull) {
                 continue;
             }

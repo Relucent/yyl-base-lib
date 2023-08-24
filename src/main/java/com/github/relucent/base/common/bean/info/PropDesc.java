@@ -17,19 +17,21 @@ import com.github.relucent.base.common.reflect.TypeUtil;
  */
 public class PropDesc {
 
+    // ==============================Fields===========================================
     /**
      * 字段
      */
-    final Field field;
+    protected final Field field;
     /**
      * Getter方法
      */
-    protected Method getter;
+    protected final Method getter;
     /**
      * Setter方法
      */
-    protected Method setter;
+    protected final Method setter;
 
+    // ==============================Constructors=====================================
     /**
      * 构造<br>
      * Getter和Setter方法设置为默认可访问
@@ -43,6 +45,7 @@ public class PropDesc {
         this.setter = MethodUtil.setAccessible(setter);
     }
 
+    // ==============================Methods==========================================
     /**
      * 获取字段名，如果存在Alias注解，读取注解的值作为名称
      * @return 字段名
@@ -176,6 +179,7 @@ public class PropDesc {
         }
     }
 
+    // ==============================PrivateMethods===================================
     /**
      * 通过Getter和Setter方法中找到属性类型
      * @param getter Getter方法
@@ -216,19 +220,15 @@ public class PropDesc {
      */
     private boolean isTransientForGet() {
 
-        boolean isTransient = ModifierUtil.isTransient(field);
-
-        // 检查Getter方法
-        if (!isTransient && getter != null) {
-            isTransient = ModifierUtil.isTransient(getter);
-
-            // 检查注解
-            if (!isTransient) {
-                isTransient = AnnotationUtil.hasAnnotation(getter, Transient.class);
-            }
+        // 检查字段
+        if (ModifierUtil.isTransient(field)) {
+            return true;
         }
-
-        return isTransient;
+        // 检查Getter方法
+        if (getter != null) {
+            return AnnotationUtil.hasAnnotation(getter, Transient.class);
+        }
+        return false;
     }
 
     /**
@@ -236,16 +236,14 @@ public class PropDesc {
      * @return 是否为Transient关键字修饰的
      */
     private boolean isTransientForSet() {
-        boolean isTransient = ModifierUtil.isTransient(field);
-        // 检查Getter方法
-        if (!isTransient && setter != null) {
-            isTransient = ModifierUtil.isTransient(setter);
-
-            // 检查注解
-            if (!isTransient) {
-                isTransient = AnnotationUtil.hasAnnotation(setter, Transient.class);
-            }
+        // 检查字段
+        if (ModifierUtil.isTransient(field)) {
+            return true;
         }
-        return isTransient;
+        // 检查Getter方法
+        if (setter != null) {
+            return AnnotationUtil.hasAnnotation(setter, Transient.class);
+        }
+        return false;
     }
 }

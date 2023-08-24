@@ -110,21 +110,8 @@ public class AnnotationUtil {
      * @param annotationType 注解类型
      * @return 注解对象
      */
-    @SuppressWarnings("unchecked")
     public static <A extends Annotation> A getAnnotation(AnnotatedElement element, Class<A> annotationType) {
-        if (element == null) {
-            return null;
-        }
-        Annotation[] annotations = element.getAnnotations();
-        if (annotations == null) {
-            return null;
-        }
-        for (Annotation annotation : annotations) {
-            if (annotation.annotationType().equals(annotationType)) {
-                return (A) annotation;
-            }
-        }
-        return null;
+        return (element == null || annotationType == null) ? null : element.getAnnotation(annotationType);
     }
 
     /**

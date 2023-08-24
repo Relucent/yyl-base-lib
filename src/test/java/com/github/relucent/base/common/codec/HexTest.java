@@ -46,7 +46,7 @@ public class HexTest {
         String expected = "hello world";
         String code = Hex.encodeHexString(StringUtil.getBytes(expected));
         Assert.assertTrue(Hex.isHex(code));
-        String actual = StringUtil.toString(Hex.decodeHex(code));
+        String actual = StringUtil.string(Hex.decodeHex(code));
         Assert.assertEquals(expected, actual);
     }
 }

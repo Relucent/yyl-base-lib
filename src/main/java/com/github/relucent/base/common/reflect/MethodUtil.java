@@ -50,6 +50,38 @@ public class MethodUtil {
      * @return 是否为Getter或者Setter方法
      */
     public static boolean isGetterOrSetter(Method method) {
+        return isGetterOrSetter(method, false);
+    }
+
+    /**
+     * 检查给定方法是否为Getter或者Setter方法，规则为：<br>
+     * <ul>
+     * <li>方法参数必须为0个或1个</li>
+     * <li>方法名称不能是getClass</li>
+     * <li>如果是无参方法，则判断是否以“get”或“is”开头</li>
+     * <li>如果方法参数1个，则判断是否以“set”开头</li>
+     * </ul>
+     * @param method 方法
+     * @return 是否为Getter或者Setter方法
+     */
+    public static boolean isGetterOrSetterIgnoreCase(Method method) {
+        return isGetterOrSetter(method, true);
+    }
+
+    /**
+     * 检查给定方法是否为Getter或者Setter方法，规则为：<br>
+     * <ul>
+     * <li>方法参数必须为0个或1个</li>
+     * <li>方法名称不能是getClass</li>
+     * <li>如果是无参方法，则判断是否以“get”或“is”开头</li>
+     * <li>如果方法参数1个，则判断是否以“set”开头</li>
+     * </ul>
+     * @param method 方法
+     * @param ignoreCase 是否忽略方法名的大小写
+     * @return 是否为Getter或者Setter方法
+     */
+    static boolean isGetterOrSetter(Method method, boolean ignoreCase) {
+
         if (method == null) {
             return false;
         }
@@ -61,12 +93,13 @@ public class MethodUtil {
         }
 
         String name = method.getName();
-
-        // 跳过getClass
+        // 跳过getClass这个特殊方法
         if ("getClass".equals(name)) {
             return false;
         }
-
+        if (ignoreCase) {
+            name = name.toLowerCase();
+        }
         switch (parameterCount) {
         case 0:
             return name.startsWith("get") || name.startsWith("is");
@@ -106,7 +139,7 @@ public class MethodUtil {
                 break;
             }
             CollectionUtil.addAll(methods, searchType.getDeclaredMethods());
-            searchType = (withSupers && false == searchType.isInterface()) ? searchType.getSuperclass() : null;
+            searchType = (withSupers && !searchType.isInterface()) ? searchType.getSuperclass() : null;
         }
 
         return methods.toArray(ArrayConstant.EMPTY_METHOD_ARRAY);
@@ -402,7 +435,7 @@ public class MethodUtil {
      * @return 方法
      */
     public static Method setAccessible(Method method) {
-        if (method != null && false == method.isAccessible()) {
+        if (method != null && !method.isAccessible()) {
             method.setAccessible(true);
         }
         return method;
