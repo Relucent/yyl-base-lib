@@ -7,6 +7,7 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -80,9 +81,10 @@ public class ParallelWorker {
             }
             int size = queue.size();
 
-            GlobalThreadPool pool = GlobalThreadPool.getInstance();
-
             CountDownLatch latch = new CountDownLatch(size);
+            Semaphore semaphore = new Semaphore(threads);
+
+            GlobalThreadPool pool = GlobalThreadPool.getInstance();
             List<Future<?>> futures = new ArrayList<>();
             for (int i = size; i > 0; i--) {
                 futures.add(pool.submit(() -> {
@@ -92,7 +94,14 @@ public class ParallelWorker {
                             return;
                         }
                         try {
-                            task.run();
+                            // 获取一个许可，在提供一个许可前一直将线程阻塞。获取一个许可并立即返回，将可用的许可数减 1
+                            semaphore.acquire();
+                            try {
+                                task.run();
+                            } finally {
+                                // 释放一个许可，将其返回给信号量。释放一个许可，将可用的许可数增加 1。
+                                semaphore.release();
+                            }
                         } catch (Exception e) {
                             logger.error("!", e);
                             if (e instanceof InterruptedException) {

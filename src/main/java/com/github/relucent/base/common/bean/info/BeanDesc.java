@@ -36,7 +36,7 @@ public class BeanDesc implements Serializable {
     /**
      * 属性表
      */
-    private final Map<String, PropDesc> propMap = new LinkedHashMap<>();
+    private final Map<String, BeanPropDesc> propMap = new LinkedHashMap<>();
 
     // ==============================Constructors=====================================
     /**
@@ -54,7 +54,7 @@ public class BeanDesc implements Serializable {
         for (Field field : FieldUtil.getFields(this.beanClass)) {
             // 排除静态属性和对象子类
             if (!Modifier.isStatic(field.getModifiers()) && !FieldUtil.isOuterClassField(field)) {
-                PropDesc pd = createProp(field, gettersAndSetters);
+                BeanPropDesc pd = createProp(field, gettersAndSetters);
                 // 只有不存在时才放入，防止父类属性覆盖子类属性
                 this.propMap.putIfAbsent(pd.getFieldName(), pd);
             }
@@ -82,24 +82,24 @@ public class BeanDesc implements Serializable {
      * 获取字段属性表
      * @return 字段属性表
      */
-    public Map<String, PropDesc> getPropMap() {
+    public Map<String, BeanPropDesc> getPropMap() {
         return this.propMap;
     }
 
     /**
      * 获取字段属性列表
-     * @return {@link PropDesc} 列表
+     * @return {@link BeanPropDesc} 列表
      */
-    public Collection<PropDesc> getProps() {
+    public Collection<BeanPropDesc> getProps() {
         return this.propMap.values();
     }
 
     /**
      * 获取属性，如果不存在返回null
      * @param fieldName 字段名
-     * @return {@link PropDesc}
+     * @return {@link BeanPropDesc}
      */
-    public PropDesc getProp(String fieldName) {
+    public BeanPropDesc getProp(String fieldName) {
         return this.propMap.get(fieldName);
     }
 
@@ -109,7 +109,7 @@ public class BeanDesc implements Serializable {
      * @return 字段值
      */
     public Field getField(String fieldName) {
-        final PropDesc desc = this.propMap.get(fieldName);
+        final BeanPropDesc desc = this.propMap.get(fieldName);
         return desc == null ? null : desc.getField();
     }
 
@@ -119,7 +119,7 @@ public class BeanDesc implements Serializable {
      * @return Getter方法
      */
     public Method getGetter(String fieldName) {
-        final PropDesc desc = this.propMap.get(fieldName);
+        final BeanPropDesc desc = this.propMap.get(fieldName);
         return desc == null ? null : desc.getGetter();
     }
 
@@ -129,7 +129,7 @@ public class BeanDesc implements Serializable {
      * @return Setter方法
      */
     public Method getSetter(String fieldName) {
-        final PropDesc desc = this.propMap.get(fieldName);
+        final BeanPropDesc desc = this.propMap.get(fieldName);
         return desc == null ? null : desc.getSetter();
     }
 
@@ -147,12 +147,12 @@ public class BeanDesc implements Serializable {
      *
      * @param field 字段
      * @param methods 类中所有的方法
-     * @return {@link PropDesc}
+     * @return {@link BeanPropDesc}
      */
-    private PropDesc createProp(final Field field, final Method[] methods) {
+    private BeanPropDesc createProp(final Field field, final Method[] methods) {
         final Method getter = getGetterMethod(field, methods);
         final Method setter = getSetterMethod(field, methods);
-        return new PropDesc(field, getter, setter);
+        return new BeanPropDesc(field, getter, setter);
     }
 
     /**

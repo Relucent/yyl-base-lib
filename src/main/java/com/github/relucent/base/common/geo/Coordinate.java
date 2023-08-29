@@ -3,16 +3,16 @@ package com.github.relucent.base.common.geo;
 import java.io.Serializable;
 
 /**
- * 位置(坐标)
+ * 经纬度坐标<br>
  * @author YYL
  */
 @SuppressWarnings("serial")
 public class Coordinate implements Serializable {
     // ==============================Fields============================================
-    /** 纬度(latitude:y) */
-    private double latitude = 0D;
     /** 经度(Longitude:x) */
-    private double longitude = 0D;
+    private double longitudeX = 0D;
+    /** 纬度(latitude:y) */
+    private double latitudeY = 0D;
 
     // ==============================Constructors=====================================
     public Coordinate() {
@@ -23,37 +23,34 @@ public class Coordinate implements Serializable {
      * @param other {@link Coordinate}
      */
     public Coordinate(Coordinate other) {
-        this(other.getLatitude(), other.getLongitude());
+        this.longitudeX = other.getLongitudeX();
+        this.latitudeY = other.getLatitudeY();
     }
 
+    // ==============================Methods==========================================
     /**
-     * 构造
-     * @param latitude 纬度
-     * @param longitude 经度
+     * 校验经纬度是否在合理范围内
+     * @return 如果经纬度是否在合理范围内返回{@code true}
      */
-    public Coordinate(double latitude, double longitude) {
-        this.latitude = latitude;
-        this.longitude = longitude;
-        if (Math.abs(latitude) > 90 || Math.abs(longitude) > 180) {
-            throw new IllegalArgumentException("The supplied coordinates [latitude=" + latitude + ", longitude=" + longitude + "] are out of range.");
-        }
+    public boolean check() {
+        return Math.abs(latitudeY) <= 90 && Math.abs(longitudeX) <= 180;
     }
 
     // ==============================PropertyAccessors================================
-    public double getLatitude() {
-        return latitude;
+    public double getLatitudeY() {
+        return latitudeY;
     }
 
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
+    public void setLatitudeY(double latitude) {
+        this.latitudeY = latitude;
     }
 
-    public double getLongitude() {
-        return longitude;
+    public double getLongitudeX() {
+        return longitudeX;
     }
 
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
+    public void setLongitudeX(double longitude) {
+        this.longitudeX = longitude;
     }
 
     // ==============================OverrideMethods==================================
@@ -62,9 +59,9 @@ public class Coordinate implements Serializable {
         final int prime = 31;
         int result = 1;
         long temp;
-        temp = Double.doubleToLongBits(latitude);
+        temp = Double.doubleToLongBits(longitudeX);
         result = prime * result + (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(longitude);
+        temp = Double.doubleToLongBits(latitudeY);
         result = prime * result + (int) (temp ^ (temp >>> 32));
         return result;
     }
@@ -81,10 +78,10 @@ public class Coordinate implements Serializable {
             return false;
         }
         Coordinate other = (Coordinate) obj;
-        if (Double.doubleToLongBits(latitude) != Double.doubleToLongBits(other.latitude)) {
+        if (Double.doubleToLongBits(longitudeX) != Double.doubleToLongBits(other.longitudeX)) {
             return false;
         }
-        if (Double.doubleToLongBits(longitude) != Double.doubleToLongBits(other.longitude)) {
+        if (Double.doubleToLongBits(latitudeY) != Double.doubleToLongBits(other.latitudeY)) {
             return false;
         }
         return true;
@@ -92,6 +89,6 @@ public class Coordinate implements Serializable {
 
     @Override
     public String toString() {
-        return "Place [latitude=" + latitude + ", longitude=" + longitude + "]";
+        return "CoordinateXY [longitudeX=" + longitudeX + ", latitudeY=" + latitudeY + "]";
     }
 }

@@ -88,8 +88,8 @@ public class GeoHashUtil {
         DecimalFormat df = new DecimalFormat("0.00000");
 
         Coordinate coordinate = new Coordinate();
-        coordinate.setLatitude(Double.parseDouble(df.format(lat)));
-        coordinate.setLongitude(Double.parseDouble(df.format(lon)));
+        coordinate.setLongitudeX(Double.parseDouble(df.format(lon)));
+        coordinate.setLatitudeY(Double.parseDouble(df.format(lat)));
         return coordinate;
     }
 
@@ -119,8 +119,8 @@ public class GeoHashUtil {
      * @return GEOHASH 字符串
      */
     public static String encode(Coordinate coordinate) {
-        BitSet latbits = getBits(coordinate.getLatitude(), -90, 90);
-        BitSet lonbits = getBits(coordinate.getLongitude(), -180, 180);
+        BitSet lonbits = getBits(coordinate.getLongitudeX(), -180, 180);
+        BitSet latbits = getBits(coordinate.getLatitudeY(), -90, 90);
         StringBuilder buffer = new StringBuilder();
         for (int i = 0; i < NUMBITS; i++) {
             buffer.append((lonbits.get(i)) ? '1' : '0');
@@ -153,16 +153,16 @@ public class GeoHashUtil {
 
     /**
      * 得到经/纬度对应的二进制编码
-     * @param lat 经/纬度
+     * @param latlng 经/纬度
      * @param floor 下限
      * @param ceiling 上限
      * @return 二进制编码串
      */
-    private static BitSet getBits(double lat, double floor, double ceiling) {
+    private static BitSet getBits(double latlng, double floor, double ceiling) {
         BitSet buffer = new BitSet(NUMBITS);
         for (int i = 0; i < NUMBITS; i++) {
             double mid = (floor + ceiling) / 2;
-            if (lat >= mid) {
+            if (latlng >= mid) {
                 buffer.set(i);
                 floor = mid;
             } else {

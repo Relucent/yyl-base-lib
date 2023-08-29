@@ -1,12 +1,23 @@
 package com.github.relucent.base.common.thread;
 
+import java.util.Collection;
+import java.util.Queue;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
+import java.util.concurrent.Semaphore;
+
+import com.github.relucent.base.common.collection.CollectionUtil;
+import com.github.relucent.base.common.exception.GeneralException;
+import com.github.relucent.base.common.logging.Logger;
 
 /**
  * 线程工具类，提供一些线程方法
  */
 public class ThreadUtil {
+
+    private static final Logger LOG = Logger.getLogger(ThreadUtil.class);
 
     /**
      * 工具类方法，实例不应在标准编程中构造。
@@ -58,6 +69,53 @@ public class ThreadUtil {
      */
     public static Future<?> runAsync(Runnable task) {
         return GlobalThreadPool.getInstance().submit(task);
+    }
+
+    /**
+     * 并行执行任务，会阻塞当前线程，直到所有任务完成<br>
+     * @param tasks 待执行的任务
+     * @param permits 并发数
+     * @throws InterruptedException 线程发生中断异常
+     */
+    public void runParallel(Collection<Runnable> tasks, int permits) throws InterruptedException {
+        // 没有任务需要执行
+        if (CollectionUtil.isEmpty(tasks)) {
+            return;
+        }
+        // 不允许出现空任务
+        for (Runnable task : tasks) {
+            if (task == null) {
+                throw new GeneralException("TASKS_NOT_ALLOWED!");
+            }
+        }
+        final CountDownLatch latch = new CountDownLatch(tasks.size());
+        final Semaphore semaphore = new Semaphore(Math.min(1, permits));
+        final Queue<Exception> exceptionQueue = new ConcurrentLinkedQueue<>();
+        final GlobalThreadPool pool = GlobalThreadPool.getInstance();
+        for (final Runnable task : tasks) {
+            pool.execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        semaphore.acquire();
+                        try {
+                            task.run();
+                        } finally {
+                            semaphore.release();
+                        }
+                    } catch (Exception e) {
+                        LOG.error("!", e);
+                        if (e instanceof InterruptedException) {
+                            return;
+                        }
+                        exceptionQueue.add(e);
+                    } finally {
+                        latch.countDown();
+                    }
+                }
+            });
+        }
+        latch.await();
     }
 
     /**

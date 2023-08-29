@@ -15,7 +15,7 @@ import com.github.relucent.base.common.reflect.TypeUtil;
 /**
  * 属性描述，包括了字段、getter、setter和相应的方法执行
  */
-public class PropDesc {
+public class BeanPropDesc {
 
     // ==============================Fields===========================================
     /**
@@ -39,7 +39,7 @@ public class PropDesc {
      * @param getter get方法
      * @param setter set方法
      */
-    public PropDesc(Field field, Method getter, Method setter) {
+    public BeanPropDesc(Field field, Method getter, Method setter) {
         this.field = field;
         this.getter = MethodUtil.setAccessible(getter);
         this.setter = MethodUtil.setAccessible(setter);
