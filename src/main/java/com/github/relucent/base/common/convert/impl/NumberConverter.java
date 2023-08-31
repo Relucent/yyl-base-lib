@@ -6,7 +6,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 import com.github.relucent.base.common.convert.Converter;
-
+import com.github.relucent.base.common.lang.StringUtil;
 
 /**
  * 数值类型转换器
@@ -48,7 +48,7 @@ public class NumberConverter implements Converter<Number> {
             } else if (source instanceof Number) {
                 decimal = new BigDecimal(((Number) source).toString());
             } else {
-                decimal = new BigDecimal(source.toString());
+                decimal = new BigDecimal(sourceToString(source));
             }
 
             if (BigDecimal.class.isAssignableFrom(toType)) {
@@ -111,5 +111,23 @@ public class NumberConverter implements Converter<Number> {
                 Integer.TYPE.equals(type) || //
                 Short.TYPE.equals(type) || //
                 Byte.TYPE.equals(type);
+    }
+
+    /**
+     * 特殊处理解决浮点类型的后缀
+     * @param source 处理的对象
+     * @return 处理后的字符串
+     */
+    protected String sourceToString(Object source) {
+        final String string = StringUtil.trim(StringUtil.string(source));
+        if (StringUtil.isNotEmpty(string)) {
+
+        }
+        final char c = Character.toUpperCase(string.charAt(string.length() - 1));
+        // 类型标识形式（例如123.45D）
+        if (c == 'D' || c == 'L' || c == 'F') {
+            return string.substring(0, string.length() - 1);
+        }
+        return string;
     }
 }
