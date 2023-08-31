@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.github.relucent.base.common.collection.Listx;
 import com.github.relucent.base.common.collection.Mapx;
+import com.github.relucent.base.common.convert.impl.ArrayConverter;
 import com.github.relucent.base.common.convert.impl.BooleanConverter;
 import com.github.relucent.base.common.convert.impl.CharacterConverter;
 import com.github.relucent.base.common.convert.impl.DateConverter;
@@ -49,8 +50,6 @@ public class ConvertUtil {
         CONVERTERS.put(Long.class, NumberConverter.INSTANCE);
         CONVERTERS.put(BigInteger.class, NumberConverter.INSTANCE);
         CONVERTERS.put(BigDecimal.class, NumberConverter.INSTANCE);
-        // 枚举
-        CONVERTERS.put(Enum.class, EnumConverter.INSTANCE);
         // 字符串/日期
         CONVERTERS.put(String.class, StringConverter.INSTANCE);
         CONVERTERS.put(Date.class, DateConverter.INSTANCE);
@@ -313,44 +312,42 @@ public class ConvertUtil {
     /**
      * 将对象转换为指定的类型
      * @param <T> 转换类型泛型
-     * @param obj 对象转换
+     * @param source 要转换的对象
      * @param toType 转换的目标类型
      * @param defaultValue 默认值
      * @return 转换类型后的对象(无法正确转换类型则返回默认值)
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public static <T> T convert(Object obj, Class<T> toType, T defaultValue) {
-        T result = defaultValue;
-        try {
-            if (toType == null) {
-                return defaultValue;
-            }
-            Converter converter = findConverter(toType);
-            if (converter == null) {
-                return defaultValue;
-            }
-            result = (T) converter.convert(obj, toType, defaultValue);
-        } catch (Exception ex) {
-            // Ignore//
+    public static <T> T convert(Object source, Class<T> toType, T defaultValue) {
+        if (toType == null) {
+            return defaultValue;
         }
-        return result;
-    }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    private static <T> Converter<T> findConverter(Class<T> type) {
-        if (type == null) {
-            return null;
+        if (toType == Object.class) {
+            return (T) source;
         }
-        Converter converter = CONVERTERS.get(type);
+
+        Converter converter = CONVERTERS.get(toType);
+
         if (converter != null) {
-            return converter;
+            return (T) converter.convert(source, toType, defaultValue);
         }
+
+        if (toType.isEnum()) {
+            return (T) EnumConverter.INSTANCE.convert(source, (Class<? extends Enum>) toType, (Enum) defaultValue);
+        }
+
+        if (toType.isArray()) {
+            return (T) ArrayConverter.INSTANCE.convert(source, toType, defaultValue);
+        }
+
         for (Converter c : CONVERTERS.values()) {
-            if (c.support(type)) {
-                return c;
+            if (c.support(toType)) {
+                return (T) c.convert(source, toType, defaultValue);
             }
         }
-        return null;
+
+        return defaultValue;
     }
 
     /**

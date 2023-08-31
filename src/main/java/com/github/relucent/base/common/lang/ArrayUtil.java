@@ -1624,6 +1624,16 @@ public class ArrayUtil {
         return array != null ? array.getClass().getComponentType() : null;
     }
 
+    /**
+     * 根据数组元素类型，获取数组的类型<br>
+     * 方法是通过创建一个空数组从而获取其类型
+     * @param componentType 数组元素类型
+     * @return 数组类型
+     */
+    public static Class<?> getArrayType(Class<?> componentType) {
+        return Array.newInstance(componentType, 0).getClass();
+    }
+
     // Generic array
     // ----------------------------------------------------------------------
     /**
