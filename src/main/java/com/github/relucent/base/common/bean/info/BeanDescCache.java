@@ -10,7 +10,7 @@ import com.github.relucent.base.common.collection.WeakConcurrentMap;
  */
 public class BeanDescCache {
 
-    /** Bean属性缓实例 */
+    /** Bean属性缓存实例 */
     public static final BeanDescCache INSTANCE = new BeanDescCache();
 
     private final WeakConcurrentMap<Class<?>, BeanDesc> cache = new WeakConcurrentMap<>();

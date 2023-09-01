@@ -1,7 +1,9 @@
 package com.github.relucent.base.common.constant;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 
 /**
  * 常量数组
@@ -12,10 +14,12 @@ public class ArrayConstant {
      * An empty immutable {@code Object}array.
      */
     public static final Object[] EMPTY_OBJECT_ARRAY = new Object[0];
+
     /**
      * An empty immutable {@code Class} array.
      */
     public static final Class<?>[] EMPTY_CLASS_ARRAY = new Class[0];
+
     /**
      * An empty immutable {@code String} array.
      */
@@ -86,6 +90,11 @@ public class ArrayConstant {
     public static final Character[] EMPTY_CHARACTER_OBJECT_ARRAY = new Character[0];
 
     /**
+     * An empty immutable {@code Constructor} array.
+     */
+    public static final Constructor<?>[] EMPTY_CONSTRUCTOR_ARRAY = new Constructor[0];
+
+    /**
      * An empty immutable {@code Field} array.
      */
     public static final Field[] EMPTY_FIELD_ARRAY = new Field[0];
@@ -94,6 +103,11 @@ public class ArrayConstant {
      * An empty immutable {@code Method} array.
      */
     public static final Method[] EMPTY_METHOD_ARRAY = new Method[0];
+
+    /**
+     * An empty immutable {@code Type} array.
+     */
+    public static final Type[] EMPTY_TYPE_ARRAY = new Type[0];
 
     private ArrayConstant() {
     }

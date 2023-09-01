@@ -10,7 +10,7 @@ import com.github.relucent.base.common.lang.AssertUtil;
 import com.github.relucent.base.common.lang.ClassUtil;
 
 /**
- * 动态Bean<br>
+ * 动态Bean (Dynamic Bean)<br>
  */
 @SuppressWarnings("serial")
 public class DynaBean implements Cloneable, Serializable {
