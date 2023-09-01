@@ -1,14 +1,18 @@
 package com.github.relucent.base.common.reflect;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
+import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import com.github.relucent.base.common.lang.ArrayUtil;
 import com.github.relucent.base.common.lang.ObjectUtil;
@@ -29,6 +33,36 @@ public class TypeUtil {
     }
 
     // =================================TypeMethods============================================
+
+    /**
+     * 规范化，返回功能相同但不一定相同的类型 {@link Object#equals(Object)} <br>
+     * 如果能够处理，则返回的类型将支持{@link java.io.Serializable}。<br>
+     * @param type 类型
+     * @return 功能相同但不一定相同的类型
+     */
+    public static Type canonicalize(Type type) {
+        if (type instanceof Class) {
+            Class<?> c = (Class<?>) type;
+            return c.isArray() ? new GenericArrayTypeImpl(canonicalize(c.getComponentType())) : c;
+
+        } else if (type instanceof ParameterizedType) {
+            ParameterizedType p = (ParameterizedType) type;
+            return new ParameterizedTypeImpl(p.getOwnerType(), p.getRawType(), p.getActualTypeArguments());
+
+        } else if (type instanceof GenericArrayType) {
+            GenericArrayType g = (GenericArrayType) type;
+            return new GenericArrayTypeImpl(g.getGenericComponentType());
+
+        } else if (type instanceof WildcardType) {
+            WildcardType w = (WildcardType) type;
+            return new WildcardTypeImpl(w.getUpperBounds(), w.getLowerBounds());
+
+        } else {
+            // 类型可以按原样序列化或不受支持
+            return type;
+        }
+    }
+
     /**
      * 获得给定类的第一个泛型参数
      * @param type 被检查的类型，必须是已经确定泛型类型的类型
@@ -127,18 +161,26 @@ public class TypeUtil {
      * @return 原始类，如果无法获取原始类，返回{@code null}
      */
     public static Class<?> getClass(Type type) {
-        if (type != null) {
-            if (type instanceof Class) {
-                return (Class<?>) type;
-            } else if (type instanceof ParameterizedType) {
-                return (Class<?>) ((ParameterizedType) type).getRawType();
-            } else if (type instanceof TypeVariable) {
-                return (Class<?>) ((TypeVariable<?>) type).getBounds()[0];
-            } else if (type instanceof WildcardType) {
-                final Type[] upperBounds = ((WildcardType) type).getUpperBounds();
-                if (upperBounds.length == 1) {
-                    return getClass(upperBounds[0]);
-                }
+        if (type == null) {
+            return null;
+        }
+        if (type instanceof Class) {
+            return (Class<?>) type;
+        }
+        if (type instanceof ParameterizedType) {
+            return (Class<?>) ((ParameterizedType) type).getRawType();
+        }
+        if (type instanceof TypeVariable) {
+            return (Class<?>) ((TypeVariable<?>) type).getBounds()[0];
+        }
+        if (type instanceof GenericArrayType) {
+            Type componentType = ((GenericArrayType) type).getGenericComponentType();
+            return Array.newInstance(getClass(componentType), 0).getClass();
+        }
+        if (type instanceof WildcardType) {
+            final Type[] upperBounds = ((WildcardType) type).getUpperBounds();
+            if (upperBounds.length == 1) {
+                return getClass(upperBounds[0]);
             }
         }
         return null;
@@ -185,7 +227,7 @@ public class TypeUtil {
             actualTypeArguments = getActualTypes(type, parameterizedType.getActualTypeArguments());
             if (ArrayUtil.isNotEmpty(actualTypeArguments)) {
                 // 替换泛型变量为实际类型，例如List<T>变为List<String>
-                parameterizedType = new ParameterizedTypeImpl(actualTypeArguments, parameterizedType.getOwnerType(), parameterizedType.getRawType());
+                parameterizedType = new ParameterizedTypeImpl(parameterizedType.getOwnerType(), parameterizedType.getRawType(), actualTypeArguments);
             }
         }
         return parameterizedType;
@@ -223,6 +265,15 @@ public class TypeUtil {
             }
         }
         return false;
+    }
+
+    /**
+     * 获得类型的字符串形式
+     * @param type 类型
+     * @return 类型的字符串形式
+     */
+    public static String typeToString(Type type) {
+        return type instanceof Class ? ((Class<?>) type).getName() : type.toString();
     }
 
     // =================================FieldMethods===========================================
@@ -395,5 +446,59 @@ public class TypeUtil {
      */
     public static Map<Type, Type> getTypeMap(Class<?> clazz) {
         return ActualTypeMapCache.INSTANCE.get(clazz);
+    }
+
+    // =================================ToolMethods============================================
+    /**
+     * 判断两个类型是表示相同类型
+     * @param a 类型A
+     * @param b 类型B
+     * @return 如果{@code a}和{@code b}表示相同类型，则返回{@code true}
+     */
+    static boolean equals(Type a, Type b) {
+        if (a == b) {
+            return true;
+        }
+        if (a instanceof Class) {
+            return a.equals(b);
+        }
+        if (a instanceof ParameterizedType) {
+            if (!(b instanceof ParameterizedType)) {
+                return false;
+            }
+            ParameterizedType pa = (ParameterizedType) a;
+            ParameterizedType pb = (ParameterizedType) b;
+            return Objects.equals(pa.getOwnerType(), pb.getOwnerType()) //
+                    && pa.getRawType().equals(pb.getRawType())//
+                    && Arrays.equals(pa.getActualTypeArguments(), pb.getActualTypeArguments());
+        }
+        if (a instanceof GenericArrayType) {
+            if (!(b instanceof GenericArrayType)) {
+                return false;
+            }
+            GenericArrayType ga = (GenericArrayType) a;
+            GenericArrayType gb = (GenericArrayType) b;
+            return equals(ga.getGenericComponentType(), gb.getGenericComponentType());
+        }
+        if (a instanceof WildcardType) {
+            if (!(b instanceof WildcardType)) {
+                return false;
+            }
+            WildcardType wa = (WildcardType) a;
+            WildcardType wb = (WildcardType) b;
+            return Arrays.equals(wa.getUpperBounds(), wb.getUpperBounds()) && Arrays.equals(wa.getLowerBounds(), wb.getLowerBounds());
+
+        }
+        if (a instanceof TypeVariable) {
+            if (!(b instanceof TypeVariable)) {
+                return false;
+            }
+            TypeVariable<?> va = (TypeVariable<?>) a;
+            TypeVariable<?> vb = (TypeVariable<?>) b;
+            return va.getGenericDeclaration() == vb.getGenericDeclaration() && va.getName().equals(vb.getName());
+
+        }
+        // 不支持的类型，可能是通用数组类型、通配符类型等
+        return false;
     }
 }

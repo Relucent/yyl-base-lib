@@ -2,6 +2,7 @@ package com.github.relucent.base.common.convert;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -10,6 +11,7 @@ import com.github.relucent.base.common.collection.Listx;
 import com.github.relucent.base.common.collection.Mapx;
 import com.github.relucent.base.common.convert.impl.ArrayConverter;
 import com.github.relucent.base.common.convert.impl.BooleanConverter;
+import com.github.relucent.base.common.convert.impl.CalendarConverter;
 import com.github.relucent.base.common.convert.impl.CharacterConverter;
 import com.github.relucent.base.common.convert.impl.DateConverter;
 import com.github.relucent.base.common.convert.impl.EnumConverter;
@@ -28,20 +30,19 @@ public class ConvertUtil {
     /** 转换器映射表 */
     private static final Map<Class<?>, Converter<?>> CONVERTERS = new ConcurrentHashMap<Class<?>, Converter<?>>();
     static {
-        // 布尔/字符 类型
+
+        // 原始类型
         CONVERTERS.put(Boolean.TYPE, BooleanConverter.INSTANCE);
         CONVERTERS.put(Character.TYPE, CharacterConverter.INSTANCE);
-        //
-        CONVERTERS.put(Boolean.class, BooleanConverter.INSTANCE);
-        CONVERTERS.put(Character.class, CharacterConverter.INSTANCE);
-        // 数值类型
         CONVERTERS.put(Byte.TYPE, NumberConverter.INSTANCE);
         CONVERTERS.put(Double.TYPE, NumberConverter.INSTANCE);
         CONVERTERS.put(Float.TYPE, NumberConverter.INSTANCE);
         CONVERTERS.put(Integer.TYPE, NumberConverter.INSTANCE);
         CONVERTERS.put(Long.TYPE, NumberConverter.INSTANCE);
         CONVERTERS.put(Short.TYPE, NumberConverter.INSTANCE);
-        //
+        // 布尔/字符/数值
+        CONVERTERS.put(Boolean.class, BooleanConverter.INSTANCE);
+        CONVERTERS.put(Character.class, CharacterConverter.INSTANCE);
         CONVERTERS.put(Byte.class, NumberConverter.INSTANCE);
         CONVERTERS.put(Short.class, NumberConverter.INSTANCE);
         CONVERTERS.put(Double.class, NumberConverter.INSTANCE);
@@ -50,10 +51,15 @@ public class ConvertUtil {
         CONVERTERS.put(Long.class, NumberConverter.INSTANCE);
         CONVERTERS.put(BigInteger.class, NumberConverter.INSTANCE);
         CONVERTERS.put(BigDecimal.class, NumberConverter.INSTANCE);
-        // 字符串/日期
+        // 字符串
         CONVERTERS.put(String.class, StringConverter.INSTANCE);
+        // 日期
         CONVERTERS.put(Date.class, DateConverter.INSTANCE);
-        // 集合 类型
+        CONVERTERS.put(java.sql.Date.class, DateConverter.INSTANCE);
+        CONVERTERS.put(java.sql.Time.class, DateConverter.INSTANCE);
+        CONVERTERS.put(java.sql.Timestamp.class, DateConverter.INSTANCE);
+        CONVERTERS.put(Calendar.class, CalendarConverter.INSTANCE);
+        // 集合类型
         CONVERTERS.put(Mapx.class, MapxConverter.INSTANCE);
         CONVERTERS.put(Listx.class, ListxConverter.INSTANCE);
     }
