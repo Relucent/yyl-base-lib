@@ -1,7 +1,7 @@
 package com.github.relucent.base.common.convert.impl;
 
 import com.github.relucent.base.common.convert.Converter;
-import com.github.relucent.base.common.lang.ArrayUtil;
+import com.github.relucent.base.common.lang.BooleanUtil;
 
 /**
  * 布尔类型转换器
@@ -13,40 +13,25 @@ public class BooleanConverter implements Converter<Boolean> {
 
     public static final BooleanConverter INSTANCE = new BooleanConverter();
 
-    private static final String[] TRUE_VALUES = {"1", "T", "Y", "TRUE", "YES", "ON", "是"};
-    private static final String[] FALSE_VALUES = {"0", "F", "N", "FALSE", "NO", "OFF", "否"};
+    public Boolean convert(Object source, Class<? extends Boolean> toType) {
 
-    public Boolean convert(Object source, Class<? extends Boolean> toType, Boolean vDefault) {
-        try {
-            if (toType.isPrimitive() && vDefault == null) {
-                vDefault = Boolean.FALSE;
-            }
-            if (source == null) {
-                return vDefault;
-            }
-            if (source instanceof Boolean) {
-                return (Boolean) source;
-            }
-            if (source instanceof Number) {
-                return ((Number) source).intValue() != 0;
-            }
-
-            String value = String.valueOf(source).toUpperCase();
-            if (ArrayUtil.contains(TRUE_VALUES, value)) {
-                return Boolean.TRUE;
-            }
-            if (ArrayUtil.contains(FALSE_VALUES, value)) {
-                return Boolean.FALSE;
-            }
-
-        } catch (Exception e) {
-            // Ignore//
+        // 空直接返回
+        if (source == null) {
+            return null;
         }
-        return vDefault;
-    }
 
-    @Override
-    public boolean support(Class<? extends Boolean> type) {
-        return Boolean.class.equals(type) || Boolean.TYPE.equals(type);
+        // 本身就是布尔类型
+        if (source instanceof Boolean) {
+            return (Boolean) source;
+        }
+
+        // 数字类型 0为false，其它为true
+        if (source instanceof Number) {
+            return ((Number) source).longValue() != 0L;
+        }
+
+        // 转换成字符串在进行比较
+        String value = String.valueOf(source).toUpperCase();
+        return BooleanUtil.toBoolean(value);
     }
 }

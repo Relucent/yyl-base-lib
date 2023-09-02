@@ -20,7 +20,7 @@ public class DateConverter implements Converter<Date> {
 
     private static final Pattern DATE_PATTERN = Pattern.compile("^new Date\\((\\d+)\\)$");
 
-    public Date convert(Object source, Class<? extends Date> toType, Date vDefault) {
+    public Date convert(Object source, Class<? extends Date> toType) {
         try {
 
             Long mills = null;
@@ -47,7 +47,7 @@ public class DateConverter implements Converter<Date> {
                 }
             }
             if (mills == null) {
-                return vDefault;
+                return null;
             }
             if (java.util.Date.class == toType) {
                 return new java.util.Date(mills);
@@ -61,14 +61,9 @@ public class DateConverter implements Converter<Date> {
             if (java.sql.Timestamp.class == toType) {
                 return new java.sql.Timestamp(mills);
             }
-        } catch (Exception e) {
+        } catch (Exception ignore) {
             // Ignore//
         }
-        return vDefault;
-    }
-
-    @Override
-    public boolean support(Class<? extends Date> type) {
-        return Date.class.isAssignableFrom(type);
+        return null;
     }
 }
