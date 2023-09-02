@@ -12,7 +12,7 @@ import java.net.URLStreamHandler;
 
 import com.github.relucent.base.common.constant.CharsetConstant;
 import com.github.relucent.base.common.constant.UrlConstant;
-import com.github.relucent.base.common.exception.ExceptionHelper;
+import com.github.relucent.base.common.exception.ExceptionUtil;
 import com.github.relucent.base.common.lang.AssertUtil;
 import com.github.relucent.base.common.lang.ClassLoaderUtil;
 import com.github.relucent.base.common.lang.StringUtil;
@@ -35,7 +35,7 @@ public class UrlUtil {
         try {
             return uri.toURL();
         } catch (MalformedURLException e) {
-            throw ExceptionHelper.propagate(e);
+            throw ExceptionUtil.propagate(e);
         }
     }
 
@@ -72,7 +72,7 @@ public class UrlUtil {
             try {
                 return new File(url).toURI().toURL();
             } catch (MalformedURLException ex2) {
-                throw ExceptionHelper.propagate(e);
+                throw ExceptionUtil.propagate(e);
             }
         }
     }
@@ -114,7 +114,7 @@ public class UrlUtil {
         try {
             return new URL(null, url, handler);
         } catch (MalformedURLException e) {
-            throw ExceptionHelper.propagate(e);
+            throw ExceptionUtil.propagate(e);
         }
     }
 
@@ -151,7 +151,7 @@ public class UrlUtil {
         try {
             return file.toURI().toURL();
         } catch (MalformedURLException e) {
-            throw ExceptionHelper.propagate(e);
+            throw ExceptionUtil.propagate(e);
         }
     }
 
@@ -167,7 +167,7 @@ public class UrlUtil {
                 urls[i] = files[i].toURI().toURL();
             }
         } catch (MalformedURLException e) {
-            throw ExceptionHelper.propagate(e);
+            throw ExceptionUtil.propagate(e);
         }
 
         return urls;
@@ -185,7 +185,7 @@ public class UrlUtil {
         try {
             return new URI(url.getProtocol(), url.getHost(), null, null);
         } catch (URISyntaxException e) {
-            throw ExceptionHelper.propagate(e);
+            throw ExceptionUtil.propagate(e);
         }
     }
 
@@ -210,7 +210,7 @@ public class UrlUtil {
         try {
             return URLDecoder.decode(content, charset);
         } catch (UnsupportedEncodingException e) {
-            throw ExceptionHelper.propagate(e);
+            throw ExceptionUtil.propagate(e);
         }
     }
 
@@ -278,13 +278,13 @@ public class UrlUtil {
             try {
                 location = URLEncoder.encode(location, "UTF-8");
             } catch (UnsupportedEncodingException e) {
-                throw ExceptionHelper.propagate(e);
+                throw ExceptionUtil.propagate(e);
             }
         }
         try {
             return new URI(StringUtil.trim(location));
         } catch (URISyntaxException e) {
-            throw ExceptionHelper.propagate(e);
+            throw ExceptionUtil.propagate(e);
         }
     }
 }

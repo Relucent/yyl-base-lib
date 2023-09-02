@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.github.relucent.base.common.constant.CharConstant;
-import com.github.relucent.base.common.exception.ExceptionHelper;
+import com.github.relucent.base.common.exception.ExceptionUtil;
 
 /**
  * {@link ClassLoader}工具类
@@ -263,7 +263,7 @@ public class ClassLoaderUtil {
         try {
             return getJarClassLoader(jarOrDir).loadClass(name);
         } catch (ClassNotFoundException e) {
-            throw ExceptionHelper.propagate(e);
+            throw ExceptionUtil.propagate(e);
         }
     }
 
@@ -303,7 +303,7 @@ public class ClassLoaderUtil {
                 // 尝试获取内部类，例如java.lang.Thread.State =》java.lang.Thread$State
                 clazz = tryLoadInnerClass(name, classLoader, isInitialized);
                 if (clazz == null) {
-                    throw ExceptionHelper.propagate(ex);
+                    throw ExceptionUtil.propagate(ex);
                 }
             }
         }

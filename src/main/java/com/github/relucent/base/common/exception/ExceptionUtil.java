@@ -7,7 +7,7 @@ import java.io.StringWriter;
  * 异常工具类
  * @author YYL
  */
-public class ExceptionHelper {
+public class ExceptionUtil {
 
     /**
      * 创建通用异常

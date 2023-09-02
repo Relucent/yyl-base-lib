@@ -3,23 +3,23 @@ package com.github.relucent.base.common.exception;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class ExceptionHelperTest {
+public class ExceptionUtilTest {
 
     @Test(expected = GeneralException.class)
     public void testError() {
-        throw ExceptionHelper.error("error");
+        throw ExceptionUtil.error("error");
     }
 
     @Test(expected = PromptException.class)
     public void testPrompt() {
-        throw ExceptionHelper.prompt("prompt");
+        throw ExceptionUtil.prompt("prompt");
     }
 
     @Test
     public void testExceptionMessage() {
         String message = "hello";
         try {
-            throw ExceptionHelper.prompt(message);
+            throw ExceptionUtil.prompt(message);
         } catch (Exception e) {
             Assert.assertEquals(message, e.getMessage());
         }

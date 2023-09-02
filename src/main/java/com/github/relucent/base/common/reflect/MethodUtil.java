@@ -12,7 +12,7 @@ import com.github.relucent.base.common.collection.CollectionUtil;
 import com.github.relucent.base.common.collection.WeakConcurrentMap;
 import com.github.relucent.base.common.constant.ArrayConstant;
 import com.github.relucent.base.common.convert.ConvertUtil;
-import com.github.relucent.base.common.exception.ExceptionHelper;
+import com.github.relucent.base.common.exception.ExceptionUtil;
 import com.github.relucent.base.common.lang.ArrayUtil;
 import com.github.relucent.base.common.lang.AssertUtil;
 import com.github.relucent.base.common.lang.ClassUtil;
@@ -350,7 +350,7 @@ public class MethodUtil {
         }
 
         if (method == null) {
-            throw ExceptionHelper.error(messagePrefix + methodName + "() on object: " + object.getClass().getName());
+            throw ExceptionUtil.error(messagePrefix + methodName + "() on object: " + object.getClass().getName());
         }
         args = toVarArgs(method, args);
 
@@ -371,7 +371,7 @@ public class MethodUtil {
         parameterTypes = ArrayUtil.nullToEmpty(parameterTypes);
         final Method method = getPublicMethod(object.getClass(), methodName, parameterTypes);
         if (method == null) {
-            throw ExceptionHelper.error("No such accessible method: " + methodName + "() on class: " + object.getClass());
+            throw ExceptionUtil.error("No such accessible method: " + methodName + "() on class: " + object.getClass());
         }
         return invokeRaw(method, object, args);
     }
@@ -404,7 +404,7 @@ public class MethodUtil {
         parameterTypes = ArrayUtil.nullToEmpty(parameterTypes);
         final Method method = getMatchingPublicMethod(clazz, methodName, parameterTypes);
         if (method == null) {
-            throw ExceptionHelper.error("No such accessible method: " + methodName + "() on class: " + clazz.getName());
+            throw ExceptionUtil.error("No such accessible method: " + methodName + "() on class: " + clazz.getName());
         }
         args = toVarArgs(method, args);
         return invokeRaw(method, null, args);
@@ -424,7 +424,7 @@ public class MethodUtil {
         parameterTypes = ArrayUtil.nullToEmpty(parameterTypes);
         final Method method = getPublicMethod(clazz, methodName, parameterTypes);
         if (method == null) {
-            throw ExceptionHelper.error("No such accessible method: " + methodName + "() on class: " + clazz.getName());
+            throw ExceptionUtil.error("No such accessible method: " + methodName + "() on class: " + clazz.getName());
         }
         return invokeRaw(method, null, args);
     }
@@ -556,7 +556,7 @@ public class MethodUtil {
             return method.invoke(object, args);
 
         } catch (Exception e) {
-            throw ExceptionHelper.propagate(e);
+            throw ExceptionUtil.propagate(e);
         }
     }
 }

@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import com.github.relucent.base.common.bean.info.BeanPropDesc;
-import com.github.relucent.base.common.exception.ExceptionHelper;
+import com.github.relucent.base.common.exception.ExceptionUtil;
 import com.github.relucent.base.common.lang.AssertUtil;
 import com.github.relucent.base.common.lang.ClassUtil;
 
@@ -50,7 +50,7 @@ public class DynaBean implements Cloneable, Serializable {
         // 获得Bean的属性
         BeanPropDesc prop = BeanUtil.getBeanDesc(beanClass).getProp(property);
         if (prop == null) {
-            throw ExceptionHelper.error("No public property for " + bean.getClass() + "[" + property + "]");
+            throw ExceptionUtil.error("No public property for " + bean.getClass() + "[" + property + "]");
         }
         return (T) prop.getValue(bean);
     }
@@ -67,7 +67,7 @@ public class DynaBean implements Cloneable, Serializable {
         } else {
             BeanPropDesc prop = BeanUtil.getBeanDesc(beanClass).getProp(property);
             if (prop == null) {
-                throw ExceptionHelper.error("No public property for " + bean.getClass() + "[" + property + "]");
+                throw ExceptionUtil.error("No public property for " + bean.getClass() + "[" + property + "]");
             }
             prop.setValue(bean, value);
         }
@@ -111,7 +111,7 @@ public class DynaBean implements Cloneable, Serializable {
         try {
             return (DynaBean) super.clone();
         } catch (final CloneNotSupportedException e) {
-            throw ExceptionHelper.error("No public property for " + bean.getClass());
+            throw ExceptionUtil.error("No public property for " + bean.getClass());
         }
     }
 
