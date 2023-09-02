@@ -23,15 +23,15 @@ public class ArrayConverter implements Converter<Object> {
     public static final ArrayConverter INSTANCE = new ArrayConverter();
 
     @Override
-    public Object convert(Object source, Class<? extends Object> toType, Object vDefault) {
+    public Object convert(Object source, Class<? extends Object> toType) {
+        if (source == null) {
+            return null;
+        }
         try {
-            if (source == null) {
-                return vDefault;
-            }
             Class<?> targetComponentType = toType.getComponentType();
             return source.getClass().isArray() ? convertArrayToArray(source, targetComponentType) : convertObjectToArray(source, targetComponentType);
-        } catch (Exception e) {
-            return vDefault;
+        } catch (Exception ignore) {
+            return null;
         }
     }
 
@@ -136,10 +136,5 @@ public class ArrayConverter implements Converter<Object> {
         Object[] array = ArrayUtil.newArray(targetComponentType, 1);
         array[0] = convertComponentType(value, targetComponentType);
         return array;
-    }
-
-    @Override
-    public boolean support(Class<?> toType) {
-        return toType.isArray();
     }
 }

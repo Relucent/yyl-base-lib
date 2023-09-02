@@ -15,7 +15,7 @@ public class MapxConverter implements Converter<Mapx> {
 
     @SuppressWarnings("rawtypes")
     @Override
-    public Mapx convert(Object source, Class<? extends Mapx> toType, Mapx vDefault) {
+    public Mapx convert(Object source, Class<? extends Mapx> toType) {
         try {
             if (source instanceof Map) {
                 Mapx result = new Mapx();
@@ -25,14 +25,9 @@ public class MapxConverter implements Converter<Mapx> {
                 }
                 return result;
             }
-        } catch (Exception e) {
+        } catch (Exception ignore) {
             // Ignore//
         }
-        return vDefault;
-    }
-
-    @Override
-    public boolean support(Class<? extends Mapx> type) {
-        return Mapx.class.isAssignableFrom(type);
+        return null;
     }
 }

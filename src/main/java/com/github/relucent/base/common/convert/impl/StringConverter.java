@@ -11,7 +11,6 @@ import java.util.TimeZone;
 import com.github.relucent.base.common.convert.Converter;
 import com.github.relucent.base.common.exception.ExceptionHelper;
 import com.github.relucent.base.common.io.IoUtil;
-import com.github.relucent.base.common.lang.ObjectUtil;
 import com.github.relucent.base.common.time.DateUtil;
 
 /**
@@ -23,14 +22,12 @@ public class StringConverter implements Converter<String> {
     public static final StringConverter INSTANCE = new StringConverter();
 
     @Override
-    public String convert(Object source, Class<? extends String> toType, String defaultValue) {
-        String result = null;
+    public String convert(Object source, Class<? extends String> toType) {
         try {
-            result = convertInternal(source);
-        } catch (Exception e) {
-            // Ignore//
+            return convertInternal(source);
+        } catch (Exception ignore) {
+            return null;
         }
-        return ObjectUtil.defaultIfNull(result, defaultValue);
     }
 
     protected String convertInternal(Object value) {
@@ -87,10 +84,4 @@ public class StringConverter implements Converter<String> {
             throw ExceptionHelper.propagate(e);
         }
     }
-
-    @Override
-    public boolean support(Class<? extends String> type) {
-        return String.class.isAssignableFrom(type);
-    }
-
 }

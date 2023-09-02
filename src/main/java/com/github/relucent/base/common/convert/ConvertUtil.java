@@ -6,6 +6,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.DoubleAdder;
+import java.util.concurrent.atomic.LongAdder;
 
 import com.github.relucent.base.common.collection.Listx;
 import com.github.relucent.base.common.collection.Mapx;
@@ -18,6 +22,7 @@ import com.github.relucent.base.common.convert.impl.EnumConverter;
 import com.github.relucent.base.common.convert.impl.ListxConverter;
 import com.github.relucent.base.common.convert.impl.MapxConverter;
 import com.github.relucent.base.common.convert.impl.NumberConverter;
+import com.github.relucent.base.common.convert.impl.PrimitiveConverter;
 import com.github.relucent.base.common.convert.impl.StringConverter;
 
 /**
@@ -32,27 +37,38 @@ public class ConvertUtil {
     static {
 
         // 原始类型
-        CONVERTERS.put(Boolean.TYPE, BooleanConverter.INSTANCE);
-        CONVERTERS.put(Character.TYPE, CharacterConverter.INSTANCE);
-        CONVERTERS.put(Byte.TYPE, NumberConverter.INSTANCE);
-        CONVERTERS.put(Double.TYPE, NumberConverter.INSTANCE);
-        CONVERTERS.put(Float.TYPE, NumberConverter.INSTANCE);
-        CONVERTERS.put(Integer.TYPE, NumberConverter.INSTANCE);
-        CONVERTERS.put(Long.TYPE, NumberConverter.INSTANCE);
-        CONVERTERS.put(Short.TYPE, NumberConverter.INSTANCE);
-        // 布尔/字符/数值
+        CONVERTERS.put(Boolean.TYPE, PrimitiveConverter.INSTANCE);
+        CONVERTERS.put(Character.TYPE, PrimitiveConverter.INSTANCE);
+        CONVERTERS.put(Byte.TYPE, PrimitiveConverter.INSTANCE);
+        CONVERTERS.put(Double.TYPE, PrimitiveConverter.INSTANCE);
+        CONVERTERS.put(Float.TYPE, PrimitiveConverter.INSTANCE);
+        CONVERTERS.put(Integer.TYPE, PrimitiveConverter.INSTANCE);
+        CONVERTERS.put(Long.TYPE, PrimitiveConverter.INSTANCE);
+        CONVERTERS.put(Short.TYPE, PrimitiveConverter.INSTANCE);
+
+        // 布尔
         CONVERTERS.put(Boolean.class, BooleanConverter.INSTANCE);
+        // 字符
         CONVERTERS.put(Character.class, CharacterConverter.INSTANCE);
+
+        // 数值
         CONVERTERS.put(Byte.class, NumberConverter.INSTANCE);
         CONVERTERS.put(Short.class, NumberConverter.INSTANCE);
-        CONVERTERS.put(Double.class, NumberConverter.INSTANCE);
-        CONVERTERS.put(Float.class, NumberConverter.INSTANCE);
         CONVERTERS.put(Integer.class, NumberConverter.INSTANCE);
         CONVERTERS.put(Long.class, NumberConverter.INSTANCE);
+        CONVERTERS.put(Float.class, NumberConverter.INSTANCE);
+        CONVERTERS.put(Double.class, NumberConverter.INSTANCE);
+        CONVERTERS.put(Number.class, NumberConverter.INSTANCE);
         CONVERTERS.put(BigInteger.class, NumberConverter.INSTANCE);
         CONVERTERS.put(BigDecimal.class, NumberConverter.INSTANCE);
+        CONVERTERS.put(AtomicInteger.class, NumberConverter.INSTANCE);
+        CONVERTERS.put(AtomicLong.class, NumberConverter.INSTANCE);
+        CONVERTERS.put(LongAdder.class, NumberConverter.INSTANCE);
+        CONVERTERS.put(DoubleAdder.class, NumberConverter.INSTANCE);
+
         // 字符串
         CONVERTERS.put(String.class, StringConverter.INSTANCE);
+
         // 日期
         CONVERTERS.put(Date.class, DateConverter.INSTANCE);
         CONVERTERS.put(java.sql.Date.class, DateConverter.INSTANCE);
@@ -345,12 +361,6 @@ public class ConvertUtil {
 
         if (toType.isArray()) {
             return (T) ArrayConverter.INSTANCE.convert(source, toType, defaultValue);
-        }
-
-        for (Converter c : CONVERTERS.values()) {
-            if (c.support(toType)) {
-                return (T) c.convert(source, toType, defaultValue);
-            }
         }
 
         return defaultValue;

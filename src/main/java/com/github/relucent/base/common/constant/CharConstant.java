@@ -5,6 +5,9 @@ package com.github.relucent.base.common.constant;
  */
 public class CharConstant {
 
+    /** 空字符(nul) [0x00] */
+    public static final char NUL = 0;
+
     /** 水平制表符(horizontal tab) [0x09] */
     public static final char TAB = '\t';
 

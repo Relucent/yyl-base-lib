@@ -2,8 +2,12 @@ package com.github.relucent.base.common.lang;
 
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.ParseException;
 
+import com.github.relucent.base.common.constant.CharConstant;
 import com.github.relucent.base.common.constant.NumberConstant;
 
 /**
@@ -13,6 +17,7 @@ import com.github.relucent.base.common.constant.NumberConstant;
 public class NumberUtil {
 
     // ==============================Fields===========================================
+    private static final String NaN = "NaN";
 
     // ==============================Constructors=====================================
     /**
@@ -115,22 +120,112 @@ public class NumberUtil {
     }
 
     /**
+     * 数字转{@link BigInteger}<br>
+     * @param number 需要转换的数字
+     * @return {@link BigInteger}
+     */
+    public static BigInteger toBigInteger(final Number value) {
+        if (value instanceof Short) {
+            return BigInteger.valueOf(((Short) value).longValue());
+        }
+        if (value instanceof Integer) {
+            return BigInteger.valueOf(((Integer) value).longValue());
+        }
+        if (value instanceof Long) {
+            return BigInteger.valueOf(((Long) value).longValue());
+        }
+        return new BigInteger(value.toString());
+    }
+
+    /**
+     * 字符串转{@link BigInteger}<br>
+     * @param value 数字字符串
+     * @return {@link BigInteger}
+     */
+    public static BigInteger toBigInteger(final String value) {
+        if (StringUtil.isBlank(value)) {
+            throw new NumberFormatException("A blank string is not a valid number");
+        }
+        return new BigInteger(value);
+    }
+
+    /**
+     * 将{@code Number}转换为{@code BigDecimal}，如果参数为空则返回{@code null}
+     * @param number 需要转换的数字
+     * @return {@link BigDecimal}
+     */
+    public static BigDecimal toBigDecimal(final Number number) {
+        if (number == null) {
+            return null;
+        }
+        if (number instanceof BigDecimal) {
+            return (BigDecimal) number;
+        }
+        if (number instanceof Long) {
+            return new BigDecimal((Long) number);
+        }
+        if (number instanceof Integer) {
+            return new BigDecimal((Integer) number);
+        }
+        if (number instanceof BigInteger) {
+            return new BigDecimal((BigInteger) number);
+        }
+        return toBigDecimal(number.toString());
+    }
+
+    /**
      * 将{@code String}转换为{@code BigDecimal}，如果参数为空则返回{@code null}
      * @param value 需要转换的 {@code String}，可以为 null
      * @return 转换后的结果{@code BigDecimal} (如果参数为空则返回 null )
      * @throws NumberFormatException 无法转换该值
      */
     public static BigDecimal toBigDecimal(final String value) {
-        if (value == null) {
-            return null;
-        }
+
         if (StringUtil.isBlank(value)) {
             throw new NumberFormatException("A blank string is not a valid number");
         }
-        return new BigDecimal(value);
+
+        // 优先调用构造解析
+        try {
+            return new BigDecimal(value);
+        } catch (final Exception ignore) {
+            // ignore
+        }
+
+        // 在JDK9+中，NaN按0处理
+        if (NaN.equals(value)) {
+            return BigDecimal.ZERO;
+        }
+
+        // 16进制
+        if (CharSequenceUtil.startWithIgnoreCase(value, "0x")) {
+            try {
+                return BigDecimal.valueOf(Long.parseLong(value.substring(2), 16));
+            } catch (Exception ignore) {
+                // ignore
+            }
+        }
+
+        // 后续会尝试使用NumberFormat完成数字解析
+
+        // 处理数字前有+号前缀的情况
+        String source = value;
+        if (CharSequenceUtil.startWith(value, CharConstant.PLUS)) {
+            source = source.substring(1);
+        }
+        try {
+            DecimalFormat format = new DecimalFormat();
+            format.setParseBigDecimal(true);
+            return (BigDecimal) format.parse(source);
+
+        } catch (final ParseException e) {
+            NumberFormatException nfe = new NumberFormatException(e.getMessage());
+            nfe.initCause(e);
+            throw nfe;
+        }
     }
 
-    // // --------------------------------------------------------------------
+    // --------------------------------------------------------------------
     /**
      * 返回数组中的最小值
      * @param array 数字数组

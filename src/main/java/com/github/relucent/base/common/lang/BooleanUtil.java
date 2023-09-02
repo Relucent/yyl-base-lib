@@ -7,9 +7,9 @@ public class BooleanUtil {
 
     // ==============================Fields===========================================
     /** 表示为真的字符串 */
-    private static final String[] TRUE_VALUES = { "1", "T", "Y", "TRUE", "YES", "ON", "是", "对", "真", "對", "√" };
+    private static final String[] TRUE_VALUES = { "1", "T", "Y", "TRUE", "YES", "ON", "O", "是", "对", "真", "對", "√" };
     /** 表示为假的字符串 */
-    private static final String[] FALSE_VALUES = { "0", "F", "N", "FALSE", "NO", "OFF", "否", "错", "假", "錯", "×" };
+    private static final String[] FALSE_VALUES = { "0", "F", "N", "FALSE", "NO", "OFF", "X", "否", "错", "假", "錯", "×" };
 
     // ==============================Constructors=====================================
     /**

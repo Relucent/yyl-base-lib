@@ -16,7 +16,7 @@ public class ListxConverter implements Converter<Listx> {
     public static final ListxConverter INSTANCE = new ListxConverter();
 
     @Override
-    public Listx convert(Object source, Class<? extends Listx> toType, Listx vDefault) {
+    public Listx convert(Object source, Class<? extends Listx> toType) {
         try {
             if (source instanceof Collection) {
                 Listx result = new Listx();
@@ -29,17 +29,13 @@ public class ListxConverter implements Converter<Listx> {
             } else if (source instanceof Iterable) {
                 Listx result = new Listx();
                 for (@SuppressWarnings("rawtypes")
-                Iterator elements = (Iterator) source; elements.hasNext(); result.add(elements.next()));
+                Iterator elements = (Iterator) source; elements.hasNext(); result.add(elements.next()))
+                    ;
                 return result;
             }
-        } catch (Exception e) {
+        } catch (Exception ignore) {
             // Ignore//
         }
-        return vDefault;
-    }
-
-    @Override
-    public boolean support(Class<? extends Listx> type) {
-        return Listx.class.isAssignableFrom(type);
+        return null;
     }
 }

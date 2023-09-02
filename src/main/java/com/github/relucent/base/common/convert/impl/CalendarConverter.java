@@ -14,17 +14,8 @@ public class CalendarConverter implements Converter<Calendar> {
     public static final CalendarConverter INSTANCE = new CalendarConverter();
 
     @Override
-    public Calendar convert(Object source, Class<? extends Calendar> toType, Calendar vDefault) {
-        Date date = DateConverter.INSTANCE.convert(source, Date.class, null);
-        if (date != null) {
-            return CalendarUtil.toCalendar(date);
-        }
-        return vDefault;
+    public Calendar convert(Object source, Class<? extends Calendar> toType) {
+        Date date = DateConverter.INSTANCE.convert(source, Date.class);
+        return date == null ? null : CalendarUtil.toCalendar(date);
     }
-
-    @Override
-    public boolean support(Class<? extends Calendar> toType) {
-        return Calendar.class.isAssignableFrom(toType);
-    }
-
 }
