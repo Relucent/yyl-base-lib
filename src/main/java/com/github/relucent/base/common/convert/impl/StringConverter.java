@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.TimeZone;
 
 import com.github.relucent.base.common.convert.Converter;
-import com.github.relucent.base.common.exception.ExceptionHelper;
+import com.github.relucent.base.common.exception.ExceptionUtil;
 import com.github.relucent.base.common.io.IoUtil;
 import com.github.relucent.base.common.time.DateUtil;
 
@@ -66,7 +66,7 @@ public class StringConverter implements Converter<String> {
                 return IoUtil.toString(reader);
             }
         } catch (Exception e) {
-            throw ExceptionHelper.propagate(e);
+            throw ExceptionUtil.propagate(e);
         }
     }
 
@@ -81,7 +81,7 @@ public class StringConverter implements Converter<String> {
                 return IoUtil.toString(input);
             }
         } catch (Exception e) {
-            throw ExceptionHelper.propagate(e);
+            throw ExceptionUtil.propagate(e);
         }
     }
 }

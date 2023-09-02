@@ -1,7 +1,7 @@
 package com.github.relucent.base.common.convert.impl;
 
 import com.github.relucent.base.common.convert.Converter;
-import com.github.relucent.base.common.exception.ExceptionHelper;
+import com.github.relucent.base.common.exception.ExceptionUtil;
 import com.github.relucent.base.common.lang.ObjectUtil;
 
 /**
@@ -32,7 +32,7 @@ public class PrimitiveConverter implements Converter<Object> {
     public Object convert(Object source, Class<? extends Object> toType) {
 
         if (toType == null || !toType.isPrimitive()) {
-            throw ExceptionHelper.error("convert error: " + toType + " is not of type a primitive");
+            throw ExceptionUtil.error("convert error: " + toType + " is not of type a primitive");
         }
 
         if (boolean.class == toType) {
@@ -67,6 +67,6 @@ public class PrimitiveConverter implements Converter<Object> {
             return ObjectUtil.defaultIfNull(NumberConverter.toDouble(source), DEFAULT_DOUBLE);
         }
 
-        throw ExceptionHelper.error("convert error: Unsupported to type: " + toType);
+        throw ExceptionUtil.error("convert error: Unsupported to type: " + toType);
     }
 }

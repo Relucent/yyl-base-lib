@@ -11,7 +11,7 @@ import java.util.function.Predicate;
 import com.github.relucent.base.common.collection.WeakConcurrentMap;
 import com.github.relucent.base.common.constant.ArrayConstant;
 import com.github.relucent.base.common.convert.ConvertUtil;
-import com.github.relucent.base.common.exception.ExceptionHelper;
+import com.github.relucent.base.common.exception.ExceptionUtil;
 import com.github.relucent.base.common.lang.ArrayUtil;
 import com.github.relucent.base.common.lang.AssertUtil;
 import com.github.relucent.base.common.lang.ClassUtil;
@@ -153,7 +153,7 @@ public class FieldUtil {
         try {
             return field.get(obj);
         } catch (IllegalAccessException e) {
-            throw ExceptionHelper.propagate("IllegalAccess for " + field.getDeclaringClass() + "." + field.getName(), e);
+            throw ExceptionUtil.propagate("IllegalAccess for " + field.getDeclaringClass() + "." + field.getName(), e);
         }
     }
 
@@ -208,7 +208,7 @@ public class FieldUtil {
         try {
             field.set(obj instanceof Class ? null : obj, value);
         } catch (IllegalAccessException e) {
-            throw ExceptionHelper.propagate("IllegalAccess for " + obj + "." + field.getName(), e);
+            throw ExceptionUtil.propagate("IllegalAccess for " + obj + "." + field.getName(), e);
         }
     }
 

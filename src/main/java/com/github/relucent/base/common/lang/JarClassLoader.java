@@ -7,7 +7,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.List;
 
-import com.github.relucent.base.common.exception.ExceptionHelper;
+import com.github.relucent.base.common.exception.ExceptionUtil;
 import com.github.relucent.base.common.io.FileUtil;
 import com.github.relucent.base.common.net.UrlUtil;
 import com.github.relucent.base.common.reflect.MethodUtil;
@@ -60,7 +60,7 @@ public class JarClassLoader extends URLClassLoader {
                 }
             }
         } catch (IOException e) {
-            throw ExceptionHelper.propagate(e);
+            throw ExceptionUtil.propagate(e);
         }
     }
 

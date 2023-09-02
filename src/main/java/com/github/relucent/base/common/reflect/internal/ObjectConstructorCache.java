@@ -23,7 +23,7 @@ import java.util.concurrent.ConcurrentNavigableMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 
 import com.github.relucent.base.common.collection.WeakConcurrentMap;
-import com.github.relucent.base.common.exception.ExceptionHelper;
+import com.github.relucent.base.common.exception.ExceptionUtil;
 import com.github.relucent.base.common.reflect.TypeReference;
 
 /**
@@ -141,10 +141,10 @@ public class ObjectConstructorCache {
                             if (elementType instanceof Class) {
                                 return (T) EnumSet.noneOf((Class) elementType);
                             } else {
-                                throw ExceptionHelper.error("Invalid EnumSet type: " + type.toString());
+                                throw ExceptionUtil.error("Invalid EnumSet type: " + type.toString());
                             }
                         } else {
-                            throw ExceptionHelper.error("Invalid EnumSet type: " + type.toString());
+                            throw ExceptionUtil.error("Invalid EnumSet type: " + type.toString());
                         }
                     }
                 };
