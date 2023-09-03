@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.github.relucent.base.common.convert.BasicConverter;
 import com.github.relucent.base.common.convert.Converter;
 import com.github.relucent.base.common.time.DateUtil;
 
@@ -14,13 +15,13 @@ import com.github.relucent.base.common.time.DateUtil;
  * @version 2012-12-11
  * @see Converter
  */
-public class DateConverter implements Converter<Date> {
+public class DateConverter implements BasicConverter<Date> {
 
     public static final DateConverter INSTANCE = new DateConverter();
 
     private static final Pattern DATE_PATTERN = Pattern.compile("^new Date\\((\\d+)\\)$");
 
-    public Date convert(Object source, Class<? extends Date> toType) {
+    public Date convertInternal(Object source, Class<? extends Date> toType) {
         try {
 
             Long mills = null;

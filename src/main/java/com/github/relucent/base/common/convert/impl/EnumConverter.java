@@ -1,6 +1,6 @@
 package com.github.relucent.base.common.convert.impl;
 
-import com.github.relucent.base.common.convert.Converter;
+import com.github.relucent.base.common.convert.BasicConverter;
 import com.github.relucent.base.common.lang.EnumUtil;
 import com.github.relucent.base.common.lang.NumberUtil;
 
@@ -9,7 +9,7 @@ import com.github.relucent.base.common.lang.NumberUtil;
  * @author YYL
  */
 @SuppressWarnings("rawtypes")
-public class EnumConverter implements Converter<Enum> {
+public class EnumConverter implements BasicConverter<Enum> {
 
     public static final EnumConverter INSTANCE = new EnumConverter();
 
@@ -18,7 +18,7 @@ public class EnumConverter implements Converter<Enum> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public Enum convert(Object source, Class<? extends Enum> toType) {
+    public Enum convertInternal(Object source, Class<? extends Enum> toType) {
 
         // 源对象为空，目标类型不是枚举
         if (source == null || toType == null || !toType.isEnum()) {

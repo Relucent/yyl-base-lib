@@ -1,31 +1,33 @@
 package com.github.relucent.base.common.convert;
 
+import java.lang.reflect.Type;
+
 import com.github.relucent.base.common.lang.ObjectUtil;
 
 /**
- * 类型转换接口
- * @param <T> 转换到的目标类型
+ * 类型转换接口，提供到类型的动态对象转换
+ * @param <T> 目标类型泛型
  * @author YYL
  */
 @FunctionalInterface
 public interface Converter<T> {
 
     /**
-     * 类型转换，将对象转换为指定类型<br>
-     * @param source 初始对象
+     * 转换对象，将对象转换为指定的类型的对象<br>
+     * @param source 要转换的对象
      * @param toType 需要转换的类型
      * @return 类型转换后的对象
      */
-    T convert(Object source, Class<? extends T> toType);
+    T convert(Object source, Type toType);
 
     /**
-     * 类型转换，将对象转换为指定的类型，如果转换失败时返回默认值<br>
-     * @param source 初始对象
+     * 转换对象，将对象转换为指定的类型的对象，如果转换失败则返回默认值<br>
+     * @param source 要转换的对象
      * @param toType 需要转换的类型
      * @param defaultValue 默认值，如果转换失败时返回默认值
-     * @return 类型转换后的对象
+     * @return 转换为目标类型的结果对象
      */
-    default T convert(Object source, Class<? extends T> toType, final T defaultValue) {
+    default T convert(Object source, Type toType, T defaultValue) {
         return (T) ObjectUtil.defaultIfNull(convert(source, toType), defaultValue);
     }
 }

@@ -12,7 +12,7 @@ import java.lang.reflect.Modifier;
  * Unsafe类提供了一系列的方法，包括内存操作、线程操作、对象操作等<br>
  * Unsafe可以绕过Java语言的安全机制，直接操作内存，所以如果使用不当，会存在一定的风险，就有可能导致内存泄露、崩溃等问题。<br>
  * 因此在Java在设计时，并没有直接提供给开发者使用它，而只留给了Java虚拟机内部的代码使用。但是在一些特殊场景下，Unsafe可以提供非常强大的功能。<br>
- * 算法参考：com.google.gson.internal.UnsafeAllocator
+ * 算法参考：com.google.gson.internal.UnsafeAllocator的实现<br>
  */
 public abstract class UnsafeAllocator {
 

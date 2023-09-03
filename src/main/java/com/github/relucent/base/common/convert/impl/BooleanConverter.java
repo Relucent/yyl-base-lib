@@ -1,19 +1,19 @@
 package com.github.relucent.base.common.convert.impl;
 
-import com.github.relucent.base.common.convert.Converter;
+import com.github.relucent.base.common.convert.BasicConverter;
 import com.github.relucent.base.common.lang.BooleanUtil;
 
 /**
  * 布尔类型转换器
  * @author YYL
  * @version 2012-12-11
- * @see Converter
+ * @see BasicConverter
  */
-public class BooleanConverter implements Converter<Boolean> {
+public class BooleanConverter implements BasicConverter<Boolean> {
 
     public static final BooleanConverter INSTANCE = new BooleanConverter();
 
-    public Boolean convert(Object source, Class<? extends Boolean> toType) {
+    public Boolean convertInternal(Object source, Class<? extends Boolean> toType) {
 
         // 空直接返回
         if (source == null) {

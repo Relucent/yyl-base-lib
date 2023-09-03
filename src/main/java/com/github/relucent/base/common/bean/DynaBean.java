@@ -8,6 +8,9 @@ import com.github.relucent.base.common.bean.info.BeanPropDesc;
 import com.github.relucent.base.common.exception.ExceptionUtil;
 import com.github.relucent.base.common.lang.AssertUtil;
 import com.github.relucent.base.common.lang.ClassUtil;
+import com.github.relucent.base.common.reflect.TypeReference;
+import com.github.relucent.base.common.reflect.internal.ObjectConstructor;
+import com.github.relucent.base.common.reflect.internal.ObjectConstructorCache;
 
 /**
  * 动态Bean (Dynamic Bean)<br>
@@ -18,6 +21,19 @@ public class DynaBean implements Cloneable, Serializable {
     // ==============================Fields===========================================
     private final Class<?> beanClass;
     private final Object bean;
+
+    // ==============================StaticConstructors===============================
+    /**
+     * 根据原始Bean类型，创建一个动态Bean
+     * @param beanType 原始Bean类型
+     * @return 动态Bean
+     */
+    public static DynaBean create(Class<?> beanType) {
+        TypeReference<?> type = TypeReference.of(beanType);
+        ObjectConstructor<?> constructor = ObjectConstructorCache.INSTANCE.get(type);
+        Object bean = constructor.construct();
+        return new DynaBean(bean);
+    }
 
     // ==============================Constructors=====================================
     /**

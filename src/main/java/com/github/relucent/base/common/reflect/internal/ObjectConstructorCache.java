@@ -32,7 +32,7 @@ import com.github.relucent.base.common.reflect.TypeReference;
  */
 public class ObjectConstructorCache {
 
-    /** Bean属性缓实例 */
+    /** 对象构造器构建类缓存实例 */
     public static final ObjectConstructorCache INSTANCE = new ObjectConstructorCache();
 
     /** 构建器缓存 */
@@ -45,24 +45,24 @@ public class ObjectConstructorCache {
     /**
      * 根据类型，获得一个对象构造器
      * @param <T> 对象的类型泛型
-     * @param typeToken 对象的类型引用
+     * @param typeReference 对象的类型引用
      * @return 对象构造器
      */
     @SuppressWarnings("unchecked")
-    public <T> ObjectConstructor<T> get(TypeReference<T> typeToken) {
-        return (ObjectConstructor<T>) cache.computeIfAbsent(typeToken, (key) -> create(typeToken));
+    public <T> ObjectConstructor<T> get(TypeReference<T> typeReference) {
+        return (ObjectConstructor<T>) cache.computeIfAbsent(typeReference, (key) -> create(typeReference));
     }
 
     /**
      * 根据类型，获得一个对象构造器
      * @param <T> 对象的类型泛型
-     * @param typeToken 对象的类型引用
+     * @param typeReference 对象的类型引用
      * @return 对象构造器
      */
-    protected <T> ObjectConstructor<T> create(TypeReference<T> typeToken) {
+    protected <T> ObjectConstructor<T> create(TypeReference<T> typeReference) {
 
-        final Type type = typeToken.getType();
-        final Class<? super T> rawType = typeToken.getRawType();
+        final Type type = typeReference.getType();
+        final Class<? super T> rawType = typeReference.getRawType();
 
         // 使用默认的构造函数创建构建器
         ObjectConstructor<T> defaultConstructor = newDefaultConstructor(rawType);

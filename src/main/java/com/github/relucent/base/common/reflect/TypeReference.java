@@ -5,7 +5,8 @@ import java.lang.reflect.Type;
 import java.util.Objects;
 
 /**
- * 类型引用类，用于获取完整的泛型类型信息的泛型抽象类
+ * 类型引用类，用于获取完整的泛型类型信息的泛型抽象类<br>
+ * 算法参考：com.google.gson.reflect.TypeToken 实现
  * @param <T> 引用类型的泛型
  * @author YYL
  */
@@ -18,7 +19,6 @@ public abstract class TypeReference<T> {
 
     /**
      * 返回包装{@code type}的类型引用类的实例
-     * @param <T> 引用类型的泛型
      * @param type 指定的类型
      * @return 的类型引用类的实例
      */

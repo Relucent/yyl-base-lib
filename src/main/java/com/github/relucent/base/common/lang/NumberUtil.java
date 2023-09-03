@@ -121,7 +121,7 @@ public class NumberUtil {
 
     /**
      * 数字转{@link BigInteger}<br>
-     * @param number 需要转换的数字
+     * @param value 需要转换的数字
      * @return {@link BigInteger}
      */
     public static BigInteger toBigInteger(final Number value) {
@@ -151,26 +151,26 @@ public class NumberUtil {
 
     /**
      * 将{@code Number}转换为{@code BigDecimal}，如果参数为空则返回{@code null}
-     * @param number 需要转换的数字
+     * @param value 需要转换的数字
      * @return {@link BigDecimal}
      */
-    public static BigDecimal toBigDecimal(final Number number) {
-        if (number == null) {
+    public static BigDecimal toBigDecimal(final Number value) {
+        if (value == null) {
             return null;
         }
-        if (number instanceof BigDecimal) {
-            return (BigDecimal) number;
+        if (value instanceof BigDecimal) {
+            return (BigDecimal) value;
         }
-        if (number instanceof Long) {
-            return new BigDecimal((Long) number);
+        if (value instanceof Long) {
+            return new BigDecimal((Long) value);
         }
-        if (number instanceof Integer) {
-            return new BigDecimal((Integer) number);
+        if (value instanceof Integer) {
+            return new BigDecimal((Integer) value);
         }
-        if (number instanceof BigInteger) {
-            return new BigDecimal((BigInteger) number);
+        if (value instanceof BigInteger) {
+            return new BigDecimal((BigInteger) value);
         }
-        return toBigDecimal(number.toString());
+        return toBigDecimal(value.toString());
     }
 
     /**
