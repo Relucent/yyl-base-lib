@@ -74,7 +74,7 @@ public class ModifierUtil {
     /**
      * 是否包含{@code static}修饰符
      * @param clazz 类
-     * @return是否包含{@code static}修饰符
+     * @return 是否包含{@code static}修饰符
      */
     public static boolean isStatic(Class<?> clazz) {
         return clazz != null && Modifier.isStatic(clazz.getModifiers());

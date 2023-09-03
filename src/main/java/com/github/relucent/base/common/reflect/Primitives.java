@@ -91,13 +91,17 @@ public class Primitives {
     }
 
     /**
-     * Returns the corresponding primitive type of {@code type} if it is a wrapper type; otherwise returns {@code type} itself. Idempotent.
+     * 拆包类型，如果{@code type}是包装类型，则返回其对应的原始类型；否则返回{@code type}本身。
      * 
      * <pre>
      *     unwrap(Integer.class) == int.class
      *     unwrap(int.class) == int.class
      *     unwrap(String.class) == String.class
      * </pre>
+     * 
+     * @param <T> 类型的泛型
+     * @param type 包装类型
+     * @return 如果{@code type}是包装类型，则返回其对应的原始类型；否则返回{@code type}本身。
      */
     @SuppressWarnings("unchecked")
     public static <T> Class<T> unwrap(Class<T> type) {

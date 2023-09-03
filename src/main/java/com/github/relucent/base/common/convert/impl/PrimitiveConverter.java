@@ -1,8 +1,9 @@
 package com.github.relucent.base.common.convert.impl;
 
-import com.github.relucent.base.common.convert.Converter;
-import com.github.relucent.base.common.exception.ExceptionUtil;
+import com.github.relucent.base.common.convert.BasicConverter;
+import com.github.relucent.base.common.convert.ConvertException;
 import com.github.relucent.base.common.lang.ObjectUtil;
+import com.github.relucent.base.common.lang.StringUtil;
 
 /**
  * 原始类型转换器<br>
@@ -14,8 +15,9 @@ import com.github.relucent.base.common.lang.ObjectUtil;
  * @see java.lang.Long#TYPE
  * @see java.lang.Float#TYPE
  * @see java.lang.Double#TYPE
+ * @version 2023-01-01
  */
-public class PrimitiveConverter implements Converter<Object> {
+public class PrimitiveConverter implements BasicConverter<Object> {
 
     public static final PrimitiveConverter INSTANCE = new PrimitiveConverter();
 
@@ -29,10 +31,10 @@ public class PrimitiveConverter implements Converter<Object> {
     private static final Double DEFAULT_DOUBLE = Double.valueOf(0.0D);
 
     @Override
-    public Object convert(Object source, Class<? extends Object> toType) {
+    public Object convertInternal(Object source, Class<? extends Object> toType) {
 
         if (toType == null || !toType.isPrimitive()) {
-            throw ExceptionUtil.error("convert error: " + toType + " is not of type a primitive");
+            throw new ConvertException(StringUtil.format("convert error: {} is not of type a primitive", toType));
         }
 
         if (boolean.class == toType) {
@@ -67,6 +69,6 @@ public class PrimitiveConverter implements Converter<Object> {
             return ObjectUtil.defaultIfNull(NumberConverter.toDouble(source), DEFAULT_DOUBLE);
         }
 
-        throw ExceptionUtil.error("convert error: Unsupported to type: " + toType);
+        throw new ConvertException(StringUtil.format("convert error: Unsupported to type: {}", toType));
     }
 }

@@ -8,7 +8,7 @@ import java.sql.Clob;
 import java.util.Date;
 import java.util.TimeZone;
 
-import com.github.relucent.base.common.convert.Converter;
+import com.github.relucent.base.common.convert.BasicConverter;
 import com.github.relucent.base.common.exception.ExceptionUtil;
 import com.github.relucent.base.common.io.IoUtil;
 import com.github.relucent.base.common.time.DateUtil;
@@ -17,20 +17,12 @@ import com.github.relucent.base.common.time.DateUtil;
  * 字符串类型转换器
  * @author YYL
  */
-public class StringConverter implements Converter<String> {
+public class StringConverter implements BasicConverter<String> {
 
     public static final StringConverter INSTANCE = new StringConverter();
 
     @Override
-    public String convert(Object source, Class<? extends String> toType) {
-        try {
-            return convertInternal(source);
-        } catch (Exception ignore) {
-            return null;
-        }
-    }
-
-    protected String convertInternal(Object value) {
+    public String convertInternal(Object value, Class<? extends String> toType) {
         if (value == null) {
             return null;
         }

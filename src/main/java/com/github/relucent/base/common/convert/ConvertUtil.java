@@ -2,83 +2,18 @@ package com.github.relucent.base.common.convert;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.atomic.DoubleAdder;
-import java.util.concurrent.atomic.LongAdder;
 
 import com.github.relucent.base.common.collection.Listx;
 import com.github.relucent.base.common.collection.Mapx;
 import com.github.relucent.base.common.convert.impl.ArrayConverter;
-import com.github.relucent.base.common.convert.impl.BooleanConverter;
-import com.github.relucent.base.common.convert.impl.CalendarConverter;
-import com.github.relucent.base.common.convert.impl.CharacterConverter;
-import com.github.relucent.base.common.convert.impl.DateConverter;
 import com.github.relucent.base.common.convert.impl.EnumConverter;
-import com.github.relucent.base.common.convert.impl.ListxConverter;
-import com.github.relucent.base.common.convert.impl.MapxConverter;
-import com.github.relucent.base.common.convert.impl.NumberConverter;
-import com.github.relucent.base.common.convert.impl.PrimitiveConverter;
-import com.github.relucent.base.common.convert.impl.StringConverter;
 
 /**
  * 类型转换工具类(Type Conversion) Standard Wrapped
  * @author YYL
  */
 public class ConvertUtil {
-
-    // ==============================Fields===========================================
-    /** 转换器映射表 */
-    private static final Map<Class<?>, Converter<?>> CONVERTERS = new ConcurrentHashMap<Class<?>, Converter<?>>();
-    static {
-
-        // 原始类型
-        CONVERTERS.put(Boolean.TYPE, PrimitiveConverter.INSTANCE);
-        CONVERTERS.put(Character.TYPE, PrimitiveConverter.INSTANCE);
-        CONVERTERS.put(Byte.TYPE, PrimitiveConverter.INSTANCE);
-        CONVERTERS.put(Double.TYPE, PrimitiveConverter.INSTANCE);
-        CONVERTERS.put(Float.TYPE, PrimitiveConverter.INSTANCE);
-        CONVERTERS.put(Integer.TYPE, PrimitiveConverter.INSTANCE);
-        CONVERTERS.put(Long.TYPE, PrimitiveConverter.INSTANCE);
-        CONVERTERS.put(Short.TYPE, PrimitiveConverter.INSTANCE);
-
-        // 布尔
-        CONVERTERS.put(Boolean.class, BooleanConverter.INSTANCE);
-        // 字符
-        CONVERTERS.put(Character.class, CharacterConverter.INSTANCE);
-
-        // 数值
-        CONVERTERS.put(Byte.class, NumberConverter.INSTANCE);
-        CONVERTERS.put(Short.class, NumberConverter.INSTANCE);
-        CONVERTERS.put(Integer.class, NumberConverter.INSTANCE);
-        CONVERTERS.put(Long.class, NumberConverter.INSTANCE);
-        CONVERTERS.put(Float.class, NumberConverter.INSTANCE);
-        CONVERTERS.put(Double.class, NumberConverter.INSTANCE);
-        CONVERTERS.put(Number.class, NumberConverter.INSTANCE);
-        CONVERTERS.put(BigInteger.class, NumberConverter.INSTANCE);
-        CONVERTERS.put(BigDecimal.class, NumberConverter.INSTANCE);
-        CONVERTERS.put(AtomicInteger.class, NumberConverter.INSTANCE);
-        CONVERTERS.put(AtomicLong.class, NumberConverter.INSTANCE);
-        CONVERTERS.put(LongAdder.class, NumberConverter.INSTANCE);
-        CONVERTERS.put(DoubleAdder.class, NumberConverter.INSTANCE);
-
-        // 字符串
-        CONVERTERS.put(String.class, StringConverter.INSTANCE);
-
-        // 日期
-        CONVERTERS.put(Date.class, DateConverter.INSTANCE);
-        CONVERTERS.put(java.sql.Date.class, DateConverter.INSTANCE);
-        CONVERTERS.put(java.sql.Time.class, DateConverter.INSTANCE);
-        CONVERTERS.put(java.sql.Timestamp.class, DateConverter.INSTANCE);
-        CONVERTERS.put(Calendar.class, CalendarConverter.INSTANCE);
-        // 集合类型
-        CONVERTERS.put(Mapx.class, MapxConverter.INSTANCE);
-        CONVERTERS.put(Listx.class, ListxConverter.INSTANCE);
-    }
 
     // ==============================Constructors=====================================
     /**
@@ -349,7 +284,7 @@ public class ConvertUtil {
             return (T) source;
         }
 
-        Converter converter = CONVERTERS.get(toType);
+        Converter converter = ConverterManager.getInstance().lookup(toType);
 
         if (converter != null) {
             return (T) converter.convert(source, toType, defaultValue);

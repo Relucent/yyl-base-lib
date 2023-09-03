@@ -1,5 +1,6 @@
 package com.github.relucent.base.common.convert.impl;
 
+import com.github.relucent.base.common.convert.BasicConverter;
 import com.github.relucent.base.common.convert.Converter;
 
 /**
@@ -8,11 +9,11 @@ import com.github.relucent.base.common.convert.Converter;
  * @version 2012-12-11
  * @see Converter
  */
-public class CharacterConverter implements Converter<Character> {
+public class CharacterConverter implements BasicConverter<Character> {
 
     public static final CharacterConverter INSTANCE = new CharacterConverter();
 
-    public Character convert(Object source, Class<? extends Character> toType) {
+    public Character convertInternal(Object source, Class<? extends Character> toType) {
 
         if (source == null) {
             return null;

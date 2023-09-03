@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.DoubleAdder;
 import java.util.concurrent.atomic.LongAdder;
 
-import com.github.relucent.base.common.convert.Converter;
+import com.github.relucent.base.common.convert.BasicConverter;
 import com.github.relucent.base.common.lang.NumberUtil;
 import com.github.relucent.base.common.lang.StringUtil;
 import com.github.relucent.base.common.time.TemporalAccessorUtil;
@@ -32,12 +32,12 @@ import com.github.relucent.base.common.time.TemporalAccessorUtil;
  * @see java.util.concurrent.atomic.DoubleAdder
  * @author YYL
  */
-public class NumberConverter implements Converter<Number> {
+public class NumberConverter implements BasicConverter<Number> {
 
     public static final NumberConverter INSTANCE = new NumberConverter();
 
     @Override
-    public Number convert(Object source, Class<? extends Number> toType) {
+    public Number convertInternal(Object source, Class<? extends Number> toType) {
 
         if (source == null) {
             return null;
@@ -238,8 +238,9 @@ public class NumberConverter implements Converter<Number> {
             return Double.valueOf(sourceToString(source));
         } catch (final NumberFormatException e) {
             // ignore
-            return Double.valueOf(toBigDecimal(source).doubleValue());
         }
+        BigDecimal decimal = toBigDecimal(source);
+        return decimal == null ? null : Double.valueOf(decimal.doubleValue());
     }
 
     /**

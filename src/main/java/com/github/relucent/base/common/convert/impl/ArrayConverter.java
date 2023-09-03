@@ -7,23 +7,23 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.github.relucent.base.common.constant.StringConstant;
+import com.github.relucent.base.common.convert.BasicConverter;
 import com.github.relucent.base.common.convert.ConvertUtil;
-import com.github.relucent.base.common.convert.Converter;
 import com.github.relucent.base.common.lang.ArrayUtil;
 import com.github.relucent.base.common.lang.StringUtil;
 
 /**
  * 数组类型转换器
  * @author YYL
- * @version 2020-01-01
- * @see Converter
+ * @version 2023-01-01
+ * @see BasicConverter
  */
-public class ArrayConverter implements Converter<Object> {
+public class ArrayConverter implements BasicConverter<Object> {
 
     public static final ArrayConverter INSTANCE = new ArrayConverter();
 
     @Override
-    public Object convert(Object source, Class<? extends Object> toType) {
+    public Object convertInternal(Object source, Class<? extends Object> toType) {
         if (source == null) {
             return null;
         }

@@ -3,19 +3,19 @@ package com.github.relucent.base.common.convert.impl;
 import java.util.Map;
 
 import com.github.relucent.base.common.collection.Mapx;
-import com.github.relucent.base.common.convert.Converter;
+import com.github.relucent.base.common.convert.BasicConverter;
 
 /**
  * MAP映射表类型转换器
  * @author YYL
  */
-public class MapxConverter implements Converter<Mapx> {
+public class MapxConverter implements BasicConverter<Mapx> {
 
     public static final MapxConverter INSTANCE = new MapxConverter();
 
     @SuppressWarnings("rawtypes")
     @Override
-    public Mapx convert(Object source, Class<? extends Mapx> toType) {
+    public Mapx convertInternal(Object source, Class<? extends Mapx> toType) {
         try {
             if (source instanceof Map) {
                 Mapx result = new Mapx();

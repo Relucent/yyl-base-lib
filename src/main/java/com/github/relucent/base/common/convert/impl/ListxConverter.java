@@ -5,18 +5,18 @@ import java.util.Collections;
 import java.util.Iterator;
 
 import com.github.relucent.base.common.collection.Listx;
-import com.github.relucent.base.common.convert.Converter;
+import com.github.relucent.base.common.convert.BasicConverter;
 
 /**
  * LIST集合类型转换器
  * @author YYL
  */
-public class ListxConverter implements Converter<Listx> {
+public class ListxConverter implements BasicConverter<Listx> {
 
     public static final ListxConverter INSTANCE = new ListxConverter();
 
     @Override
-    public Listx convert(Object source, Class<? extends Listx> toType) {
+    public Listx convertInternal(Object source, Class<? extends Listx> toType) {
         try {
             if (source instanceof Collection) {
                 Listx result = new Listx();
