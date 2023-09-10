@@ -3,6 +3,17 @@ package com.github.relucent.base.common.convert;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.time.DayOfWeek;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.Month;
+import java.time.MonthDay;
+import java.time.OffsetDateTime;
+import java.time.OffsetTime;
+import java.time.ZonedDateTime;
+import java.time.temporal.TemporalAccessor;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -18,6 +29,7 @@ import com.github.relucent.base.common.convert.impl.DateConverter;
 import com.github.relucent.base.common.convert.impl.NumberConverter;
 import com.github.relucent.base.common.convert.impl.PrimitiveConverter;
 import com.github.relucent.base.common.convert.impl.StringConverter;
+import com.github.relucent.base.common.convert.impl.TemporalAccessorConverter;
 
 /**
  * 类型转换管理器<br>
@@ -84,6 +96,19 @@ public class ConverterManager {
         defaultConverterCache.put(java.sql.Time.class, DateConverter.INSTANCE);
         defaultConverterCache.put(java.sql.Timestamp.class, DateConverter.INSTANCE);
         defaultConverterCache.put(Calendar.class, CalendarConverter.INSTANCE);
+
+        // 日期时间 JDK8+(since 5.0.0)
+        defaultConverterCache.put(TemporalAccessor.class, TemporalAccessorConverter.INSTANCE);
+        defaultConverterCache.put(Instant.class, TemporalAccessorConverter.INSTANCE);
+        defaultConverterCache.put(LocalDateTime.class, TemporalAccessorConverter.INSTANCE);
+        defaultConverterCache.put(LocalDate.class, TemporalAccessorConverter.INSTANCE);
+        defaultConverterCache.put(LocalTime.class, TemporalAccessorConverter.INSTANCE);
+        defaultConverterCache.put(ZonedDateTime.class, TemporalAccessorConverter.INSTANCE);
+        defaultConverterCache.put(OffsetDateTime.class, TemporalAccessorConverter.INSTANCE);
+        defaultConverterCache.put(OffsetTime.class, TemporalAccessorConverter.INSTANCE);
+        defaultConverterCache.put(DayOfWeek.class, TemporalAccessorConverter.INSTANCE);
+        defaultConverterCache.put(Month.class, TemporalAccessorConverter.INSTANCE);
+        defaultConverterCache.put(MonthDay.class, TemporalAccessorConverter.INSTANCE);
     }
     // =================================Methods================================================
 
