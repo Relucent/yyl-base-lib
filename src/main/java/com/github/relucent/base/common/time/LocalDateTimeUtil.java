@@ -47,7 +47,7 @@ public class LocalDateTimeUtil {
             return null;
         }
         Instant instant = date.toInstant();
-        ZoneId zone = ZoneId.systemDefault();
+        ZoneId zone = ZoneUtil.getDefaultZoneId();
         return LocalDateTime.ofInstant(instant, zone);
     }
 
@@ -77,7 +77,7 @@ public class LocalDateTimeUtil {
      * @return 日期类型{@code Date}
      */
     public static Date toDate(LocalDateTime datetime) {
-        ZoneId zone = ZoneId.systemDefault();
+        ZoneId zone = ZoneUtil.getDefaultZoneId();
         Instant instant = datetime.atZone(zone).toInstant();
         return Date.from(instant);
     }
@@ -102,6 +102,16 @@ public class LocalDateTimeUtil {
     public static LocalDateTime parse(CharSequence source, String pattern) {
         DateTimeFormatter formatter = getFormatter(pattern);
         return toLocalDateTime(formatter.parse(source));
+    }
+
+    /**
+     * 解析日期格式字符串<br>
+     * 会通过尝试各种不同时间格式的解析器来解析时间字符串，如果最终依旧无法解析则返回{@code null}
+     * @param text 时间文本
+     * @return 带时区的日期时间对象{@code LocalDateTime}
+     */
+    public static LocalDateTime parse(String text) {
+        return TemporalAccessorUtil.toLocalDateTime(TemporalAccessorUtil.parse(text));
     }
 
     // ==============================ToolMethods======================================
