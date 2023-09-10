@@ -55,6 +55,7 @@ public class Primitives {
      *     wrap(String.class) == String.class
      * </pre>
      * 
+     * @param <T> 类型的泛型
      * @param type 类型
      * @return 如果{@code type} 是原始类型，则返回其对应的包装类型；否则返回{@code type}本身。
      */

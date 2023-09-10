@@ -10,15 +10,11 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.DoubleAdder;
 import java.util.concurrent.atomic.LongAdder;
 
-import com.github.relucent.base.common.collection.Listx;
-import com.github.relucent.base.common.collection.Mapx;
 import com.github.relucent.base.common.collection.WeakConcurrentMap;
 import com.github.relucent.base.common.convert.impl.BooleanConverter;
 import com.github.relucent.base.common.convert.impl.CalendarConverter;
 import com.github.relucent.base.common.convert.impl.CharacterConverter;
 import com.github.relucent.base.common.convert.impl.DateConverter;
-import com.github.relucent.base.common.convert.impl.ListxConverter;
-import com.github.relucent.base.common.convert.impl.MapxConverter;
 import com.github.relucent.base.common.convert.impl.NumberConverter;
 import com.github.relucent.base.common.convert.impl.PrimitiveConverter;
 import com.github.relucent.base.common.convert.impl.StringConverter;
@@ -88,10 +84,6 @@ public class ConverterManager {
         defaultConverterCache.put(java.sql.Time.class, DateConverter.INSTANCE);
         defaultConverterCache.put(java.sql.Timestamp.class, DateConverter.INSTANCE);
         defaultConverterCache.put(Calendar.class, CalendarConverter.INSTANCE);
-
-        // 集合类型
-        defaultConverterCache.put(Mapx.class, MapxConverter.INSTANCE);
-        defaultConverterCache.put(Listx.class, ListxConverter.INSTANCE);
     }
     // =================================Methods================================================
 
@@ -114,18 +106,28 @@ public class ConverterManager {
      */
     @SuppressWarnings("unchecked")
     public <T> Converter<T> lookup(final Class<T> type) {
+        return (Converter<T>) lookup((Type) type);
+    }
+
+    /**
+     * 检索指定类型的转换器<br>
+     * 先从注册的转换器匹配，如果没找到再从默认的转换器列表中匹配<br>
+     * @param type 转换器能转换的类型
+     * @return 对应类型的转换器，如果没找到则返回 <code>null</code>
+     */
+    public Converter<?> lookup(final Type type) {
         Converter<?> converter = customConverterCache.get(type);
         if (converter != null) {
-            return (Converter<T>) converter;
+            return converter;
         }
-        return (Converter<T>) defaultConverterCache.get(type);
+        return defaultConverterCache.get(type);
     }
 
     /**
      * 取消注册指定类型的转换器
      * @param type 转换器能转换的类型
      */
-    public void unregister(final Class<?> type) {
+    public void unregister(final Type type) {
         customConverterCache.remove(type);
     }
 }

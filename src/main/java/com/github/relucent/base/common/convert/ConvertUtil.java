@@ -1,13 +1,23 @@
 package com.github.relucent.base.common.convert;
 
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Collection;
 import java.util.Date;
+import java.util.Map;
 
+import com.github.relucent.base.common.bean.BeanUtil;
 import com.github.relucent.base.common.collection.Listx;
 import com.github.relucent.base.common.collection.Mapx;
 import com.github.relucent.base.common.convert.impl.ArrayConverter;
+import com.github.relucent.base.common.convert.impl.BeanConverter;
+import com.github.relucent.base.common.convert.impl.ClassConverter;
+import com.github.relucent.base.common.convert.impl.CollectionConverter;
 import com.github.relucent.base.common.convert.impl.EnumConverter;
+import com.github.relucent.base.common.convert.impl.MapConverter;
+import com.github.relucent.base.common.reflect.TypeReference;
+import com.github.relucent.base.common.reflect.TypeUtil;
 
 /**
  * 类型转换工具类(Type Conversion) Standard Wrapped
@@ -274,10 +284,27 @@ public class ConvertUtil {
      * @param defaultValue 默认值
      * @return 转换类型后的对象(无法正确转换类型则返回默认值)
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
     public static <T> T convert(Object source, Class<T> toType, T defaultValue) {
+        return convert(source, (Type) toType, defaultValue);
+    }
+
+    /**
+     * 将对象转换为指定的类型
+     * @param <T> 转换类型泛型
+     * @param source 要转换的对象
+     * @param toType 转换的目标类型
+     * @param defaultValue 默认值
+     * @return 转换类型后的对象(无法正确转换类型则返回默认值)
+     */
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public static <T> T convert(final Object source, final Type toType, final T defaultValue) {
         if (toType == null) {
             return defaultValue;
+        }
+
+        if (toType instanceof TypeReference) {
+            return convert(source, (Type) ((TypeReference) toType).getType(), defaultValue);
         }
 
         if (toType == Object.class) {
@@ -290,12 +317,45 @@ public class ConvertUtil {
             return (T) converter.convert(source, toType, defaultValue);
         }
 
-        if (toType.isEnum()) {
+        Class<T> rowType = (Class<T>) TypeUtil.getClass(toType);
+
+        if (rowType == null) {
+            if (defaultValue != null) {
+                rowType = (Class<T>) defaultValue.getClass();
+            } else {
+                // 此处考虑抛出异常
+                return defaultValue;
+            }
+        }
+
+        // 枚举类型
+        if (rowType.isEnum()) {
             return (T) EnumConverter.INSTANCE.convert(source, (Class<? extends Enum>) toType, (Enum) defaultValue);
         }
 
-        if (toType.isArray()) {
+        // 数组类型
+        if (rowType.isArray()) {
             return (T) ArrayConverter.INSTANCE.convert(source, toType, defaultValue);
+        }
+
+        // 集合类型（含有泛型参数）
+        if (Collection.class.isAssignableFrom(rowType)) {
+            return (T) CollectionConverter.INSTANCE.convert(source, toType, (Collection<?>) defaultValue);
+        }
+
+        // Map 类型
+        if (Map.class.isAssignableFrom(rowType)) {
+            return (T) MapConverter.INSTANCE.convert(source, toType, (Map<?, ?>) defaultValue);
+        }
+
+        // Bean
+        if (BeanUtil.isWritableBean(rowType)) {
+            return (T) BeanConverter.INSTANCE.convert(source, toType);
+        }
+
+        // Class
+        if ("java.lang.Class".equals(rowType.getName())) {
+            return (T) ClassConverter.INSTANCE.convert(source, toType);
         }
 
         return defaultValue;

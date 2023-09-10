@@ -11,7 +11,7 @@ public class LocaleUtil {
     }
 
     /**
-     * 如果参数不为空则直接返回，如果参数为空则返回默认的地区{@link locale#getDefault()}
+     * 如果参数不为空则直接返回，如果参数为空则返回默认的地区{@link Locale#getDefault()}
      * @param locale 地区
      * @return 参数不为空则直接返回，如果参数为空则返回默认的地区
      */
