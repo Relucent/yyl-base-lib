@@ -6,9 +6,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.github.relucent.base.common.json.impl.DefaultJsonHandler;
 import com.github.relucent.base.common.reflect.TypeReference;
 
-@SuppressWarnings("deprecation")
 public class JsonUtilTest {
 
     private Sample[] samples;
@@ -30,6 +30,8 @@ public class JsonUtilTest {
         samples[2].number = Long.MIN_VALUE;
         samples[2].string = "json";
         samples[2].date = new Date((System.currentTimeMillis() / 1000) * 1000); // 时间只保留秒
+
+        JsonUtil.setHandler(DefaultJsonHandler.INSTANCE);
     }
 
     @Test

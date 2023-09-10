@@ -85,7 +85,7 @@ public class FastDateFormat extends Format implements DateParser, DatePrinter {
     /**
      * 获得一个指定日期格式和地区的日期格式化器
      * @param pattern 日期格式（与{@link java.text.SimpleDateFormat}兼容）
-     * @param 地区（可选），覆盖系统区域设置
+     * @param locale 地区（可选），覆盖系统区域设置
      * @return 指定格式的日期格式化器
      * @throws IllegalArgumentException 如果日期格式{@code pattern}无效
      */
@@ -97,7 +97,7 @@ public class FastDateFormat extends Format implements DateParser, DatePrinter {
      * 获得一个指定日期格式、时区和地区的日期格式化器
      * @param pattern 日期格式（与{@link java.text.SimpleDateFormat}兼容）
      * @param timeZone {@link TimeZone} 时区
-     * @param 地区（可选），覆盖系统区域设置
+     * @param locale 地区（可选），覆盖系统区域设置
      * @return 指定格式的日期格式化器
      * @throws IllegalArgumentException 如果日期格式{@code pattern}无效或者为{@code null}
      */
@@ -336,7 +336,7 @@ public class FastDateFormat extends Format implements DateParser, DatePrinter {
      * 格式化日期对象{@code Date}，并将结果追加到字符缓冲器 {@code StringBuffer}中
      * @param <B> 字符缓冲器{@code Appendable}的类型，通常是StringBuilder或StringBuffer
      * @param date 要格式化的日期对象
-     * @param 要追加内容的字符缓冲器
+     * @param buf 要追加内容的字符缓冲器
      * @return 追加内容的字符缓冲器
      */
     @Override

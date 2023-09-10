@@ -21,7 +21,6 @@ import com.github.relucent.base.common.lang.LocaleUtil;
  * {@link java.text.SimpleDateFormat} 的线程安全版本，用于将 {@link Date} 格式化输出<br>
  * JDK默认的 {code SimpleDateFormat}不是线程安全，所以在多线程环境中，创建线程独立的实例，并且不能作为静态成员多线程公用。<br>
  * 而{@code FastDatePrinter}是线程安全的，因此可以作为静态成员实例，并在多线程环境中安全使用。<br>
- * 可以通过{@link FastDateFormat#getInstance(String,TimeZone,Locale)}来获得 FastDatePrinter实例。<br>
  * 此类在大多数格式化情况下可以直接替换{@code SimpleDateFormat}<br>
  * 参考：org.apache.commons.lang3.time.FastDatePrinter<br>
  */

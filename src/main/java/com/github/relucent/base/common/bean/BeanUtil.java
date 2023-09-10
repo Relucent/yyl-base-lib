@@ -1,5 +1,8 @@
 package com.github.relucent.base.common.bean;
 
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -9,12 +12,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.github.relucent.base.common.bean.info.BeanDesc;
-import com.github.relucent.base.common.bean.info.BeanDescCache;
+import com.github.relucent.base.common.bean.introspector.BeanDesc;
+import com.github.relucent.base.common.bean.introspector.BeanDescCache;
+import com.github.relucent.base.common.bean.introspector.PropDesc;
 import com.github.relucent.base.common.bean.mapping.BeanMapDescriber;
 import com.github.relucent.base.common.bean.mapping.BeanMapPopulater;
 import com.github.relucent.base.common.bean.mapping.BeanMapper;
+import com.github.relucent.base.common.lang.ClassUtil;
 import com.github.relucent.base.common.logging.Logger;
+import com.github.relucent.base.common.reflect.ModifierUtil;
 
 /**
  * JavaBean 工具类：用于实例化bean，检查bean属性类型、复制bean属性等。<br>
@@ -22,14 +28,130 @@ import com.github.relucent.base.common.logging.Logger;
  */
 public class BeanUtil {
 
+    // ==============================Fields===========================================
     private static final Logger LOGGER = Logger.getLogger(BeanUtil.class);
 
+    // ==============================Constructors=====================================
     /**
      * 工具类方法，实例不应在标准编程中构造。
      */
     protected BeanUtil() {
     }
 
+    // ==============================Methods==========================================
+    /**
+     * 获取{@link BeanDesc} Bean描述信息
+     * @param beanClass Bean的类
+     * @return Bean对象的描述信息
+     */
+    public static BeanDesc getBeanDesc(Class<?> beanClass) {
+        return BeanDescCache.INSTANCE.getBeanDesc(beanClass);
+    }
+
+    /**
+     * 获取Bean对象{@link PropDesc}列表
+     * @param beanClass Bean的类
+     * @return Bean对象的属性表
+     */
+    public static Map<String, PropDesc> getPropDescMap(Class<?> beanClass) {
+        return getBeanDesc(beanClass).getPropMap();
+    }
+
+    // -------------------------------------------------------------------------------
+    /**
+     * 获取{@link BeanInfo} Bean 信息
+     * @param beanClass Bean的类
+     * @return {@link BeanInfo}
+     */
+    public static BeanInfo getBeanInfo(Class<?> beanClass) {
+        try {
+            return Introspector.getBeanInfo(beanClass);
+        } catch (IntrospectionException e) {
+            return null;
+        }
+    }
+
+    // -------------------------------------------------------------------------------
+    /**
+     * 判断是否有Setter方法<br>
+     * 判定方法是否存在只有一个参数的setXXX方法
+     * @param clazz 待测试类
+     * @return 是否为Bean对象
+     */
+    public static boolean hasSetter(final Class<?> clazz) {
+        if (ClassUtil.isNormalClass(clazz)) {
+            for (final Method method : clazz.getMethods()) {
+                if (method.getParameterCount() == 1 && method.getName().startsWith("set")) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 判断是否为Bean对象<br>
+     * 判定方法是否存在只有无参数的getXXX方法或者isXXX方法
+     * @param clazz 待测试类
+     * @return 是否为Bean对象
+     */
+    public static boolean hasGetter(final Class<?> clazz) {
+        if (ClassUtil.isNormalClass(clazz)) {
+            for (final Method method : clazz.getMethods()) {
+                if (method.getParameterCount() == 0) {
+                    final String name = method.getName();
+                    if (name.startsWith("get") || name.startsWith("is")) {
+                        if (!"getClass".equals(name) && !"getDeclaringClass".equals(name) && !"getMetaClass".equals(name)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 指定类中是否有public类型字段(static字段除外)
+     * @param clazz 待测试类
+     * @return 是否有public类型字段
+     */
+    public static boolean hasPublicField(final Class<?> clazz) {
+        if (ClassUtil.isNormalClass(clazz)) {
+            for (final Field field : clazz.getFields()) {
+                // 非static的public字段
+                if (ModifierUtil.isPublic(field) && !ModifierUtil.isStatic(field)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    // -------------------------------------------------------------------------------
+    /**
+     * 判断是否为可读的Bean对象
+     * @param clazz 待测试类
+     * @return 是否为可读的Bean对象
+     * @see #hasGetter(Class)
+     * @see #hasPublicField(Class)
+     */
+    public static boolean isReadableBean(final Class<?> clazz) {
+        return clazz != null && (hasGetter(clazz) || hasPublicField(clazz));
+    }
+
+    /**
+     * 判断是否为可写的Bean对象
+     * @param clazz 待测试类
+     * @return 是否为Bean对象
+     * @see #hasSetter(Class)
+     * @see #hasPublicField(Class)
+     */
+    public static boolean isWritableBean(final Class<?> clazz) {
+        return clazz != null && (hasSetter(clazz) || hasPublicField(clazz));
+    }
+
+    // -------------------------------------------------------------------------------
     public static Map<String, Object> describe(Object bean) {
         return describe(bean, MapConfig.DEFAULT);
     }
@@ -52,15 +174,6 @@ public class BeanUtil {
 
     public static <T> T newBean(Class<T> beanClass, Map<String, Object> properties, MapConfig config) {
         return new BeanMapPopulater(config).newBean(beanClass, properties);
-    }
-
-    /**
-     * 获取{@link BeanDesc} Bean描述信息
-     * @param clazz Bean类
-     * @return {@link BeanDesc}
-     */
-    public static BeanDesc getBeanDesc(Class<?> clazz) {
-        return BeanDescCache.INSTANCE.getBeanDesc(clazz, () -> new BeanDesc(clazz));
     }
 
     /**

@@ -4,13 +4,14 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import com.github.relucent.base.common.collection.Listx;
 import com.github.relucent.base.common.collection.Mapx;
+import com.github.relucent.base.common.json.impl.DefaultJsonHandler;
 import com.github.relucent.base.common.reflect.TypeReference;
 import com.github.relucent.base.plugin.gson.GsonHandler;
 import com.github.relucent.base.plugin.jackson.JacksonHandler;
 
 /**
  * JSON解析工具类<br>
- * @deprecated 建议使用性能更好功能更强的JSON类库
+ * 建议使用性能更好功能更强的JSON类库
  */
 public class JsonUtil {
 
@@ -138,7 +139,7 @@ public class JsonUtil {
             }
         }
         if (handler == null) {
-            handler = new com.github.relucent.base.common.json.impl.JsonHandler();
+            handler = new DefaultJsonHandler();
         }
         return handler;
     }

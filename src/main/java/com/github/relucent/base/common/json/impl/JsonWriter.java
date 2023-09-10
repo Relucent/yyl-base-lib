@@ -12,7 +12,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import com.github.relucent.base.common.bean.BeanUtil;
-import com.github.relucent.base.common.bean.info.BeanPropDesc;
+import com.github.relucent.base.common.bean.introspector.PropDesc;
 import com.github.relucent.base.common.codec.Hex;
 import com.github.relucent.base.common.constant.CharConstant;
 import com.github.relucent.base.common.constant.StringConstant;
@@ -411,10 +411,10 @@ public class JsonWriter {
             Class<?> clazz = bean.getClass();
             boolean isTransientSupport = config.isTransientSupport();
             boolean ignoreNullValue = config.isIgnoreNullValue();
-            Map<String, BeanPropDesc> pdMap = BeanUtil.getBeanDesc(clazz).getPropMap();
-            for (Map.Entry<String, BeanPropDesc> pdEntry : pdMap.entrySet()) {
+            Map<String, PropDesc> pdMap = BeanUtil.getBeanDesc(clazz).getPropMap();
+            for (Map.Entry<String, PropDesc> pdEntry : pdMap.entrySet()) {
                 String name = pdEntry.getKey();
-                BeanPropDesc pd = pdEntry.getValue();
+                PropDesc pd = pdEntry.getValue();
 
                 if (!pd.isReadable(isTransientSupport)) {
                     continue;

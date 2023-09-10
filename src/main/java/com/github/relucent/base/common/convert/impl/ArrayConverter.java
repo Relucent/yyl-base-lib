@@ -78,16 +78,6 @@ public class ArrayConverter implements BasicConverter<Object> {
             // 纯字符串情况下按照逗号分隔
             return convertArrayToArray(StringUtil.split(source.toString(), StringConstant.COMMA), targetComponentType);
         }
-
-        // List转数组
-        if (source instanceof List) {
-            List<?> list = (List<?>) source;
-            Object result = Array.newInstance(targetComponentType, list.size());
-            for (int i = 0; i < list.size(); i++) {
-                Array.set(result, i, convertComponentType(list.get(i), targetComponentType));
-            }
-            return result;
-        }
         // 集合转数组
         if (source instanceof Collection) {
             Collection<?> collection = (Collection<?>) source;
