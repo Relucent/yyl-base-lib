@@ -53,22 +53,11 @@ public class LocalDateTimeUtil {
 
     /**
      * {@link TemporalAccessor}转换为 {@link LocalDateTime}对象
-     * @param temporalAccessor 时间对象
+     * @param temporal 时间对象
      * @return 日期时间对象{@code LocalDateTime}
      */
-    public static LocalDateTime toLocalDateTime(TemporalAccessor temporalAccessor) {
-        if (temporalAccessor == null) {
-            return null;
-        }
-        return LocalDateTime.of(//
-                TemporalAccessorUtil.get(temporalAccessor, ChronoField.YEAR), // 年
-                TemporalAccessorUtil.get(temporalAccessor, ChronoField.MONTH_OF_YEAR), // 月
-                TemporalAccessorUtil.get(temporalAccessor, ChronoField.DAY_OF_MONTH), // 日
-                TemporalAccessorUtil.get(temporalAccessor, ChronoField.HOUR_OF_DAY), // 时
-                TemporalAccessorUtil.get(temporalAccessor, ChronoField.MINUTE_OF_HOUR), // 分
-                TemporalAccessorUtil.get(temporalAccessor, ChronoField.SECOND_OF_MINUTE), // 秒
-                TemporalAccessorUtil.get(temporalAccessor, ChronoField.NANO_OF_SECOND)// 纳秒
-        );
+    public static LocalDateTime toLocalDateTime(TemporalAccessor temporal) {
+        return TemporalAccessorUtil.toLocalDateTime(temporal);
     }
 
     /**

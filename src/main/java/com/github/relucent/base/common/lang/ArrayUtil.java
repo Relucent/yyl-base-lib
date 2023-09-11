@@ -190,6 +190,25 @@ public class ArrayUtil {
     }
 
     /**
+     * 获得对象数组指定位置的元素<br>
+     * 如果数组下标越界，返回null
+     * @param <T> 元素类型泛型
+     * @param array 要搜索的数组
+     * @param index 下标
+     * @return 值
+     */
+    public static <T> T get(T[] array, int index) {
+        int length = array.length;
+        if (index < 0) {
+            index += length;
+        }
+        if (index < 0 || array.length <= index) {
+            return null;
+        }
+        return array[index];
+    }
+
+    /**
      * 数组中是否包含{@code null}元素,
      * @param <T> 数组元素类型
      * @param array 被检查的对象的数组
