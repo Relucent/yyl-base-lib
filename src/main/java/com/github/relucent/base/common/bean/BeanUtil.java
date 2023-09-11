@@ -12,9 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.github.relucent.base.common.bean.cache.BeanDescCache;
+import com.github.relucent.base.common.bean.cache.BeanInfoCache;
 import com.github.relucent.base.common.bean.introspector.BeanDesc;
-import com.github.relucent.base.common.bean.introspector.BeanDescCache;
-import com.github.relucent.base.common.bean.introspector.PropDesc;
 import com.github.relucent.base.common.bean.mapping.BeanMapDescriber;
 import com.github.relucent.base.common.bean.mapping.BeanMapPopulater;
 import com.github.relucent.base.common.bean.mapping.BeanMapper;
@@ -48,15 +48,6 @@ public class BeanUtil {
         return BeanDescCache.INSTANCE.getBeanDesc(beanClass);
     }
 
-    /**
-     * 获取Bean对象{@link PropDesc}列表
-     * @param beanClass Bean的类
-     * @return Bean对象的属性表
-     */
-    public static Map<String, PropDesc> getPropDescMap(Class<?> beanClass) {
-        return getBeanDesc(beanClass).getPropMap();
-    }
-
     // -------------------------------------------------------------------------------
     /**
      * 获取{@link BeanInfo} Bean 信息
@@ -64,6 +55,15 @@ public class BeanUtil {
      * @return {@link BeanInfo}
      */
     public static BeanInfo getBeanInfo(Class<?> beanClass) {
+        return BeanInfoCache.INSTANCE.getBeanInfo(beanClass);
+    }
+
+    /**
+     * 获取{@link BeanInfo} Bean 信息（直接获取）
+     * @param beanClass Bean的类
+     * @return {@link BeanInfo}
+     */
+    public static BeanInfo getBeanInfoDirectly(Class<?> beanClass) {
         try {
             return Introspector.getBeanInfo(beanClass);
         } catch (IntrospectionException e) {

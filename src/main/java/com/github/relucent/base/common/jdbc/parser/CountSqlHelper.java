@@ -1,27 +1,21 @@
 package com.github.relucent.base.common.jdbc.parser;
 
-import com.github.relucent.base.plugin.jsqlparser.CountSqlJsqlParser;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class CountSqlHelper {
 
-    private static final CountSqlParser DEFAULT_COUNT_SQL_PARSER;
-    static {
-        CountSqlParser parser = null;
-        if (parser == null) {
-            try {
-                Class.forName(net.sf.jsqlparser.parser.CCJSqlParserUtil.class.getName());
-                parser = new CountSqlJsqlParser();
-            } catch (Throwable e) {
-                /* Ignore */
-            }
-        }
-        if (parser == null) {
-            parser = new CountSqlSimpleParser();
-        }
-        DEFAULT_COUNT_SQL_PARSER = parser;
-    }
+    private static final AtomicReference<CountSqlParser> COUNT_SQL_PARSER = new AtomicReference<>();
 
     public static String getCountSql(String sql) {
-        return DEFAULT_COUNT_SQL_PARSER.getCountSql(sql);
+        return getCountSqlParser().getCountSql(sql);
+    }
+
+    public static void setCountSqlParser(CountSqlParser parser) {
+        COUNT_SQL_PARSER.set(parser);
+    }
+
+    private static CountSqlParser getCountSqlParser() {
+        CountSqlParser parser = COUNT_SQL_PARSER.get();
+        return parser == null ? CountSqlSimpleParser.INSTANCE : parser;
     }
 }

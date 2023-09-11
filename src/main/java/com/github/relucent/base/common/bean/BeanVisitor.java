@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
-import com.github.relucent.base.common.bean.introspector.BeanDescCache;
 import com.github.relucent.base.common.bean.introspector.PropDesc;
 
 /**
@@ -55,7 +54,7 @@ public class BeanVisitor {
                 consumer.accept(String.valueOf(key), value);
             }
         } else {
-            Collection<PropDesc> pds = BeanDescCache.INSTANCE.getBeanDesc(source.getClass()).getProps();
+            Collection<PropDesc> pds = BeanUtil.getBeanDesc(source.getClass()).getProps();
             for (final PropDesc pd : pds) {
                 String propertyName = pd.getFieldName();
                 Object propertyValue = pd.getValue(source);
