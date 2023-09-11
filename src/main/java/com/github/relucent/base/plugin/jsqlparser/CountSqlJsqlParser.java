@@ -33,6 +33,9 @@ import net.sf.jsqlparser.statement.select.WithItem;
  */
 public class CountSqlJsqlParser implements CountSqlParser {
 
+    /** 解析类实例 */
+    public static final CountSqlJsqlParser INSTANCE = new CountSqlJsqlParser();
+
     /** 保持 OrderBy注释 （特殊sql不需要去掉order by时，使用注释前缀） */
     public static final String KEEP_ORDERBY = "/*keep orderby*/";
 
