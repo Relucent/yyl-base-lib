@@ -33,11 +33,13 @@ public class DialectRouteUtil {
         // PostgreSql
         DIALECT_ALIAS_MAP.put("postgresql", PostgreSqlDialect.class);
         DIALECT_ALIAS_MAP.put("greenplum", PostgreSqlDialect.class);
+        DIALECT_ALIAS_MAP.put("kingbase8", PostgreSqlDialect.class);
 
         // MySql
         DIALECT_ALIAS_MAP.put("mysql", MySqlDialect.class);
         DIALECT_ALIAS_MAP.put("mariadb", MySqlDialect.class);
         DIALECT_ALIAS_MAP.put("sqlite", MySqlDialect.class);
+        DIALECT_ALIAS_MAP.put("clickhouse", MySqlDialect.class);
 
         // Oracle
         DIALECT_ALIAS_MAP.put("oracle", OracleDialect.class);

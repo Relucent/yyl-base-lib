@@ -6,6 +6,7 @@ import java.util.Set;
 
 import com.github.relucent.base.common.collection.ConcurrentHashSet;
 import com.github.relucent.base.common.jdbc.parser.CountSqlParser;
+import com.github.relucent.base.common.lang.CharSequenceUtil;
 
 import net.sf.jsqlparser.expression.Alias;
 import net.sf.jsqlparser.expression.Expression;
@@ -35,9 +36,6 @@ public class CountSqlJsqlParser implements CountSqlParser {
 
     /** 解析类实例 */
     public static final CountSqlJsqlParser INSTANCE = new CountSqlJsqlParser();
-
-    /** 保持 OrderBy注释 （特殊sql不需要去掉order by时，使用注释前缀） */
-    public static final String KEEP_ORDERBY = "/*keep orderby*/";
 
     /**
      * 聚合函数，以下列函数开头的都认为是聚合函数
@@ -106,10 +104,12 @@ public class CountSqlJsqlParser implements CountSqlParser {
     private String getSmartCountSql(String sql) {
         // 解析SQL
         Statement stmt = null;
-        // 特殊sql不需要去掉order by时，使用注释前缀
-        if (sql.indexOf(KEEP_ORDERBY) >= 0) {
+
+        // 特殊SQL不需要去掉order by时，使用注释前缀
+        if (CharSequenceUtil.startWithIgnoreCase(sql, KEEP_ORDERBY)) {
             return getSimpleCountSql(sql);
         }
+
         try {
             stmt = CCJSqlParserUtil.parse(sql);
         } catch (Throwable e) {
