@@ -2,6 +2,7 @@ package com.github.relucent.base.common.jdbc;
 
 import java.util.regex.Pattern;
 
+import com.github.relucent.base.common.constant.StringConstant;
 import com.github.relucent.base.common.lang.StringUtil;
 
 /**
@@ -9,8 +10,10 @@ import com.github.relucent.base.common.lang.StringUtil;
  */
 public class SqlUtil {
     // ==============================Fields===========================================
-    private static final Pattern ORDER_BY_PATTERN = Pattern.compile("\\s+ORDER\\s+BY\\s+\\S+(\\s*(ASC|DESC)?)(\\s*,\\s*\\S+(\\s*(ASC|DESC)?))*\\s*$",
-            Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+    private static final Pattern ORDER_BY_PATTERN = Pattern.compile(//
+            "order\\s+by\\s+[^,\\s]+(\\s+asc|\\s+desc)?(\\s*,\\s*[^,\\s]+(\\s+asc|\\s+desc)?)*", //
+            Pattern.CASE_INSENSITIVE | Pattern.MULTILINE//
+    );
 
     // ==============================Constructors=====================================
     /**
@@ -38,12 +41,12 @@ public class SqlUtil {
     }
 
     /**
-     * 移除表达式末尾的排序语句
+     * 移除表达式的排序语句
      * @param sql 查询表达式
-     * @return 去除末尾排序语句的查询表达式
+     * @return 去除排序语句的查询表达式
      */
     public static String removeOrderByExpression(String sql) {
-        return ORDER_BY_PATTERN.matcher(sql).replaceAll(" ");
+        return ORDER_BY_PATTERN.matcher(sql).replaceAll(StringConstant.EMPTY);
     }
 
     /**
