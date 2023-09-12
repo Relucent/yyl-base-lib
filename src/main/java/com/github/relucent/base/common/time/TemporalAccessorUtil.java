@@ -10,7 +10,6 @@ import java.time.Month;
 import java.time.MonthDay;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.chrono.Era;
 import java.time.format.DateTimeFormatter;
@@ -156,7 +155,7 @@ public class TemporalAccessorUtil {
                 get(temporal, ChronoField.NANO_OF_SECOND), // 纳秒
                 ObjectUtil.defaultIfNullGet(// 时区
                         temporal.query(TemporalQueries.zone()), //
-                        ZoneId::systemDefault//
+                        ZoneUtil::getDefaultZoneId//
                 ));
     }
 
@@ -173,7 +172,7 @@ public class TemporalAccessorUtil {
             return (Instant) temporal;
         }
         if (temporal instanceof LocalDateTime) {
-            return ((LocalDateTime) temporal).atZone(ZoneId.systemDefault()).toInstant();
+            return ((LocalDateTime) temporal).atZone(ZoneUtil.getDefaultZoneId()).toInstant();
         }
         if (temporal instanceof ZonedDateTime) {
             return ((ZonedDateTime) temporal).toInstant();
@@ -182,18 +181,30 @@ public class TemporalAccessorUtil {
             return ((OffsetDateTime) temporal).toInstant();
         }
         if (temporal instanceof LocalDate) {
-            return ((LocalDate) temporal).atStartOfDay(ZoneId.systemDefault()).toInstant();
+            return ((LocalDate) temporal).atStartOfDay(ZoneUtil.getDefaultZoneId()).toInstant();
         }
         if (temporal instanceof LocalTime) {
             // 指定本地时间转换 为Instant，取当天日期
-            return ((LocalTime) temporal).atDate(LocalDate.now()).atZone(ZoneId.systemDefault()).toInstant();
+            return ((LocalTime) temporal).atDate(LocalDate.now()).atZone(ZoneUtil.getDefaultZoneId()).toInstant();
         }
         if (temporal instanceof OffsetTime) {
             // 指定本地时间转换 为Instant，取当天日期
             return ((OffsetTime) temporal).atDate(LocalDate.now()).toInstant();
         }
         // Instant
-        return Instant.from(temporal);
+        try {
+            return Instant.from(temporal);
+        } catch (Exception e) {
+            return (LocalDateTime.of(//
+                    get(temporal, ChronoField.YEAR), // 年
+                    get(temporal, ChronoField.MONTH_OF_YEAR), // 月
+                    get(temporal, ChronoField.DAY_OF_MONTH), // 日
+                    get(temporal, ChronoField.HOUR_OF_DAY), // 时
+                    get(temporal, ChronoField.MINUTE_OF_HOUR), // 分
+                    get(temporal, ChronoField.SECOND_OF_MINUTE), // 秒
+                    get(temporal, ChronoField.NANO_OF_SECOND)// 纳秒
+            )).atZone(ZoneUtil.getDefaultZoneId()).toInstant();
+        }
     }
 
     /**
@@ -228,7 +239,7 @@ public class TemporalAccessorUtil {
                 return formatter.format(((LocalTime) temporal).atDate(LocalDate.now()));
             } else if (temporal instanceof Instant) {
                 // 时间戳没有时区信息，赋予默认时区
-                return formatter.format(((Instant) temporal).atZone(ZoneId.systemDefault()));
+                return formatter.format(((Instant) temporal).atZone(ZoneUtil.getDefaultZoneId()));
             }
             throw e;
         }
