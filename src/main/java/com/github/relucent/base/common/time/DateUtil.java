@@ -4,7 +4,9 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
@@ -30,7 +32,7 @@ public class DateUtil {
     /** 零时区格式特殊处理，该格式24个字符 */
     private static final String ISO_8601_ZERO_ZONE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
     /** 可解析的日期格式列表 */
-    private static final String[] PARSE_DATE_PATTERNS = Arrays.asList(//
+    private static final String[] PARSE_DATE_PATTERNS = { //
             ISO8601_FORMAT, //
             DATETIME_FORMAT, //
             "yyyy-MM-dd'T'HH:mm:ss.SSSZZ", //
@@ -48,27 +50,16 @@ public class DateUtil {
             "yyyyMMdd", //
             "yyyyMM", //
             "yyyy"//
-    ).toArray(new String[0]);
-
-    /** DateFormat线程持有(保证线程安全) */
-    private static final ThreadLocal<DateFormat> ISO8601_FORMAT_HOLDER = new ThreadLocal<DateFormat>() {
-        protected DateFormat initialValue() {
-            return new SimpleDateFormat(ISO8601_FORMAT);
-        };
     };
 
     /** DateFormat线程持有(保证线程安全) */
-    private static final ThreadLocal<DateFormat> DATETIME_FORMAT_HOLDER = new ThreadLocal<DateFormat>() {
-        protected DateFormat initialValue() {
-            return new SimpleDateFormat(DATETIME_FORMAT);
-        };
-    };
+    private static final ThreadLocal<DateFormat> ISO8601_FORMAT_HOLDER = ThreadLocal.withInitial(() -> new SimpleDateFormat(ISO8601_FORMAT));
+
     /** DateFormat线程持有(保证线程安全) */
-    private static final ThreadLocal<DateFormat> DATE_FORMAT_HOLDER = new ThreadLocal<DateFormat>() {
-        protected DateFormat initialValue() {
-            return new SimpleDateFormat(DATE_FORMAT);
-        };
-    };
+    private static final ThreadLocal<DateFormat> DATETIME_FORMAT_HOLDER = ThreadLocal.withInitial(() -> new SimpleDateFormat(DATETIME_FORMAT));
+
+    /** DateFormat线程持有(保证线程安全) */
+    private static final ThreadLocal<DateFormat> DATE_FORMAT_HOLDER = ThreadLocal.withInitial(() -> new SimpleDateFormat(DATE_FORMAT));
 
     /**
      * 工具类方法，实例不应在标准编程中构造。
@@ -98,6 +89,24 @@ public class DateUtil {
      */
     public static Date max() {
         return new Date(MAX_MILLIS);
+    }
+
+    /**
+     * 转换 {@link LocalDate} 为 {@link Calendar} 类型
+     * @param localDate {@link LocalDate}
+     * @return {@link Date}
+     */
+    public static Date toDate(final LocalDate localDate) {
+        return Date.from(localDate.atStartOfDay(ZoneUtil.getDefaultZoneId()).toInstant());
+    }
+
+    /**
+     * 转换 {@link LocalDateTime} 为 {@link Calendar} 类型
+     * @param localDateTime {@link LocalDateTime}
+     * @return {@link Date}
+     */
+    public static Date toDate(final LocalDateTime localDateTime) {
+        return Date.from(localDateTime.atZone(ZoneUtil.getDefaultZoneId()).toInstant());
     }
 
     /**

@@ -1,7 +1,12 @@
 package com.github.relucent.base.common.time;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZonedDateTime;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 /**
  * 日历工具类
@@ -17,7 +22,7 @@ public class CalendarUtil {
     /**
      * 转换 {@link Date} 为 {@link Calendar} 类型
      * @param date {@link Date}
-     * @return {link {@link Calendar}}
+     * @return {@link Calendar}
      */
     public static Calendar toCalendar(Date date) {
         Calendar calendar = Calendar.getInstance();
@@ -26,14 +31,32 @@ public class CalendarUtil {
     }
 
     /**
-     * 转换 {@link Date} 为 {@link Calendar} 类型
+     * 转换毫秒值为 {@link Calendar} 类型
      * @param millis 时间的毫秒值
-     * @return {link {@link Calendar}}
+     * @return {@link Calendar}
      */
     public static Calendar toCalendar(long millis) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(millis);
         return calendar;
+    }
+
+    /**
+     * 转换 {@link LocalDateTime} 为 {@link Calendar} 类型
+     * @param localDateTime {@link LocalDateTime}
+     * @return {@link Calendar}
+     */
+    public static Calendar toCalendar(final LocalDateTime localDateTime) {
+        return GregorianCalendar.from(ZonedDateTime.of(localDateTime, ZoneUtil.getDefaultZoneId()));
+    }
+
+    /**
+     * 转换 {@link LocalDate} 为 {@link Calendar} 类型
+     * @param localDate {@link LocalDate}
+     * @return {@link Calendar}
+     */
+    public static Calendar toCalendar(final LocalDate localDate) {
+        return GregorianCalendar.from(ZonedDateTime.of(localDate, LocalTime.MIDNIGHT, ZoneUtil.getDefaultZoneId()));
     }
 
     /**
