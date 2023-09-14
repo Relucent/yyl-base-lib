@@ -101,11 +101,7 @@ public class TemporalAccessorUtil {
             // ignore
         }
         try {
-            return LocalDateTime.ofInstant(Instant.from(temporal), // 时间点
-                    ObjectUtil.defaultIfNullGet(// 时区
-                            temporal.query(TemporalQueries.zone()), //
-                            ZoneUtil::getDefaultZoneId//
-                    ));
+            return LocalDateTime.ofInstant(Instant.from(temporal), ZoneUtil.getDefaultZoneId());
         } catch (DateTimeException e) {
             // ignore
         }
@@ -137,11 +133,7 @@ public class TemporalAccessorUtil {
             // ignore
         }
         try {
-            return ZonedDateTime.ofInstant(Instant.from(temporal), // 时间点
-                    ObjectUtil.defaultIfNullGet(// 时区
-                            temporal.query(TemporalQueries.zone()), //
-                            ZoneUtil::getDefaultZoneId//
-                    ));
+            return ZonedDateTime.ofInstant(Instant.from(temporal), ZoneUtil.getDefaultZoneId());
         } catch (DateTimeException e2) {
             // ignore
         }

@@ -1,5 +1,7 @@
 package com.github.relucent.base.common.convert.impl;
 
+import java.sql.Timestamp;
+import java.time.temporal.TemporalAccessor;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.regex.Matcher;
@@ -7,7 +9,12 @@ import java.util.regex.Pattern;
 
 import com.github.relucent.base.common.convert.BasicConverter;
 import com.github.relucent.base.common.convert.Converter;
+import com.github.relucent.base.common.reflect.TypeReference;
+import com.github.relucent.base.common.reflect.TypeReferenceCache;
+import com.github.relucent.base.common.reflect.internal.ObjectConstructor;
+import com.github.relucent.base.common.reflect.internal.ObjectConstructorCache;
 import com.github.relucent.base.common.time.DateUtil;
+import com.github.relucent.base.common.time.TemporalAccessorUtil;
 
 /**
  * 日期类型转换器
@@ -23,48 +30,69 @@ public class DateConverter implements BasicConverter<Date> {
 
     public Date convertInternal(Object source, Class<? extends Date> toType) {
         try {
-
-            Long mills = null;
-
-            if (source == null) {
-                mills = null;
-            } else if (source instanceof Number) {
-                mills = ((Number) source).longValue();
-            } else if (source instanceof Date) {
-                mills = ((Date) source).getTime();
-            } else if (source instanceof Calendar) {
-                mills = ((Calendar) source).getTimeInMillis();
-            } else {
-                final String value = String.valueOf(source);
-                Matcher dateMatcher = DATE_PATTERN.matcher(value);
-                if (dateMatcher.matches() && dateMatcher.find()) {
-                    String msel = dateMatcher.group(1);
-                    mills = Long.parseLong(msel);
-                } else {
-                    Date date = DateUtil.parseDate(value);
-                    if (date != null) {
-                        mills = date.getTime();
-                    }
-                }
-            }
-            if (mills == null) {
-                return null;
-            }
-            if (java.util.Date.class == toType) {
-                return new java.util.Date(mills);
-            }
-            if (java.sql.Date.class == toType) {
-                return new java.sql.Date(mills);
-            }
-            if (java.sql.Time.class == toType) {
-                return new java.sql.Time(mills);
-            }
-            if (java.sql.Timestamp.class == toType) {
-                return new java.sql.Timestamp(mills);
-            }
+            Long mills = toEpochMilli(source);
+            return mills == null ? null : wrap(mills, toType);
         } catch (Exception ignore) {
             // Ignore//
         }
         return null;
+    }
+
+    private static Long toEpochMilli(final Object source) {
+        if (source == null) {
+            return null;
+        }
+        if (source instanceof Date) {
+            return ((Date) source).getTime();
+        }
+        if (source instanceof Number) {
+            return ((Number) source).longValue();
+        }
+
+        if (source instanceof Calendar) {
+            return ((Calendar) source).getTimeInMillis();
+        }
+        if (source instanceof TemporalAccessor) {
+            return TemporalAccessorUtil.toEpochMilli((TemporalAccessor) source);
+        }
+
+        final String value = String.valueOf(source);
+        Matcher dateMatcher = DATE_PATTERN.matcher(value);
+        if (dateMatcher.matches() && dateMatcher.find()) {
+            String msel = dateMatcher.group(1);
+            return Long.parseLong(msel);
+        }
+
+        final TemporalAccessor temporal = TemporalAccessorUtil.parse(value);
+        if (temporal != null) {
+            return TemporalAccessorUtil.toEpochMilli(temporal);
+        }
+
+        final Date date = DateUtil.parseDate(value);
+        if (date != null) {
+            return date.getTime();
+        }
+
+        return null;
+    }
+
+    private static Date wrap(final long mills, final Class<?> toType) {
+        if (java.util.Date.class.equals(toType)) {
+            return new Date(mills);
+        }
+        if (java.sql.Date.class.equals(toType)) {
+            return new java.sql.Date(mills);
+        }
+        if (java.sql.Time.class.equals(toType)) {
+            return new java.sql.Time(mills);
+        }
+        if (java.sql.Timestamp.class.equals(toType)) {
+            return new Timestamp(mills);
+        }
+        TypeReference<? extends Date> typeReference = TypeReferenceCache.INSTANCE.get(toType);
+        ObjectConstructor<? extends Date> constructor = ObjectConstructorCache.INSTANCE.get(typeReference);
+        Date date = constructor.construct();
+        date.setTime(mills);
+        return date;
     }
 }
