@@ -38,6 +38,15 @@ public class CollectionUtil {
     }
 
     /**
+     * 判断集合是否不为空
+     * @param collection 集合
+     * @return 集合是否不为空
+     */
+    public static boolean isNotEmpty(Collection<?> collection) {
+        return !isEmpty(collection);
+    }
+
+    /**
      * 获得集合第一个元素
      * @param <E> 元素类型泛型
      * @param collection 集合对象
