@@ -21,6 +21,7 @@ import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import com.github.relucent.base.common.constant.CharsetConstant;
 import com.github.relucent.base.common.constant.IoConstant;
@@ -349,6 +350,21 @@ public class IoUtil {
             return list;
         } catch (IOException e) {
             throw IoRuntimeException.wrap(e);
+        }
+    }
+
+    /**
+     * 获取读取器的内容作为字符串列表，每行一个条目。
+     * @param input 字符读取流
+     * @param action 每行处理方法
+     * @throws IOException 出现IO错误，抛出异常
+     */
+    public static void readLines(final Reader input, final Consumer<String> action) throws IOException {
+        final BufferedReader reader = buffer(input);
+        String line = reader.readLine();
+        while (line != null) {
+            action.accept(line);
+            line = reader.readLine();
         }
     }
 

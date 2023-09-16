@@ -16,10 +16,8 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
 import java.time.temporal.TemporalAccessor;
 import java.time.temporal.TemporalField;
-import java.time.temporal.TemporalQueries;
 import java.time.temporal.UnsupportedTemporalTypeException;
 
-import com.github.relucent.base.common.lang.ObjectUtil;
 import com.github.relucent.base.common.lang.StringUtil;
 
 /**
@@ -95,16 +93,33 @@ public class TemporalAccessorUtil {
         if (temporal == null) {
             return null;
         }
+
+        if (temporal instanceof Instant) {
+            return LocalDateTime.ofInstant((Instant) temporal, ZoneUtil.getDefaultZoneId());
+        }
+
+        if (temporal instanceof LocalDate) {
+            return ((LocalDate) temporal).atStartOfDay();
+        }
+
         try {
             return LocalDateTime.from(temporal);
         } catch (DateTimeException e) {
             // ignore
         }
+
+        try {
+            return ZonedDateTime.from(temporal).toLocalDateTime();
+        } catch (final Exception ignore) {
+            // ignore
+        }
+
         try {
             return LocalDateTime.ofInstant(Instant.from(temporal), ZoneUtil.getDefaultZoneId());
         } catch (DateTimeException e) {
             // ignore
         }
+
         return LocalDateTime.of(//
                 get(temporal, ChronoField.YEAR), // 年
                 get(temporal, ChronoField.MONTH_OF_YEAR), // 月
@@ -127,6 +142,14 @@ public class TemporalAccessorUtil {
         if (temporal == null) {
             return null;
         }
+
+        if (temporal instanceof Instant) {
+            return ZonedDateTime.ofInstant((Instant) temporal, ZoneUtil.getDefaultZoneId());
+        }
+        if (temporal instanceof LocalDateTime) {
+            return ((LocalDateTime) temporal).atZone(ZoneUtil.getDefaultZoneId());
+        }
+
         try {
             return ZonedDateTime.from(temporal);
         } catch (DateTimeException e) {
@@ -137,6 +160,7 @@ public class TemporalAccessorUtil {
         } catch (DateTimeException e2) {
             // ignore
         }
+
         return ZonedDateTime.of(//
                 get(temporal, ChronoField.YEAR), // 年
                 get(temporal, ChronoField.MONTH_OF_YEAR), // 月
@@ -145,10 +169,8 @@ public class TemporalAccessorUtil {
                 get(temporal, ChronoField.MINUTE_OF_HOUR), // 分
                 get(temporal, ChronoField.SECOND_OF_MINUTE), // 秒
                 get(temporal, ChronoField.NANO_OF_SECOND), // 纳秒
-                ObjectUtil.defaultIfNullGet(// 时区
-                        temporal.query(TemporalQueries.zone()), //
-                        ZoneUtil::getDefaultZoneId//
-                ));
+                ZoneUtil.getDefaultZoneId() // 时区
+        );
     }
 
     /**
