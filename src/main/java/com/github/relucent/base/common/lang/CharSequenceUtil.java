@@ -415,6 +415,29 @@ public class CharSequenceUtil {
     }
 
     /**
+     * 指定范围内查找指定字符
+     * @param cs 要处理的字符序列 {@code CharSequence}
+     * @param ch 被查找的字符
+     * @param start 起始位置，如果小于0，从0开始查找
+     * @param end 终止位置
+     * @param ignoreCase 是否不区分大小写
+     * @return 位置
+     */
+    static int indexOf(final CharSequence cs, final char ch, final int start, final int end, final boolean ignoreCase) {
+        int from = Math.max(start, 0);
+        int to = Math.min(end, cs.length());
+        if (!ignoreCase && cs instanceof String && ((String) cs).length() == to) {
+            return ((String) cs).indexOf(ch, from);
+        }
+        for (int i = from; i < to; i++) {
+            if (CharUtil.equals(ch, cs.charAt(i), ignoreCase)) {
+                return i;
+            }
+        }
+        return NOT_FOUND;
+    }
+
+    /**
      * 是否匹配
      * @param cs 要处理的字符序列
      * @param search 要检索的字符序列
