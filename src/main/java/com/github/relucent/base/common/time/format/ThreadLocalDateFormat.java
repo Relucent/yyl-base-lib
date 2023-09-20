@@ -34,7 +34,7 @@ public class ThreadLocalDateFormat {
 
     /**
      * 解析日期字符串
-     * @param date 要解析的日期字符串
+     * @param source 要解析的日期字符串
      * @return 日期对象
      * @throws ParseException 如果解析失败抛出该异常
      */
@@ -44,7 +44,7 @@ public class ThreadLocalDateFormat {
 
     /**
      * 解析日期字符串，如果解析失败返回 {@code null}
-     * @param date 要解析的日期字符串
+     * @param source 要解析的日期字符串
      * @return 日期对象
      */
     public final Date parseQuietly(String source) {

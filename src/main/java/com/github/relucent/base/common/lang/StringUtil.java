@@ -727,7 +727,7 @@ public class StringUtil {
      *
      * @param text 要检查的文本
      * @param search 要查找的字符串
-     * @return 如果文本中包含要查找的字符串则返回 true，否则返回false
+     * @return 如果文本中包含要查找的字符串则返回 {@code true}，否则返回{@code false}
      */
     public static boolean contains(final CharSequence text, final CharSequence search) {
         return indexOf(text, search) >= 0;
@@ -777,6 +777,48 @@ public class StringUtil {
         return INDEX_NOT_FOUND;
     }
 
+    /**
+     * 指定字符在文本中出现的位置
+     * @param text 用于查找的文本
+     * @param search 被查找的字符
+     * @return 字符第一次出现的位置，如果未找到返回 -1
+     */
+    public static int indexOf(final CharSequence text, final char search) {
+        return indexOf(text, search, 0);
+    }
+
+    /**
+     * 指定字符在文本中出现的位置
+     * @param text 用于查找的文本
+     * @param search 被查找的字符
+     * @param startPos 开始查找的位置
+     * @return 字符第一次出现的位置，如果未找到返回 -1
+     */
+    public static int indexOf(final CharSequence text, final char search, final int startPos) {
+        return CharSequenceUtil.indexOf(text, search, startPos);
+    }
+
+    /**
+     * 判断文本中是否包含指定字符
+     * 
+     * <pre>
+     * StringUtil.contains(null, *)     = false
+     * StringUtil.contains("", *)       = false
+     * StringUtil.contains("123", '1')  = true
+     * StringUtil.contains("abc", 'a')  = true
+     * StringUtil.contains("abc", 'a')  = true
+     * StringUtil.contains("abc", 'z')  = false
+     * </pre>
+     *
+     * @param text 要检查的文本
+     * @param search 要查找的字符
+     * @return 如果文本中包含要查找的字符返回 {@code true}，否则返回{@code false}
+     */
+    public static boolean contains(final CharSequence text, final char search) {
+        return indexOf(text, search) > -1;
+    }
+
+    // ==============================ModifyMethods====================================
     /**
      * 替换字符串
      * 
@@ -882,7 +924,6 @@ public class StringUtil {
         return buf.toString();
     }
 
-    // ==============================ModifyMethods====================================
     /**
      * 忽略大小写去掉指定前缀
      * @param str 字符串
@@ -960,6 +1001,72 @@ public class StringUtil {
      */
     public static String removeAllLineBreak(CharSequence cs) {
         return removeAll(cs, CharConstant.CR, CharConstant.LF);
+    }
+
+    /**
+     * 判断文本中的字符是否全部为大写。<br>
+     * 1. 大写字母包括A-Z<br>
+     * 2. 其它非字母的Unicode符都算作大写<br>
+     * @param text 被检查的文本
+     * @return 是否全部为大写
+     */
+    public static boolean isAllUpperCase(final CharSequence text) {
+        if (StringUtil.isEmpty(text)) {
+            return false;
+        }
+        for (int i = 0, length = text.length(); i < length; i++) {
+            if (Character.isLowerCase(text.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 判断文本中的字符是否全部为小写<br>
+     * 1. 小写字母包括a-z<br>
+     * 2. 其它非字母的Unicode符都算作大写<br>
+     * @param text 被检查的文本
+     * @return 是否全部为大写
+     */
+    public static boolean isAllLowerCase(final CharSequence text) {
+        if (StringUtil.isEmpty(text)) {
+            return false;
+        }
+        for (int i = 0, length = text.length(); i < length; i++) {
+            if (Character.isUpperCase(text.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 切换文本中的大小写，大写转小写，小写转大写。
+     *
+     * <pre>
+     * NamingCaseUtil.swapCase(null)                    = null
+     * NamingCaseUtil.swapCase("")                      = ""
+     * NamingCaseUtil.swapCase("Hello World")           = "hELLO wORLD"
+     * </pre>
+     *
+     * @param text 文本
+     * @return 交换后的文本
+     */
+    public static String swapCase(final String text) {
+        if (StringUtil.isEmpty(text)) {
+            return text;
+        }
+        char[] chars = text.toCharArray();
+        for (int i = 0; i < chars.length; i++) {
+            final char ch = chars[i];
+            if (Character.isUpperCase(ch) || Character.isTitleCase(ch)) {
+                chars[i] = Character.toLowerCase(ch);
+            } else if (Character.isLowerCase(ch)) {
+                chars[i] = Character.toUpperCase(ch);
+            }
+        }
+        return new String(chars);
     }
 
     // ==============================ConvertStringMethods=============================
