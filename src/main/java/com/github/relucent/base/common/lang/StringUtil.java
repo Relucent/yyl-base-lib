@@ -1045,9 +1045,9 @@ public class StringUtil {
      * 切换文本中的大小写，大写转小写，小写转大写。
      *
      * <pre>
-     * NamingCaseUtil.swapCase(null)                    = null
-     * NamingCaseUtil.swapCase("")                      = ""
-     * NamingCaseUtil.swapCase("Hello World")           = "hELLO wORLD"
+     * StringUtil.swapCase(null)                    = null
+     * StringUtil.swapCase("")                      = ""
+     * StringUtil.swapCase("Hello World")           = "hELLO wORLD"
      * </pre>
      *
      * @param text 文本

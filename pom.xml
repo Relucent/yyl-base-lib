@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.relucent</groupId>
 	<artifactId>yyl-base-lib</artifactId>
-	<version>0.2.9</version>
+	<version>0.3.0-SNAPSHOT</version>
 	<name>Common Base Library</name>
 	<description>Common Base Library</description>
 	<url>https://github.com/Relucent/yyl-base-lib</url>
