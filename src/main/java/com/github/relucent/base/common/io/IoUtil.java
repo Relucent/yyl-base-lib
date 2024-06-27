@@ -196,7 +196,7 @@ public class IoUtil {
 
 	/**
 	 * 无条件地的关闭可关闭{@link AutoCloseable}对象，忽略任何异常。<br>
-	 * @param objsToClose 需要关闭的对象
+	 * @param closeable 需要关闭的对象
 	 */
 	public static void closeQuietly(AutoCloseable closeable) {
 		if (closeable != null) {
