@@ -66,7 +66,8 @@ public class HttpResponse extends HttpBase<HttpResponse> {
 		if (previousResponse != null) {
 			numRedirects = previousResponse.numRedirects + 1;
 			if (numRedirects >= MAX_REDIRECTS)
-				throw new IOException(String.format("Too many redirects occurred trying to load URL %s", previousResponse.getUrl()));
+				throw new IOException(
+						String.format("Too many redirects occurred trying to load URL %s", previousResponse.getUrl()));
 		}
 	}
 
@@ -136,9 +137,9 @@ public class HttpResponse extends HttpBase<HttpResponse> {
 			// it
 			String contentType = res.getContentType();
 			if (contentType != null && !req.isIgnoreContentType() && !contentType.startsWith("text/")
-					&& !xmlContentTypeRxp.matcher(contentType).matches())
-				throw new IOException("Unhandled content type[" + contentType + "]. Must be text/*, application/xml, or application/xhtml+xml "
-						+ req.getUrl().toString());
+					&& !contentType.startsWith("application/json") && !xmlContentTypeRxp.matcher(contentType).matches())
+				throw new IOException("Unhandled content type[" + contentType
+						+ "]. Must be text/*, application/xml, or application/xhtml+xml " + req.getUrl().toString());
 
 			res.charset = DataUtil.getCharsetFromContentType(res.contentType); // may be null,
 																				// readInputStream
@@ -196,7 +197,8 @@ public class HttpResponse extends HttpBase<HttpResponse> {
 	}
 
 	public String getBodyAsString() {
-		AssertUtil.isTrue(executed, "Request must be executed (with .execute(), .get(), or .post() before getting response body");
+		AssertUtil.isTrue(executed,
+				"Request must be executed (with .execute(), .get(), or .post() before getting response body");
 		// charset gets set from header on execute, and from meta-equiv on parse. parse may not
 		// have happened yet
 		String body;
@@ -209,7 +211,8 @@ public class HttpResponse extends HttpBase<HttpResponse> {
 	}
 
 	public byte[] getBodyAsBytes() {
-		AssertUtil.isTrue(executed, "Request must be executed (with .execute(), .get(), or .post() before getting response body");
+		AssertUtil.isTrue(executed,
+				"Request must be executed (with .execute(), .get(), or .post() before getting response body");
 		return byteData.array();
 	}
 
@@ -403,7 +406,8 @@ public class HttpResponse extends HttpBase<HttpResponse> {
 		return bound;
 	}
 
-	private static void writePost(final HttpRequest req, final OutputStream outputStream, final String bound) throws IOException {
+	private static void writePost(final HttpRequest req, final OutputStream outputStream, final String bound)
+			throws IOException {
 		final Collection<KeyValue> data = req.getData();
 		final BufferedWriter w = new BufferedWriter(new OutputStreamWriter(outputStream, req.getPostDataCharset()));
 
