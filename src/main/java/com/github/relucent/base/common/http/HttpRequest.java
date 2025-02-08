@@ -9,8 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
-import javax.xml.bind.DatatypeConverter;
-
+import com.github.relucent.base.common.codec.Base64;
 import com.github.relucent.base.common.lang.AssertUtil;
 import com.github.relucent.base.common.lang.StringUtil;
 
@@ -78,8 +77,7 @@ public class HttpRequest extends HttpBase<HttpRequest> {
 	public HttpRequest setProxy(Proxy proxy, String username, String password) {
 		setProxy(proxy);
 		if (StringUtil.isNotEmpty(username) && StringUtil.isNotEmpty(password)) {
-			setHeader("Proxy-Authorization",
-					"Basic " + DatatypeConverter.printBase64Binary((username + ":" + password).getBytes()));
+			setHeader("Proxy-Authorization", "Basic " + Base64.encode((username + ":" + password).getBytes()));
 		}
 		return this;
 	}

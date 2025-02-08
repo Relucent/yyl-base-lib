@@ -7,21 +7,23 @@ package com.github.relucent.base.common.codec;
  */
 public class Base64 {
 
-    /**
-     * 将字节数组编码成Base64字符串
-     * @param data 字节数组
-     * @return Base64字符串
-     */
-    public static String encode(byte[] data) {
-        return javax.xml.bind.DatatypeConverter.printBase64Binary(data);
-    }
+	/**
+	 * 将字节数组编码成Base64字符串
+	 * @param data 字节数组
+	 * @return Base64字符串
+	 */
+	public static String encode(byte[] data) {
+		// javax.xml.bind.DatatypeConverter.printBase64Binary(data); #JDK7-
+		return java.util.Base64.getEncoder().encodeToString(data);
+	}
 
-    /**
-     * 将Base64字符串解码成字节数组
-     * @param base64 Base64字符串
-     * @return 字节数组
-     */
-    public static byte[] decode(String base64) {
-        return javax.xml.bind.DatatypeConverter.parseBase64Binary(base64);
-    }
+	/**
+	 * 将Base64字符串解码成字节数组
+	 * @param base64 Base64字符串
+	 * @return 字节数组
+	 */
+	public static byte[] decode(String base64) {
+		// javax.xml.bind.DatatypeConverter.parseBase64Binary(base64); JDK7-
+		return java.util.Base64.getDecoder().decode(base64);
+	}
 }
