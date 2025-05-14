@@ -39,7 +39,7 @@ public class ParallelWorker {
     /**
      * 开始执行任务
      * @param threads 执行线程数
-     * @throws IllegalStateException 如果执行器运行状态错误
+     * @throws IllegalStateException       如果执行器运行状态错误
      * @throws InterruptedRuntimeException 如果当前线程被中断
      */
     public synchronized void run(int threads) {
@@ -49,7 +49,7 @@ public class ParallelWorker {
     /**
      * 开始执行任务
      * @param timeout 超时时间
-     * @throws IllegalStateException 如果执行器运行状态错误
+     * @throws IllegalStateException       如果执行器运行状态错误
      * @throws InterruptedRuntimeException 如果当前线程被中断
      */
     public synchronized void run(Duration timeout) {
@@ -60,7 +60,7 @@ public class ParallelWorker {
      * 开始执行任务
      * @param threads 执行线程数
      * @param timeout 超时时间
-     * @throws IllegalStateException 如果执行器运行状态错误
+     * @throws IllegalStateException       如果执行器运行状态错误
      * @throws InterruptedRuntimeException 如果当前线程被中断
      */
     public synchronized void run(int threads, Duration timeout) {
@@ -80,13 +80,14 @@ public class ParallelWorker {
                 return;
             }
             int size = queue.size();
+            int limit = Math.max(1, Math.min(threads, size));
 
             CountDownLatch latch = new CountDownLatch(size);
             Semaphore semaphore = new Semaphore(threads);
 
             GlobalThreadPool pool = GlobalThreadPool.getInstance();
             List<Future<?>> futures = new ArrayList<>();
-            for (int i = size; i > 0; i--) {
+            for (int i = 0; i < limit; i++) {
                 futures.add(pool.submit(() -> {
                     while (true) {
                         Runnable task = queue.poll();

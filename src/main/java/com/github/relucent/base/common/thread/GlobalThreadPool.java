@@ -8,6 +8,9 @@ import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor.AbortPolicy;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import com.github.relucent.base.common.logging.Logger;
 
 /**
  * 全局公共线程池<br>
@@ -16,6 +19,8 @@ import java.util.concurrent.TimeUnit;
 public class GlobalThreadPool {
 
     // ==============================Fields===========================================
+    private final Logger logger = Logger.getLogger(getClass());
+    private final AtomicBoolean shutdownFlag = new AtomicBoolean(false);
     private final ExecutorService threadPool;
 
     // ==============================Construction=====================================
@@ -37,6 +42,7 @@ public class GlobalThreadPool {
      * 构造函数
      */
     private GlobalThreadPool() {
+        // 定义线程池
         threadPool = new ThreadPoolExecutor(//
                 0, Integer.MAX_VALUE, //
                 5L, TimeUnit.SECONDS, //
@@ -44,6 +50,13 @@ public class GlobalThreadPool {
                 Executors.defaultThreadFactory(), //
                 new AbortPolicy()//
         );
+        // 注册关闭钩子
+        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+            @Override
+            public void run() {
+                GlobalThreadPool.this.shutdown();
+            }
+        }));
     }
 
     // ==============================Methods==========================================
@@ -68,11 +81,33 @@ public class GlobalThreadPool {
     /**
      * 执行任务，并返回异步结果。<br>
      * Future代表一个异步执行的操作，通过get()方法可以获得操作的结果，如果异步操作还没有完成，则，get()会使当前线程阻塞
-     * @param <T> 任务返回的结果类型
+     * @param <T>  任务返回的结果类型
      * @param task 执行的任务
      * @return 异步结果（{@link Future}）
      */
     public <T> Future<T> submit(Callable<T> task) {
         return threadPool.submit(task);
+    }
+
+    /**
+     * 优雅关闭
+     */
+    protected synchronized void shutdown() {
+        if (shutdownFlag.get()) {
+            return;
+        }
+        shutdownFlag.set(true);
+        threadPool.shutdown();
+        try {
+            if (!threadPool.awaitTermination(30, TimeUnit.SECONDS)) {
+                threadPool.shutdownNow();
+                if (!threadPool.awaitTermination(30, TimeUnit.SECONDS)) {
+                    logger.error("GlobalThreadPool did not terminate");
+                }
+            }
+        } catch (InterruptedException e) {
+            threadPool.shutdownNow();
+            Thread.currentThread().interrupt();
+        }
     }
 }

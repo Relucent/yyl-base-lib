@@ -1,5 +1,7 @@
 package com.github.relucent.base.common.identifier;
 
+import java.util.UUID;
+
 public class IdUtil {
 
     /**
@@ -33,10 +35,26 @@ public class IdUtil {
     }
 
     /**
-     * 生成32位UUID
+     * 生成UUID（长度32）
      * @return UUID
      */
     public static String uuid32() {
         return UUID32.randomUUID().toString();
+    }
+
+    /**
+     * 生成UUID（长度36）
+     * @return UUID
+     */
+    public static String uuid36() {
+        return UUID.randomUUID().toString();
+    }
+
+    /**
+     * 获得 ULID （长度26）
+     * @return ULID
+     */
+    public static String ulid() {
+        return Ulid.create().toString();
     }
 }

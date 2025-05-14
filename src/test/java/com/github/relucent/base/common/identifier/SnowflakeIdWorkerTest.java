@@ -12,7 +12,7 @@ public class SnowflakeIdWorkerTest {
         SnowflakeIdWorker snowflake = SnowflakeIdWorker.DEFAULT;
         int count = 10000;
         final Set<Long> idSet = new HashSet<>(count);
-        for (int i = 0; i < 10000; i++) {
+        for (int i = 0; i < count; i++) {
             idSet.add(snowflake.nextId());
         }
         Assert.assertEquals(count, idSet.size());
