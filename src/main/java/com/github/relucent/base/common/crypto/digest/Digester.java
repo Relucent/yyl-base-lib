@@ -37,7 +37,7 @@ public class Digester {
      * 构造函数
      * @param algorithm 算法
      */
-    public Digester(DigestAlgorithm algorithm) {
+    public Digester(MessageDigestAlgorithm algorithm) {
         this(algorithm.getValue(), null, 0, 0, null);
     }
 
@@ -46,7 +46,7 @@ public class Digester {
      * @param algorithm 算法
      * @param provider 算法提供者，null表示JDK默认，可以引入第三方包(例如BouncyCastle)提供更多算法支持
      */
-    public Digester(DigestAlgorithm algorithm, Provider provider) {
+    public Digester(MessageDigestAlgorithm algorithm, Provider provider) {
         this(algorithm.getValue(), null, 0, 0, provider);
     }
 
@@ -55,7 +55,7 @@ public class Digester {
      * @param algorithm 算法
      * @param salt 盐值 (默认加盐位置在头部)
      */
-    public Digester(DigestAlgorithm algorithm, byte[] salt) {
+    public Digester(MessageDigestAlgorithm algorithm, byte[] salt) {
         this(algorithm.getValue(), salt, 0, 1, null);
     }
 
@@ -67,7 +67,7 @@ public class Digester {
      * @param digestCount 摘要次数，当此值小于等于1,默认为1。
      * @param provider 算法提供者，null表示JDK默认，可以引入第三方包(例如BouncyCastle)提供更多算法支持
      */
-    protected Digester(DigestAlgorithm algorithm, byte[] salt, int saltPosition, int digestCount, Provider provider) {
+    protected Digester(MessageDigestAlgorithm algorithm, byte[] salt, int saltPosition, int digestCount, Provider provider) {
         this(algorithm.getValue(), salt, saltPosition, digestCount, provider);
     }
 

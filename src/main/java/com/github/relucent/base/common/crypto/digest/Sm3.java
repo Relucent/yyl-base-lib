@@ -20,7 +20,7 @@ public class Sm3 extends Digester {
      * @param digestCount 摘要次数，当此值小于等于1,默认为1。
      */
     protected Sm3(byte[] salt, int saltPosition, int digestCount) {
-        super(DigestAlgorithm.SM3, salt, saltPosition, digestCount, null);
+        super(MessageDigestAlgorithm.SM3, salt, saltPosition, digestCount, null);
     }
 
     // =================================Methods================================================

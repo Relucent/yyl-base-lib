@@ -13,7 +13,7 @@ public class Md5 extends Digester {
      * @param digestCount 摘要次数，当此值小于等于1,默认为1。
      */
     protected Md5(byte[] salt, int saltPosition, int digestCount) {
-        super(DigestAlgorithm.MD5, salt, saltPosition, digestCount, null);
+        super(MessageDigestAlgorithm.MD5, salt, saltPosition, digestCount, null);
     }
 
     // =================================Methods================================================
