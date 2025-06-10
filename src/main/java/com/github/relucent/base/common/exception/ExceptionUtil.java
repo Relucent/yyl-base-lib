@@ -18,13 +18,13 @@ public class ExceptionUtil {
         if (cause instanceof GeneralException) {
             return (GeneralException) cause;
         }
-        return new GeneralException("#", cause);
+        return new GeneralException(cause.getMessage(), cause);
     }
 
     /**
      * 创建未捕获异常
      * @param message 异常信息
-     * @param cause 源异常
+     * @param cause   源异常
      * @return 未捕获异常
      */
     public static GeneralException propagate(String message, Throwable cause) {
@@ -42,7 +42,7 @@ public class ExceptionUtil {
 
     /**
      * 创建提示异常
-     * @param code 异常编码
+     * @param code    异常编码
      * @param message 提示消息
      * @return 提示异常
      */
@@ -61,7 +61,7 @@ public class ExceptionUtil {
 
     /**
      * 创建通用异常
-     * @param code 异常编码
+     * @param code    异常编码
      * @param message 异常信息
      * @return 通用异常
      */

@@ -10,6 +10,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.net.URLStreamHandler;
 
+import com.github.relucent.base.common.codec.CodecUtil;
 import com.github.relucent.base.common.constant.CharsetConstant;
 import com.github.relucent.base.common.constant.UrlConstant;
 import com.github.relucent.base.common.exception.ExceptionUtil;
@@ -50,7 +51,7 @@ public class UrlUtil {
 
     /**
      * 通过一个字符串形式的URL地址创建URL对象
-     * @param url URL
+     * @param url     URL
      * @param handler {@link URLStreamHandler}
      * @return URL对象
      */
@@ -103,7 +104,7 @@ public class UrlUtil {
 
     /**
      * 将URL字符串转换为URL对象
-     * @param url URL字符串
+     * @param url     URL字符串
      * @param handler {@link URLStreamHandler}
      * @return URL
      */
@@ -190,6 +191,17 @@ public class UrlUtil {
     }
 
     /**
+     * 编码URL<br>
+     * 将%开头的16进制表示的内容解码。
+     * @param url URL
+     * @return 编码后的URL
+     * @see CodecUtil#encodeURI(String)
+     */
+    public static String encode(String url) {
+        return CodecUtil.encodeURI(url);
+    }
+
+    /**
      * 解码URL<br>
      * 将%开头的16进制表示的内容解码。
      * @param url URL
@@ -250,7 +262,7 @@ public class UrlUtil {
 
     /**
      * 转URL为URI
-     * @param url URL
+     * @param url      URL
      * @param isEncode 是否编码参数中的特殊字符（默认UTF-8编码）
      * @return URI
      */
