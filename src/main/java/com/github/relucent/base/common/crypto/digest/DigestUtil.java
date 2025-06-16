@@ -94,7 +94,7 @@ public class DigestUtil {
      * @param messageDigest 使用的摘要算法工具类
      * @param file          待计算摘要文件
      * @return 数据摘要
-     * @throws 读取流出现异常
+     * @throws IOException 读取流出现异常
      */
     public static byte[] digest(final MessageDigest messageDigest, final File file) throws IOException {
         return updateDigest(messageDigest, file).digest();
@@ -105,7 +105,7 @@ public class DigestUtil {
      * @param messageDigest 使用的摘要算法工具类
      * @param input         输入流
      * @return 数据摘要
-     * @throws 读取流出现异常
+     * @throws IOException 读取流出现异常
      */
     public static byte[] digest(final MessageDigest messageDigest, final InputStream input) throws IOException {
         return updateDigest(messageDigest, input).digest();
@@ -116,8 +116,7 @@ public class DigestUtil {
      * @param messageDigest 使用的摘要算法工具类
      * @param file          待计算摘要文件
      * @return 消息摘要工具类
-     * @throws IOException On error reading from the stream
-     * @since 1.11
+     * @throws IOException 读取流出现异常
      */
     public static MessageDigest updateDigest(final MessageDigest messageDigest, final File file) throws IOException {
         try (final BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {

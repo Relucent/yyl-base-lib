@@ -44,12 +44,12 @@ public class MapUtil {
     }
 
     /**
-     * 将 Map<String, String[]> 转换为 Map<String, String>，支持多种取值策略。
+     * 将 Map&lt;String, String[]&gt; 转换为 Map&lt;String, String&gt;，支持多种取值策略。
      * @param parameters 原始参数
      * @param strategy   值的提取策略：FIRST、LAST、JOIN_ALL、INDEX
      * @param delimiter  拼接用的分隔符（仅在 JOIN_ALL 生效）
      * @param index      仅在 INDEX 模式下有效，指定取第几个值（从 0 开始）
-     * @return 转换后的 Map<String, String>
+     * @return 转换后的 Map&lt;String, String&gt;
      */
     public static Map<String, String> toSingleValueMap(Map<String, String[]> parameters, ValuePickStrategy strategy,
             String delimiter, int index) {

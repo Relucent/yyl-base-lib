@@ -28,8 +28,7 @@ public class Listx extends ListWrapper<Object> implements Cloneable {
     // ==============================ChainMethods========================================
     /**
      * 添加一个元素到集合（该方法返回当前LIST对象，用于链式写法）
-     * @param key   键
-     * @param value 值对象
+     * @param o 添加的元素
      * @return 当前LIST对象
      */
     public Listx _add(Object o) {
