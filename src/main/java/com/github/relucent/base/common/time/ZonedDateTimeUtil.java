@@ -142,9 +142,6 @@ public class ZonedDateTimeUtil {
         if (time instanceof ZonedDateTime) {
             return ((ZonedDateTime) time).withZoneSameInstant(zoneId);
         }
-        if (time instanceof Instant) {
-            return ZonedDateTime.ofInstant((Instant) time, zoneId);
-        }
         return TemporalAccessorUtil.toInstant(time).atZone(zoneId);
     }
 

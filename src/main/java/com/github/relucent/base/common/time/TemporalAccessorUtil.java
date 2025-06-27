@@ -10,6 +10,7 @@ import java.time.Month;
 import java.time.MonthDay;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.chrono.Era;
 import java.time.format.DateTimeFormatter;
@@ -26,6 +27,9 @@ import com.github.relucent.base.common.lang.StringUtil;
 public class TemporalAccessorUtil {
 
     // =================================Fields=================================================
+    /** 默认初始日期（Unix Epoch 时间零点） */
+    private static final LocalDate DEFAULT_EPOCH_DATE = LocalDate.of(1970, 1, 1);
+
     /**
      * 常用的时间解析器列表<br>
      */
@@ -59,7 +63,7 @@ public class TemporalAccessorUtil {
     /**
      * 安全获取时间的某个属性，属性不存在返回默认值
      * @param temporal 时间对象
-     * @param field 需要获取的属性
+     * @param field    需要获取的属性
      * @return 时间的值，如果无法获取则默认值
      */
     public static int get(TemporalAccessor temporal, TemporalField field) {
@@ -174,7 +178,13 @@ public class TemporalAccessorUtil {
     }
 
     /**
-     * {@link TemporalAccessor}转换为 {@link Instant}对象
+     * {@link TemporalAccessor}转换为 {@link Instant}对象<br>
+     * 此方法会最大限度进行转化处理，尽量不抛出发异常：<br>
+     * 如果入参为空，则会直接返回null。<br>
+     * 如果TemporalAccessor缺失时区信息，则会使用默认的时区。<br>
+     * 如果TemporalAccessor缺失日期信息，则会补偿默认的日期“1970-01-01”。<br>
+     * 如果TemporalAccessor缺失时间信息，则会补偿默认的时间“00:00:00”。<br>
+     * 但是如果所有关键信息都缺失，则会抛出 DateTimeException 异常<br>
      * @param temporal 时间对象
      * @return {@link Instant}对象
      */
@@ -209,22 +219,52 @@ public class TemporalAccessorUtil {
         try {
             return Instant.from(temporal);
         } catch (Exception e) {
-            return (LocalDateTime.of(//
-                    get(temporal, ChronoField.YEAR), // 年
-                    get(temporal, ChronoField.MONTH_OF_YEAR), // 月
-                    get(temporal, ChronoField.DAY_OF_MONTH), // 日
-                    get(temporal, ChronoField.HOUR_OF_DAY), // 时
-                    get(temporal, ChronoField.MINUTE_OF_HOUR), // 分
-                    get(temporal, ChronoField.SECOND_OF_MINUTE), // 秒
-                    get(temporal, ChronoField.NANO_OF_SECOND)// 纳秒
-            )).atZone(ZoneUtil.getDefaultZoneId()).toInstant();
+            ZoneId defaultZone = ZoneUtil.getDefaultZoneId();
+            // 包含日期部分
+            boolean hasDate = temporal.isSupported(ChronoField.YEAR) //
+                    && temporal.isSupported(ChronoField.MONTH_OF_YEAR)//
+                    && temporal.isSupported(ChronoField.DAY_OF_MONTH);
+            // 包含时间部分
+            boolean hasTime = temporal.isSupported(ChronoField.HOUR_OF_DAY)//
+                    && temporal.isSupported(ChronoField.MINUTE_OF_HOUR);
+            // 包含时间偏移部分
+            boolean hasOffset = temporal.isSupported(ChronoField.OFFSET_SECONDS);
+
+            // 包含：日期、时间、偏移
+            if (hasDate && hasTime && hasOffset) {
+                return OffsetDateTime.from(temporal).toInstant();
+            }
+            // 包含：日期、时间
+            else if (hasDate && hasTime) {
+                return LocalDateTime.from(temporal).atZone(defaultZone).toInstant();
+            }
+            // 包含：日期
+            else if (hasDate) {
+                return LocalDate.from(temporal).atStartOfDay(defaultZone).toInstant();
+            }
+            // 包含：时间、偏移
+            else if (hasTime && hasOffset) {
+                // 需要补偿日期部分（为了统一处理，补偿日期为DEFAULT_DATE）
+                return OffsetTime.from(temporal).atDate(DEFAULT_EPOCH_DATE).toInstant();
+            }
+            // 包含：时间
+            else if (hasTime) {
+                // 只有时间，无偏移也无日期：补默认日期 + 默认时区
+                LocalTime time = LocalTime.from(temporal);
+                LocalDateTime ldt = LocalDateTime.of(DEFAULT_EPOCH_DATE, time);
+                return ldt.atZone(defaultZone).toInstant();
+            }
+            // 实在无法处理了，只能抛出异常了
+            else {
+                throw new DateTimeException("Unsupported TemporalAccessor: missing required fields");
+            }
         }
     }
 
     /**
      * 格式化日期时间为指定格式<br>
      * 如果为{@link Month}，调用{@link Month#toString()}
-     * @param temporal {@link TemporalAccessor}
+     * @param temporal  {@link TemporalAccessor}
      * @param formatter 日期格式化器，预定义的格式见：{@link DateTimeFormatter}
      * @return 格式化后的字符串
      */
@@ -234,7 +274,8 @@ public class TemporalAccessorUtil {
             return null;
         }
 
-        if (temporal instanceof DayOfWeek || temporal instanceof Month || temporal instanceof Era || temporal instanceof MonthDay) {
+        if (temporal instanceof DayOfWeek || temporal instanceof Month || temporal instanceof Era
+                || temporal instanceof MonthDay) {
             return temporal.toString();
         }
 
@@ -261,7 +302,7 @@ public class TemporalAccessorUtil {
 
     /**
      * 使用指定的 时间格式解析时间格式字符串
-     * @param text 时间文本
+     * @param text    时间文本
      * @param pattern 时间格式
      * @return 时间对象{@code TemporalAccessor}
      */
@@ -271,7 +312,7 @@ public class TemporalAccessorUtil {
 
     /**
      * 使用指定的格式化器解析时间格式字符串
-     * @param text 时间文本
+     * @param text      时间文本
      * @param formatter 时间格式化器
      * @return 时间对象{@code TemporalAccessor}
      */
