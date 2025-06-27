@@ -48,9 +48,19 @@ public class ZonedDateTimeUtil {
      * 格式化日期时间为标准格式字符串
      * @param zonedDateTime 带有时区的日期时间对象
      * @return 日期时间文本
+     * @deprecated {@link #formatIsoZonedDateTime(ZonedDateTime)}
      */
     public static String formatIsoDateTime(ZonedDateTime zonedDateTime) {
         return format(zonedDateTime, DateTimeFormatter.ISO_DATE_TIME);
+    }
+
+    /**
+     * 格式化日期时间为UTC零时区的标准格式字符串
+     * @param zonedDateTime 带有时区的日期时间对象
+     * @return 日期时间文本（UTC零时区）
+     */
+    public static String formatUtcDateTime(ZonedDateTime zonedDateTime) {
+        return formatIsoOffsetDateTime(toUtcZonedDateTime(zonedDateTime));
     }
 
     /**
@@ -93,6 +103,16 @@ public class ZonedDateTimeUtil {
 
     /**
      * 日期时间转换，将{@code Date}转换为{@code ZonedDateTime}
+     * @param date   日期类型对象 {@code Date}
+     * @param zoneId 时区
+     * @return 带时区的日期时间对象{@code ZonedDateTime}
+     */
+    public static ZonedDateTime toZonedDateTime(Date date, ZoneId zoneId) {
+        return date == null ? null : ZonedDateTime.ofInstant(date.toInstant(), zoneId);
+    }
+
+    /**
+     * 日期时间转换，将{@code Date}转换为{@code ZonedDateTime}，使用系统默认时区
      * @param date 日期类型对象 {@code Date}
      * @return 带时区的日期时间对象{@code ZonedDateTime}
      */
@@ -101,46 +121,49 @@ public class ZonedDateTimeUtil {
     }
 
     /**
-     * 日期时间转换，将{@code Date}转换为{@code ZonedDateTime}
-     * @param date   日期类型对象 {@code Date}
-     * @param zoneId 时区
+     * 日期时间转换，将{@code Date}转换为{@code ZonedDateTime}，使用UTC时区（零时区）
+     * @param date 日期类型对象 {@code Date}
      * @return 带时区的日期时间对象{@code ZonedDateTime}
      */
-    public static ZonedDateTime toZonedDateTime(Date date, ZoneId zoneId) {
-        if (date == null) {
-            return null;
-        }
-        Instant instant = date.toInstant();
-        return ZonedDateTime.ofInstant(instant, zoneId);
+    public static ZonedDateTime toUtcZonedDateTime(Date date) {
+        return toZonedDateTime(date, ZoneIdConstant.UTC);
     }
 
     /**
-     * 日期时间转换，将{@code TemporalAccessor}转换为{@code ZonedDateTime}
+     * 将时间对象转换成指定目标时区的日期时间对象
+     * @param time   时间对象{@code TemporalAccessor}
+     * @param zoneId 时区ID
+     * @return 日期时间对象{@code ZonedDateTime}
+     */
+    public static final ZonedDateTime toZonedDateTime(TemporalAccessor time, ZoneId zoneId) {
+        if (time == null) {
+            return null;
+        }
+        if (time instanceof ZonedDateTime) {
+            return ((ZonedDateTime) time).withZoneSameInstant(zoneId);
+        }
+        if (time instanceof Instant) {
+            return ZonedDateTime.ofInstant((Instant) time, zoneId);
+        }
+        return TemporalAccessorUtil.toInstant(time).atZone(zoneId);
+    }
+
+    /**
+     * 日期时间转换，将{@code TemporalAccessor}转换为{@code ZonedDateTime}，使用系统默认时区
      * @param time 时间对象{@code TemporalAccessor}
      * @return 带时区的日期时间对象{@code ZonedDateTime}
      */
     public static final ZonedDateTime toZonedDateTime(TemporalAccessor time) {
-        if (time == null) {
-            return null;
-        }
-        if (time instanceof ZonedDateTime) {
-            return (ZonedDateTime) time;
-        }
-        return TemporalAccessorUtil.toInstant(time).atZone(ZoneUtil.getDefaultZoneId());
+        return toZonedDateTime(time, ZoneUtil.getDefaultZoneId());
     }
 
     /**
-     * 日期时间转换，将{@code TemporalAccessor}转换为UTC时区的{@code ZonedDateTime}
+     * 日期时间转换，将{@code TemporalAccessor}转换为UTC时区的{@code ZonedDateTime}，使用UTC时区（零时区）
      * @param time 时间对象{@code TemporalAccessor}
      * @return UTC时区的日期时间对象{@code ZonedDateTime}
      */
     public static final ZonedDateTime toUtcZonedDateTime(TemporalAccessor time) {
-        if (time == null) {
-            return null;
-        }
-        if (time instanceof ZonedDateTime) {
-            return ((ZonedDateTime) time).withZoneSameInstant(ZoneIdConstant.UTC);
-        }
-        return TemporalAccessorUtil.toInstant(time).atZone(ZoneIdConstant.UTC);
+        return toZonedDateTime(time, ZoneIdConstant.UTC);
     }
+
 }
