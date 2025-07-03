@@ -1,5 +1,6 @@
 package com.github.relucent.base.common.cache;
 
+import java.io.Serializable;
 import java.time.Duration;
 import java.util.Objects;
 
@@ -9,7 +10,8 @@ import com.github.relucent.base.common.reflect.TypeReference;
  * 缓存定义
  * @param <T> 缓存元素的类型
  */
-public class CacheDefinition<T> {
+@SuppressWarnings("serial")
+public class CacheDefinition<T> implements Serializable {
 
     /** 缓存名称 */
     private final String name;
@@ -22,9 +24,9 @@ public class CacheDefinition<T> {
 
     /**
      * 缓存定义构造函数
-     * @param name 缓存名称
+     * @param name        缓存名称
      * @param elementType 缓存元素的类型引用
-     * @param ttl 缓存对象过期时间
+     * @param ttl         缓存对象过期时间
      * @param maxIdleTime 缓存对象最长空闲时间
      */
     protected CacheDefinition(String name, TypeReference<T> elementType, Duration ttl, Duration maxIdleTime) {
@@ -36,8 +38,8 @@ public class CacheDefinition<T> {
 
     /**
      * 获得一个缓存定义
-     * @param <T> 缓存元素类型
-     * @param name 缓存名称
+     * @param <T>         缓存元素类型
+     * @param name        缓存名称
      * @param elementType 缓存元素的类型引用
      * @return 缓存定义实例
      */
@@ -47,10 +49,10 @@ public class CacheDefinition<T> {
 
     /**
      * 获得一个缓存定义
-     * @param <T> 缓存元素类型
-     * @param name 缓存名称
+     * @param <T>         缓存元素类型
+     * @param name        缓存名称
      * @param elementType 缓存元素的类型引用
-     * @param ttl 缓存对象过期时间
+     * @param ttl         缓存对象过期时间
      * @return 缓存定义实例
      */
     public static <T> CacheDefinition<T> of(String name, TypeReference<T> elementType, Duration ttl) {
@@ -59,21 +61,22 @@ public class CacheDefinition<T> {
 
     /**
      * 获得一个缓存定义
-     * @param <T> 缓存元素类型
-     * @param name 缓存名称
+     * @param <T>         缓存元素类型
+     * @param name        缓存名称
      * @param elementType 缓存元素的类型引用
-     * @param ttl 缓存对象过期时间
+     * @param ttl         缓存对象过期时间
      * @param maxIdleTime 缓存对象最长空闲时间
      * @return 缓存定义实例
      */
-    public static <T> CacheDefinition<T> of(String name, TypeReference<T> elementType, Duration ttl, Duration maxIdleTime) {
+    public static <T> CacheDefinition<T> of(String name, TypeReference<T> elementType, Duration ttl,
+            Duration maxIdleTime) {
         return new CacheDefinition<T>(name, elementType, ttl, maxIdleTime);
     }
 
     /**
      * 获得一个缓存定义
-     * @param <T> 缓存元素类型
-     * @param name 缓存名称
+     * @param <T>         缓存元素类型
+     * @param name        缓存名称
      * @param elementType 缓存元素的类型
      * @return 缓存定义实例
      */
@@ -83,10 +86,10 @@ public class CacheDefinition<T> {
 
     /**
      * 获得一个缓存定义
-     * @param <T> 缓存元素类型
-     * @param name 缓存名称
+     * @param <T>         缓存元素类型
+     * @param name        缓存名称
      * @param elementType 缓存元素的类型
-     * @param ttl 缓存对象过期时间
+     * @param ttl         缓存对象过期时间
      * @return 缓存定义实例
      */
     public static <T> CacheDefinition<T> of(String name, Class<T> elementType, Duration ttl) {
@@ -95,10 +98,10 @@ public class CacheDefinition<T> {
 
     /**
      * 获得一个缓存定义
-     * @param <T> 缓存元素类型
-     * @param name 缓存名称
+     * @param <T>         缓存元素类型
+     * @param name        缓存名称
      * @param elementType 缓存元素的类型
-     * @param ttl 缓存对象过期时间
+     * @param ttl         缓存对象过期时间
      * @param maxIdleTime 缓存对象最长空闲时间
      * @return 缓存定义实例
      */
@@ -163,13 +166,14 @@ public class CacheDefinition<T> {
             return false;
         }
         CacheDefinition<?> other = (CacheDefinition<?>) obj;
-        return Objects.equals(name, other.name) && Objects.equals(elementType, other.elementType) && Objects.equals(maxIdleTime, other.maxIdleTime)
-                && Objects.equals(ttl, other.ttl);
+        return Objects.equals(name, other.name) && Objects.equals(elementType, other.elementType)
+                && Objects.equals(maxIdleTime, other.maxIdleTime) && Objects.equals(ttl, other.ttl);
     }
 
     @Override
     public String toString() {
-        return "SimpleCacheDefinition [name=" + name + ", elementType=" + elementType + ", ttl=" + ttl + ", maxIdleTime=" + maxIdleTime + "]";
+        return "SimpleCacheDefinition [name=" + name + ", elementType=" + elementType + ", ttl=" + ttl
+                + ", maxIdleTime=" + maxIdleTime + "]";
     }
 
     public static class Builder<T> {

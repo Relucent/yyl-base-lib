@@ -24,38 +24,39 @@ import com.github.relucent.base.plugin.jackson.databind.DatePowerSerializer;
 @SuppressWarnings("serial")
 public class MyObjectMapper extends ObjectMapper {
 
-	public static final MyObjectMapper INSTANCE = new MyObjectMapper();
+    public static final MyObjectMapper INSTANCE = new MyObjectMapper();
 
-	public MyObjectMapper() {
-		initialize();
-	}
+    public MyObjectMapper() {
+        initialize();
+    }
 
-	protected void initialize() {
-		// 当找不到对应的序列化器时 忽略此字段
-		this.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+    protected void initialize() {
 
-		// 支持结束
-		this.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-		this.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-		//
-		this.setDateFormat(new SimpleDateFormat(DateUtil.DATETIME_FORMAT));
-		// 反序列化忽略不需要的字段
-		this.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        // 当找不到对应的序列化器时 忽略此字段
+        this.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
 
-		SimpleModule module = new SimpleModule();
+        // 支持结束
+        this.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        this.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        //
+        this.setDateFormat(new SimpleDateFormat(DateUtil.DATETIME_FORMAT));
+        // 反序列化忽略不需要的字段
+        this.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-		// 将大数字转换为 String 类型
-		module.addSerializer(BigDecimal.class, BigDecimalPowerSerializer.INSTANCE);
-		module.addDeserializer(BigDecimal.class, BigDecimalPowerDeserializer.INSTANCE);
+        SimpleModule module = new SimpleModule();
 
-		// 日期序列化与反序列化
-		module.addSerializer(Date.class, DatePowerSerializer.INSTANCE);
-		module.addDeserializer(Date.class, DatePowerDeserializer.INSTANCE);
+        // 将大数字转换为 String 类型
+        module.addSerializer(BigDecimal.class, BigDecimalPowerSerializer.INSTANCE);
+        module.addDeserializer(BigDecimal.class, BigDecimalPowerDeserializer.INSTANCE);
 
-		// 扩展集合类反序列化
-		module.addDeserializer(Mapx.class, JacksonConvertUtil.MAP_DESERIALIZER);
-		module.addDeserializer(Listx.class, JacksonConvertUtil.LIST_DESERIALIZER);
+        // 日期序列化与反序列化
+        module.addSerializer(Date.class, DatePowerSerializer.INSTANCE);
+        module.addDeserializer(Date.class, DatePowerDeserializer.INSTANCE);
 
-		this.registerModule(module);
-	}
+        // 扩展集合类反序列化
+        module.addDeserializer(Mapx.class, JacksonConvertUtil.MAP_DESERIALIZER);
+        module.addDeserializer(Listx.class, JacksonConvertUtil.LIST_DESERIALIZER);
+
+        this.registerModule(module);
+    }
 }
