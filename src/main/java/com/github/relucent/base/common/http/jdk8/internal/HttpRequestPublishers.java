@@ -18,6 +18,7 @@ import java.util.UUID;
 import java.util.function.Supplier;
 
 import com.github.relucent.base.common.codec.CodecUtil;
+import com.github.relucent.base.common.http.HttpUtil;
 import com.github.relucent.base.common.http.jdk8.HttpRequest.BodyPublisher;
 
 public class HttpRequestPublishers {
@@ -53,9 +54,10 @@ public class HttpRequestPublishers {
         private final byte[] body;
         private final String contentType;
 
-        public StringBodyPublisher(String content, Charset charset) {
+        public StringBodyPublisher(String content, String contentType) {
+            Charset charset = HttpUtil.parseCharset(contentType);
             this.body = content.getBytes(charset);
-            this.contentType = "text/plain; charset=" + charset.name();
+            this.contentType = contentType;
         }
 
         @Override

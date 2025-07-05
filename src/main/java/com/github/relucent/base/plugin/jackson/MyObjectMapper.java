@@ -43,6 +43,9 @@ public class MyObjectMapper extends ObjectMapper {
         // 反序列化忽略不需要的字段
         this.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
+        // 自动注册 JavaTimeModule、Jdk8Module 等
+        this.findAndRegisterModules();
+
         SimpleModule module = new SimpleModule();
 
         // 将大数字转换为 String 类型
