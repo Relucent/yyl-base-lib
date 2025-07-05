@@ -88,7 +88,11 @@ public interface HttpRequest {
         }
 
         public static BodyPublisher ofString(String content) {
-            return new HttpRequestPublishers.StringBodyPublisher(content, StandardCharsets.UTF_8);
+            return ofString(content, "text/plain; charset=" + StandardCharsets.UTF_8.name());
+        }
+
+        public static BodyPublisher ofString(String content, String contentType) {
+            return new HttpRequestPublishers.StringBodyPublisher(content, contentType);
         }
 
         public static BodyPublisher ofByteArray(byte[] data, String contentType) {

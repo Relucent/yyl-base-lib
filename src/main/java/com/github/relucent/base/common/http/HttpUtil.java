@@ -10,6 +10,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -63,7 +64,7 @@ public class HttpUtil {
 
     /**
      * 发送GET请求
-     * @param url 请求地址
+     * @param url         请求地址
      * @param queryParams URL参数
      * @return 请求的结果
      */
@@ -73,9 +74,9 @@ public class HttpUtil {
 
     /**
      * 发送GET请求
-     * @param url 请求地址
+     * @param url         请求地址
      * @param queryParams URL参数
-     * @param headers HTTP头数据
+     * @param headers     HTTP头数据
      * @return 请求的结果
      */
     public static String get(String url, Map<String, String> queryParams, Map<String, String> headers) {
@@ -98,7 +99,7 @@ public class HttpUtil {
 
     /**
      * 发送POST请求
-     * @param url 请求地址
+     * @param url         请求地址
      * @param queryParams 查询参数
      * @return 请求的结果
      */
@@ -108,9 +109,9 @@ public class HttpUtil {
 
     /**
      * 发送POST请求
-     * @param url 请求地址
+     * @param url         请求地址
      * @param queryParams 查询参数
-     * @param headers HTTP头数据
+     * @param headers     HTTP头数据
      * @return 请求的结果
      */
     public static String post(String url, Map<String, String> queryParams, Map<String, String> headers) {
@@ -120,8 +121,8 @@ public class HttpUtil {
 
     /**
      * 发送POST请求
-     * @param url 请求地址
-     * @param data 提交数据
+     * @param url     请求地址
+     * @param data    提交数据
      * @param headers HTTP头数据
      * @return 请求的结果
      */
@@ -131,7 +132,7 @@ public class HttpUtil {
 
     /**
      * 发送PUT请求
-     * @param url 请求地址
+     * @param url  请求地址
      * @param body 提交数据
      * @return 请求的结果
      */
@@ -141,8 +142,8 @@ public class HttpUtil {
 
     /**
      * 发送PUT请求
-     * @param url 请求地址
-     * @param body 提交数据
+     * @param url     请求地址
+     * @param body    提交数据
      * @param headers HTTP头数据
      * @return 请求的结果
      */
@@ -161,9 +162,9 @@ public class HttpUtil {
 
     /**
      * 执行请求
-     * @param url 请求地址
-     * @param method 请求方法
-     * @param body 请求主体 (针对POST请求,GET请求应为NULL)
+     * @param url     请求地址
+     * @param method  请求方法
+     * @param body    请求主体 (针对POST请求,GET请求应为NULL)
      * @param headers HTTP头数据
      * @return 请求的结果
      */
@@ -185,13 +186,14 @@ public class HttpUtil {
 
     /**
      * 获得一个HTTP连接
-     * @param url 请求地址
-     * @param method 请求的方法
+     * @param url     请求地址
+     * @param method  请求的方法
      * @param headers HTTP头数据
      * @return HTTP连接对象
      * @throws IOException 出现IO错误，抛出异常
      */
-    public static HttpURLConnection getConnection(String url, HttpMethod method, Map<String, String> headers) throws IOException {
+    public static HttpURLConnection getConnection(String url, HttpMethod method, Map<String, String> headers)
+            throws IOException {
         HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
         ignoreTLS(conn);
         conn.setRequestMethod(method.name());
@@ -229,7 +231,7 @@ public class HttpUtil {
 
     /**
      * 拼装参数字符串
-     * @param url URL地址
+     * @param url         URL地址
      * @param queryParams 参数
      * @return 参数字符串
      */
@@ -291,6 +293,40 @@ public class HttpUtil {
             } catch (Exception e) {
             }
         }
+    }
+
+    /**
+     * 解析 Content-Type 字符串中的 charset 参数，没指定则返回 UTF-8
+     * @param contentType Content-Type 字符串，比如 "text/html; charset=UTF-8"
+     * @return Charset 对象，默认 UTF-8
+     */
+    public static Charset parseCharset(String contentType) {
+        if (contentType == null) {
+            return StandardCharsets.UTF_8;
+        }
+        int semicolonIndex = contentType.indexOf(';');
+        if (semicolonIndex >= 0 && semicolonIndex + 1 < contentType.length()) {
+            String params = contentType.substring(semicolonIndex + 1);
+            String[] paramPairs = params.split(";");
+            for (String param : paramPairs) {
+                param = param.trim();
+                if (param.toLowerCase().startsWith("charset=")) {
+                    String charsetName = param.substring(8).trim();
+                    // 移除可能的引号，如 charset="UTF-8"
+                    if ((charsetName.startsWith("\"") && charsetName.endsWith("\""))
+                            || (charsetName.startsWith("'") && charsetName.endsWith("'"))) {
+                        charsetName = charsetName.substring(1, charsetName.length() - 1);
+                    }
+                    try {
+                        return Charset.forName(charsetName);
+                    } catch (Exception e) {
+                        // 无效 charset，返回默认 UTF-8
+                        return StandardCharsets.UTF_8;
+                    }
+                }
+            }
+        }
+        return StandardCharsets.UTF_8;
     }
 
     /**
