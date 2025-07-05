@@ -6,10 +6,10 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.stream.Collectors;
 
+import com.github.relucent.base.common.http.HttpUtil;
 import com.github.relucent.base.common.http.jdk8.HttpResponse.BodyHandler;
 import com.github.relucent.base.common.http.jdk8.HttpResponse.BodySubscriber;
 import com.github.relucent.base.common.http.jdk8.HttpResponse.ResponseInfo;
-import com.github.relucent.base.common.web.WebUtil;
 
 public class HttpResponseHandlers {
 
@@ -20,7 +20,7 @@ public class HttpResponseHandlers {
         @Override
         public BodySubscriber<String> apply(ResponseInfo responseInfo) {
             String contentType = responseInfo.headers().firstValue("Content-Type");
-            Charset charset = WebUtil.parseCharset(contentType);
+            Charset charset = HttpUtil.parseCharset(contentType);
             return inputStream -> {
                 try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, charset))) {
                     return reader.lines().collect(Collectors.joining("\n"));

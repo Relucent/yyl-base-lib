@@ -12,7 +12,7 @@ public class PageConstant {
     public static final long DEFAULT_OFFSET = 0L;
 
     /** 默认每页记录条数 */
-    public static final long DEFAULT_LIMIT = 15L;
+    public static final long DEFAULT_LIMIT = 20L;
 
     private PageConstant() {
     }
