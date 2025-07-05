@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 import javax.servlet.http.HttpServletRequest;
@@ -190,40 +189,6 @@ public class WebUtil {
         response.setContentType(contentType);
         response.setHeader("content-disposition", contentDisposition);
         file.writeTo(response.getOutputStream());
-    }
-
-    /**
-     * 解析 Content-Type 字符串中的 charset 参数，没指定则返回 UTF-8
-     * @param contentType Content-Type 字符串，比如 "text/html; charset=UTF-8"
-     * @return Charset 对象，默认 UTF-8
-     */
-    public static Charset parseCharset(String contentType) {
-        if (contentType == null) {
-            return StandardCharsets.UTF_8;
-        }
-        int semicolonIndex = contentType.indexOf(';');
-        if (semicolonIndex >= 0 && semicolonIndex + 1 < contentType.length()) {
-            String params = contentType.substring(semicolonIndex + 1);
-            String[] paramPairs = params.split(";");
-            for (String param : paramPairs) {
-                param = param.trim();
-                if (param.toLowerCase().startsWith("charset=")) {
-                    String charsetName = param.substring(8).trim();
-                    // 移除可能的引号，如 charset="UTF-8"
-                    if ((charsetName.startsWith("\"") && charsetName.endsWith("\""))
-                            || (charsetName.startsWith("'") && charsetName.endsWith("'"))) {
-                        charsetName = charsetName.substring(1, charsetName.length() - 1);
-                    }
-                    try {
-                        return Charset.forName(charsetName);
-                    } catch (Exception e) {
-                        // 无效 charset，返回默认 UTF-8
-                        return StandardCharsets.UTF_8;
-                    }
-                }
-            }
-        }
-        return StandardCharsets.UTF_8;
     }
 
     /**
