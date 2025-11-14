@@ -45,12 +45,48 @@ public class CodecUtil {
     }
 
     /**
+     * 将字节数组编码成 URL安全Base64字符串
+     * @param data 字节数组
+     * @return Base64字符串
+     */
+    public static String encodeUrlBase64(byte[] data) {
+        return Base64.encodeUrl(data);
+    }
+
+    /**
+     * 将字节数组编码成 MIME Base64字符串
+     * @param data 字节数组
+     * @return Base64字符串
+     */
+    public static String encodeMimeBase64(byte[] data) {
+        return Base64.encodeMime(data);
+    }
+
+    /**
      * 将Base64字符串解码成字节数组
      * @param base64 Base64字符串
      * @return 字节数组
      */
     public static byte[] decodeBase64(String base64) {
         return Base64.decode(base64);
+    }
+
+    /**
+     * 将MIME Base64字符串解码成字节数组
+     * @param base64 MIME Base64字符串
+     * @return 字节数组
+     */
+    public static byte[] decodeMimeBase64(String base64) {
+        return Base64.decodeMime(base64);
+    }
+
+    /**
+     * 将URL安全Base64字符串解码成字节数组
+     * @param base64 Base64字符串
+     * @return 字节数组
+     */
+    public static byte[] decodeUrlBase64(String base64) {
+        return Base64.decodeUrl(base64);
     }
 
     /**
