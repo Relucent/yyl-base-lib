@@ -1,4 +1,4 @@
-package com.github.relucent.base.common.thread;
+package com.github.relucent.base.common.concurrent;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -8,7 +8,12 @@ import java.util.function.Supplier;
 import com.github.relucent.base.common.logging.Logger;
 
 /**
- * 生产者消费者工作类
+ * 生产者消费者工作类<br>
+ * 本类实现一个单消费者线程，用于从外部“拉模式”生产者获取任务（Supplier&lt;T&gt;）并处理（Consumer&lt;T&gt;）。<br>
+ * 生产者采用拉模式：Worker 主动调用 supplier.get() 获取任务，生产者本身不阻塞，也可能返回 null 表示当前没有任务。<br>
+ * 当没有任务时，Worker 不会盲目消费，而是随机等待一段时间后继续拉取，以降低空轮询压力。<br>
+ * 支持安全中断与 shutdown：捕获 InterruptedException 并恢复中断状态，保证线程可以被外部及时停止。<br>
+ * 状态管理通过 AtomicReference&lt;WorkerState&gt; 实现，保证线程安全，并防止重复启动。<br>
  */
 public class ProcessWorker<T> implements Runnable {
 
@@ -30,7 +35,12 @@ public class ProcessWorker<T> implements Runnable {
     // ==============================Methods==========================================
     @Override
     public void run() {
-        checkRunningState();
+
+        // 检验线程可运行状态
+        if (!stateReference.compareAndSet(WorkerState.NEW, WorkerState.RUNNING)) {
+            throw new IllegalStateException("Worker already started or terminated.");
+        }
+
         logger.info("Worker {} Thread Started!", name);
         try {
             // 延迟执行(让几个线程首次执行时间错开)
@@ -77,7 +87,10 @@ public class ProcessWorker<T> implements Runnable {
      * 停止运行
      */
     public void shutdown() {
+        // 设置状态
         stateReference.set(WorkerState.INTERRUPTED);
+        // 响应阻塞或 sleep 中断
+        Thread.currentThread().interrupt();
     }
 
     /**
@@ -90,17 +103,6 @@ public class ProcessWorker<T> implements Runnable {
         } catch (Exception e) {
             logger.error("Worker Process Error", e);
         }
-    }
-
-    /**
-     * 检验线程可运行状态
-     */
-    private synchronized void checkRunningState() {
-        WorkerState state = stateReference.get();
-        if (!WorkerState.NEW.equals(state)) {
-            throw new IllegalStateException("Worker is already " + state + " !");
-        }
-        stateReference.set(WorkerState.RUNNING);
     }
 
     /**

@@ -1,4 +1,4 @@
-package com.github.relucent.base.common.thread;
+package com.github.relucent.base.common.concurrent;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
