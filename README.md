@@ -8,6 +8,6 @@ YYL-BASE-LIB 是一个Java 工具类库，包括 “集合、日期、字符串�
 <dependency>
     <groupId>com.github.relucent</groupId>
     <artifactId>yyl-base-lib</artifactId>
-    <version>0.3.2</version>
+    <version>0.3.6</version>
 </dependency>
 ```

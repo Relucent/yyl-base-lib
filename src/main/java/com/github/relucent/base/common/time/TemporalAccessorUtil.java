@@ -34,21 +34,30 @@ public class TemporalAccessorUtil {
      * 常用的时间解析器列表<br>
      */
     private static final DateTimeFormatter[] DATE_TIME_FORMATTERS = { //
-            DateTimeFormatter.BASIC_ISO_DATE, //
-            DateTimeFormatter.ISO_INSTANT, //
-            DateTimeFormatter.ISO_DATE, //
-            DateTimeFormatter.ISO_TIME, //
-            DateTimeFormatter.ISO_DATE_TIME, //
-            DateTimeFormatter.ISO_LOCAL_DATE, //
-            DateTimeFormatter.ISO_LOCAL_TIME, //
-            DateTimeFormatter.ISO_LOCAL_DATE_TIME, //
-            DateTimeFormatter.ISO_OFFSET_DATE, //
-            DateTimeFormatter.ISO_OFFSET_TIME, //
-            DateTimeFormatter.ISO_OFFSET_DATE_TIME, //
-            DateTimeFormatter.ISO_ORDINAL_DATE, //
-            DateTimeFormatter.ISO_ZONED_DATE_TIME, //
-            DateTimeFormatter.RFC_1123_DATE_TIME, //
+            // 1. ISO 标准格式（尽量放前面，严格匹配）
+            DateTimeFormatter.ISO_ZONED_DATE_TIME, // 2025-11-14T17:00:00+08:00[Asia/Shanghai]
+            DateTimeFormatter.ISO_OFFSET_DATE_TIME, // 2025-11-14T17:00:00+08:00
+            DateTimeFormatter.ISO_LOCAL_DATE_TIME, // 2025-11-14T17:00:00
+            DateTimeFormatter.ISO_INSTANT, // 2025-11-14T09:00:00Z
+            DateTimeFormatter.ISO_OFFSET_DATE, // 2025-11-14+08:00
+            DateTimeFormatter.ISO_OFFSET_TIME, // 17:00:00+08:00
+            DateTimeFormatter.ISO_LOCAL_DATE, // 2025-11-14
+            DateTimeFormatter.ISO_LOCAL_TIME, // 17:00:00
+            DateTimeFormatter.ISO_ORDINAL_DATE, // 2025-318
+            DateTimeFormatter.RFC_1123_DATE_TIME, // Fri, 14 Nov 2025 17:00:00 GMT
 
+            // 2. 自定义常用格式（用户输入）
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"), // 含毫秒
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"), // 含时分秒
+            DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"), // 斜杠分隔
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"), // 少秒
+            DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm"), //
+            DateTimeFormatter.ofPattern("yyyy-MM-dd"), // 只有日期
+            DateTimeFormatter.ofPattern("yyyy/MM/dd"),
+
+            // 3. 紧凑数字型日期时间
+            DateTimeFormatter.ofPattern("yyyyMMddHHmmss"), // 紧凑型日期时间
+            DateTimeFormatter.BASIC_ISO_DATE // yyyyMMdd
     };
 
     // =================================Constructors===========================================

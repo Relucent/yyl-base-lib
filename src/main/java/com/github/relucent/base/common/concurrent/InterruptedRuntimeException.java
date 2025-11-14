@@ -1,4 +1,4 @@
-package com.github.relucent.base.common.thread;
+package com.github.relucent.base.common.concurrent;
 
 /**
  * 运行时中断异常<br>
@@ -7,6 +7,9 @@ package com.github.relucent.base.common.thread;
  */
 @SuppressWarnings("serial")
 public class InterruptedRuntimeException extends RuntimeException {
+
+    public InterruptedRuntimeException() {
+    }
 
     public InterruptedRuntimeException(String message) {
         super(message);

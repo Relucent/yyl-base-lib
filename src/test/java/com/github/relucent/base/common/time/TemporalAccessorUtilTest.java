@@ -35,6 +35,7 @@ public class TemporalAccessorUtilTest {
             String text = formatter.format(now);
             ZonedDateTime expected = TemporalAccessorUtil.toZonedDateTime(formatter.parse(text));
             ZonedDateTime actual = ZonedDateTimeUtil.parse(text);
+            System.out.println(text);
             Assert.assertEquals(expected.toInstant(), actual.toInstant());
         }
     }
