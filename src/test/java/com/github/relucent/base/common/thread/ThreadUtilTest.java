@@ -6,6 +6,9 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.github.relucent.base.common.concurrent.InterruptedRuntimeException;
+import com.github.relucent.base.common.concurrent.ThreadUtil;
+
 public class ThreadUtilTest {
 
     private static final long ALLOWABLE_DELAY_MILLIS = 311;

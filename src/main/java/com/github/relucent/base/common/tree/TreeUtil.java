@@ -1,14 +1,13 @@
 package com.github.relucent.base.common.tree;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
 /**
  * Tree类型工具类
+ * @see TreeBuilder
  * @author YYL
  */
 public class TreeUtil {
@@ -23,132 +22,132 @@ public class TreeUtil {
 
     /**
      * 构建树模型
-     * @param <T> 原始数据类型泛型
-     * @param <N> 树节点对象泛型
-     * @param <I> ID类型泛型
-     * @param parentId 父节点ID
-     * @param data 数据
-     * @param adapter 节点适配器
-     * @param idGetter 节点ID访问器
+     * @param <T>            原始数据类型泛型
+     * @param <N>            树节点对象泛型
+     * @param <I>            ID类型泛型
+     * @param parentId       父节点ID
+     * @param data           数据
+     * @param adapter        节点适配器
+     * @param idGetter       节点ID访问器
      * @param parentIdGetter 节点父ID访问器
      * @param childrenSetter 子节点设置器
      * @return 树模型
      */
     @SuppressWarnings("unchecked")
-    public static <T, N, I> List<N> buildTree(I parentId, List<T> data, NodeAdapter<T, N> adapter, IdGetter<T, I> idGetter,
-            ParentIdGetter<T, I> parentIdGetter, ChildrenSetter<N> childrenSetter) {
-        return buildTree(parentId, data, adapter, DEFAULT_NODE_FILTER, idGetter, parentIdGetter, childrenSetter, (Comparator<N>) NONE_COMPARATOR, 0);
+    public static <T, N, I> List<N> buildTree(I parentId, List<T> data, NodeAdapter<T, N> adapter,
+            IdGetter<T, I> idGetter, ParentIdGetter<T, I> parentIdGetter, ChildrenSetter<N> childrenSetter) {
+        return buildTree(parentId, data, adapter, DEFAULT_NODE_FILTER, idGetter, parentIdGetter, childrenSetter,
+                (Comparator<N>) NONE_COMPARATOR, 0);
     }
 
     /**
      * 构建树模型
-     * @param <T> 原始数据类型泛型
-     * @param <N> 树节点对象泛型
-     * @param <I> ID类型泛型
-     * @param parentId 父节点ID
-     * @param data 数据
-     * @param adapter 节点适配器
-     * @param idGetter 节点ID访问器
+     * @param <T>            原始数据类型泛型
+     * @param <N>            树节点对象泛型
+     * @param <I>            ID类型泛型
+     * @param parentId       父节点ID
+     * @param data           数据
+     * @param adapter        节点适配器
+     * @param idGetter       节点ID访问器
      * @param parentIdGetter 节点父ID访问器
      * @param childrenSetter 子节点设置器
-     * @param comparator 排序比较器
+     * @param comparator     排序比较器
      * @return 树模型
      */
     @SuppressWarnings("unchecked")
-    public static <T, N, I> List<N> buildTree(I parentId, List<T> data, NodeAdapter<T, N> adapter, IdGetter<T, I> idGetter,
-            ParentIdGetter<T, I> parentIdGetter, ChildrenSetter<N> childrenSetter, Comparator<N> comparator) {
-        return buildTree(parentId, data, adapter, DEFAULT_NODE_FILTER, idGetter, parentIdGetter, childrenSetter, comparator, 0);
+    public static <T, N, I> List<N> buildTree(I parentId, List<T> data, NodeAdapter<T, N> adapter,
+            IdGetter<T, I> idGetter, ParentIdGetter<T, I> parentIdGetter, ChildrenSetter<N> childrenSetter,
+            Comparator<N> comparator) {
+        return buildTree(parentId, data, adapter, DEFAULT_NODE_FILTER, idGetter, parentIdGetter, childrenSetter,
+                comparator, 0);
     }
 
     /**
      * 构建树模型
-     * @param <T> 原始数据类型泛型
-     * @param <N> 树节点对象泛型
-     * @param <I> ID类型泛型
-     * @param parentId 父节点ID
-     * @param data 数据
-     * @param adapter 节点适配器
-     * @param filter 节点过滤器
-     * @param idGetter 节点ID访问器
+     * @param <T>            原始数据类型泛型
+     * @param <N>            树节点对象泛型
+     * @param <I>            ID类型泛型
+     * @param parentId       父节点ID
+     * @param data           数据
+     * @param adapter        节点适配器
+     * @param filter         节点过滤器
+     * @param idGetter       节点ID访问器
      * @param parentIdGetter 节点父ID访问器
      * @param childrenSetter 子节点设置器
      * @return 树模型
      */
     @SuppressWarnings("unchecked")
-    public static <T, N, I> List<N> buildTree(I parentId, List<T> data, NodeAdapter<T, N> adapter, NodeFilter<T> filter, IdGetter<T, I> idGetter,
-            ParentIdGetter<T, I> parentIdGetter, ChildrenSetter<N> childrenSetter) {
-        return buildTree(parentId, data, adapter, filter, idGetter, parentIdGetter, childrenSetter, (Comparator<N>) NONE_COMPARATOR, 0);
+    public static <T, N, I> List<N> buildTree(I parentId, List<T> data, NodeAdapter<T, N> adapter, NodeFilter<T> filter,
+            IdGetter<T, I> idGetter, ParentIdGetter<T, I> parentIdGetter, ChildrenSetter<N> childrenSetter) {
+        return buildTree(parentId, data, adapter, filter, idGetter, parentIdGetter, childrenSetter,
+                (Comparator<N>) NONE_COMPARATOR, 0);
     }
 
     /**
      * 构建树模型
-     * @param <T> 原始数据类型泛型
-     * @param <N> 树节点类型泛型
-     * @param <I> ID类型泛型
-     * @param parentId 父节点ID
-     * @param data 数据
-     * @param adapter 节点适配器
-     * @param filter 节点过滤器
-     * @param idGetter 节点ID访问器
+     * @param <T>            原始数据类型泛型
+     * @param <N>            树节点类型泛型
+     * @param <I>            ID类型泛型
+     * @param parentId       父节点ID
+     * @param data           数据
+     * @param adapter        节点适配器
+     * @param filter         节点过滤器
+     * @param idGetter       节点ID访问器
      * @param parentIdGetter 节点父ID访问器
      * @param childrenSetter 子节点设置器
-     * @param comparator 排序比较器
+     * @param comparator     排序比较器
      * @return 树模型
      */
-    public static <T, N, I> List<N> buildTree(I parentId, List<T> data, NodeAdapter<T, N> adapter, NodeFilter<T> filter, IdGetter<T, I> idGetter,
-            ParentIdGetter<T, I> parentIdGetter, ChildrenSetter<N> childrenSetter, Comparator<N> comparator) {
+    public static <T, N, I> List<N> buildTree(I parentId, List<T> data, NodeAdapter<T, N> adapter, NodeFilter<T> filter,
+            IdGetter<T, I> idGetter, ParentIdGetter<T, I> parentIdGetter, ChildrenSetter<N> childrenSetter,
+            Comparator<N> comparator) {
         return buildTree(parentId, data, adapter, filter, idGetter, parentIdGetter, childrenSetter, comparator, 0);
     }
 
     /**
      * 构建树模型
-     * @param <T> 原始数据类型泛型
-     * @param <N> 树节点类型泛型
-     * @param <I> ID类型泛型
-     * @param parentId 父节点ID
-     * @param data 数据
-     * @param adapter 节点适配器
-     * @param filter 节点过滤器
-     * @param idGetter 节点ID访问器
+     * @param <T>            原始数据类型泛型
+     * @param <N>            树节点类型泛型
+     * @param <I>            ID类型泛型
+     * @param parentId       父节点ID
+     * @param data           数据
+     * @param adapter        节点适配器
+     * @param filter         节点过滤器
+     * @param idGetter       节点ID访问器
      * @param parentIdGetter 节点父ID访问器
      * @param childrenSetter 子节点设置器
-     * @param comparator 排序比较器
-     * @param depth 节点层级
+     * @param comparator     排序比较器
+     * @param depth          节点层级
      * @return 树模型
      */
-    private static <T, N, I> List<N> buildTree(I parentId, List<T> data, NodeAdapter<T, N> adapter, NodeFilter<T> filter, IdGetter<T, I> idGetter,
-            ParentIdGetter<T, I> parentIdGetter, ChildrenSetter<N> childrenSetter, Comparator<N> comparator, int depth) {
-        List<N> nodes = new ArrayList<>();
-        for (T model : data) {
-            if (Objects.equals(parentId, parentIdGetter.getParentId(model))) {
-                List<N> children = buildTree(idGetter.getId(model), data, adapter, filter, idGetter, parentIdGetter, childrenSetter, comparator,
-                        depth + 1);
-                if (filter.accept(model, depth, children.isEmpty())) {
-                    N node = adapter.adapte(model);
-                    childrenSetter.setChildren(node, children);
-                    nodes.add(node);
-                }
-            }
-        }
-        if (comparator != NONE_COMPARATOR) {
-            Collections.sort(nodes, comparator);
-        }
-        return nodes;
+    private static <T, N, I> List<N> buildTree(I parentId, List<T> data, NodeAdapter<T, N> adapter,
+            NodeFilter<T> filter, IdGetter<T, I> idGetter, ParentIdGetter<T, I> parentIdGetter,
+            ChildrenSetter<N> childrenSetter, Comparator<N> comparator, int depth) {
+        return TreeBuilder.<T, N, I>builder()//
+                .data(data)//
+                .rootParentId(parentId)//
+                .idGetter(idGetter::getId)//
+                .parentIdGetter(parentIdGetter::getParentId)//
+                .nodeAdapter(adapter::adapte)//
+                .childrenSetter(childrenSetter::setChildren)//
+                .nodeFilter(filter::accept)//
+                .comparator(comparator)//
+                .build();
     }
 
     /**
      * 递归设置 ID_PATH
-     * @param <N> 节点对象泛型
-     * @param <I> ID类型泛型
-     * @param nodes 节点列表
-     * @param idGetter 节点ID访问器
+     * @param <N>            节点对象泛型
+     * @param <I>            ID类型泛型
+     * @param nodes          节点列表
+     * @param idGetter       节点ID访问器
      * @param parentIdGetter 节点父ID访问器
-     * @param idPathSetter ID路径设置器
-     * @param parentId 上级ID
-     * @param parentIdPath 上级ID路径
+     * @param idPathSetter   ID路径设置器
+     * @param parentId       上级ID
+     * @param parentIdPath   上级ID路径
      */
-    public static <N, I> void recursiveSetIdPath(Collection<N> nodes, IdGetter<N, I> idGetter, ParentIdGetter<N, I> parentIdGetter,
-            IdPathSetter<N> idPathSetter, I parentId, String parentIdPath) {
+    public static <N, I> void recursiveSetIdPath(Collection<N> nodes, IdGetter<N, I> idGetter,
+            ParentIdGetter<N, I> parentIdGetter, IdPathSetter<N> idPathSetter, I parentId, String parentIdPath) {
         for (N node : nodes) {
             if (Objects.equals(parentId, parentIdGetter.getParentId(node))) {
                 I id = idGetter.getId(node);
@@ -207,7 +206,7 @@ public class TreeUtil {
     public static interface ChildrenSetter<N> {
         /**
          * 设置子节点
-         * @param node 节点对象
+         * @param node     节点对象
          * @param children 子节点
          */
         void setChildren(N node, List<N> children);
@@ -221,7 +220,7 @@ public class TreeUtil {
     public static interface IdPathSetter<N> {
         /**
          * ID路径
-         * @param node 节点对象
+         * @param node   节点对象
          * @param idPath ID路径
          */
         void setIdPath(N node, String idPath);
@@ -237,7 +236,7 @@ public class TreeUtil {
          * 判断树中是否应含有该节点
          * @param model 节点代表的的对象
          * @param depth 节点在树中所在的层次
-         * @param leaf 是否叶子节点
+         * @param leaf  是否叶子节点
          * @return 如果树中不包含该节点，则返回true，否则返回false。
          */
         boolean accept(T model, int depth, boolean leaf);

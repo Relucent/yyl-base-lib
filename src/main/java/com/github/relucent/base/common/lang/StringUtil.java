@@ -666,6 +666,35 @@ public class StringUtil {
     }
 
     /**
+     * *获取字符串最左侧的{@code length}个字符。<br>
+     * 
+     * <pre>
+     * StringUtil.left(null, *)    = null
+     * StringUtil.left(*, -ve)     = ""
+     * StringUtil.left("", *)      = ""
+     * StringUtil.left("abc", 0)   = ""
+     * StringUtil.left("abc", 2)   = "ab"
+     * StringUtil.left("abc", 4)   = "abc"
+     * </pre>
+     * 
+     * @param str 要处理的字符串
+     * @param len 所需字符串的长度
+     * @return 最左侧的字符
+     */
+    public static String left(final String str, final int len) {
+        if (str == null) {
+            return null;
+        }
+        if (len < 0) {
+            return StringConstant.EMPTY;
+        }
+        if (str.length() <= len) {
+            return str;
+        }
+        return str.substring(0, len);
+    }
+
+    /**
      * 左填充指定字符的字符串.
      * 
      * <pre>
@@ -696,6 +725,35 @@ public class StringUtil {
         }
         builder.append(str);
         return builder.toString();
+    }
+
+    /**
+     * 获取字符串中最右侧的{@code len}个字符。<br>
+     *
+     * <pre>
+     * StringUtils.right(null, *)    = null
+     * StringUtils.right(*, -ve)     = ""
+     * StringUtils.right("", *)      = ""
+     * StringUtils.right("abc", 0)   = ""
+     * StringUtils.right("abc", 2)   = "bc"
+     * StringUtils.right("abc", 4)   = "abc"
+     * </pre>
+     *
+     * @param str 要处理的字符串
+     * @param len 所需字符串的长度
+     * @return 最右侧的字符
+     */
+    public static String right(final String str, final int len) {
+        if (str == null) {
+            return null;
+        }
+        if (len < 0) {
+            return StringConstant.EMPTY;
+        }
+        if (str.length() <= len) {
+            return str;
+        }
+        return str.substring(str.length() - len);
     }
 
     /**

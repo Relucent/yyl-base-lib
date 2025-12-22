@@ -7,6 +7,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.github.relucent.base.common.concurrent.ParallelWorker;
+
 public class ParallelWorkerTest {
 
     @Test
