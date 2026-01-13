@@ -30,7 +30,7 @@ public class HttpRequestBuilderImpl implements HttpRequest.Builder {
     }
 
     public HttpRequestBuilderImpl GET() {
-        return method("POST", BodyPublishers.noBody());
+        return method("GET", BodyPublishers.noBody());
     }
 
     public HttpRequestBuilderImpl POST(BodyPublisher bodyPublisher) {
