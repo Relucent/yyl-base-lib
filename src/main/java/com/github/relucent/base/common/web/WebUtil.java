@@ -7,6 +7,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -82,7 +83,7 @@ public class WebUtil {
         if (uri == null) {
             uri = request.getRequestURI();
         }
-        return normalize(decodeAndCleanUriString(request, uri));
+        return CanonicalUtil.normalize(decodeAndCleanUriString(request, uri));
     }
 
     /**
@@ -112,12 +113,24 @@ public class WebUtil {
     }
 
     /**
-     * 规范化路径
-     * @param path 路径
-     * @return 规范化的路径
+     * 获取具有给定名称的第一个 Cookie <br>
+     * 备注：同名的Cookie是可以有多个的，但是路径或域不同。<br>
+     * @param request 当前请求
+     * @param name    Cookie 名称
+     * @return 返回具有给定名称的第一个cookie，如果未找到则返回{@code null}
      */
-    public static String normalize(String path) {
-        return normalize(path, true);
+    public static Cookie getCookie(HttpServletRequest request, String name) {
+        if (request != null && StringUtil.isNotBlank(name)) {
+            Cookie[] cookies = request.getCookies();
+            if (cookies != null) {
+                for (Cookie cookie : cookies) {
+                    if (name.equals(cookie.getName())) {
+                        return cookie;
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     /**
@@ -206,50 +219,6 @@ public class WebUtil {
         response.setContentType(contentType);
         response.setHeader("content-disposition", contentDisposition);
         file.writeTo(response.getOutputStream());
-    }
-
-    /**
-     * 规范化路径
-     * @param path             路径
-     * @param replaceBackSlash 是否替换反斜杠(\)
-     * @return 规范化的路径
-     */
-    private static String normalize(String path, boolean replaceBackSlash) {
-        if (path == null) {
-            return null;
-        }
-        String normalized = path;
-        if ((replaceBackSlash) && (normalized.indexOf('\\') >= 0)) {
-            normalized = normalized.replace('\\', '/');
-        }
-        if (normalized.equals("/.")) {
-            return "/";
-        }
-        if (!(normalized.startsWith("/"))) {
-            normalized = "/" + normalized;
-        }
-        while (true) {
-            int index = normalized.indexOf("//");
-            if (index < 0)
-                break;
-            normalized = normalized.substring(0, index) + normalized.substring(index + 1);
-        }
-        while (true) {
-            int index = normalized.indexOf("/./");
-            if (index < 0)
-                break;
-            normalized = normalized.substring(0, index) + normalized.substring(index + 2);
-        }
-        while (true) {
-            int index = normalized.indexOf("/../");
-            if (index < 0)
-                break;
-            if (index == 0)
-                return null;
-            int index2 = normalized.lastIndexOf(47, index - 1);
-            normalized = normalized.substring(0, index2) + normalized.substring(index + 3);
-        }
-        return normalized;
     }
 
     /**
