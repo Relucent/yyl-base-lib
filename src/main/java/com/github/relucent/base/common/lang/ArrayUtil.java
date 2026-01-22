@@ -37,7 +37,7 @@ public class ArrayUtil {
     // ===# Object[]
     /**
      * 判断数组是否为空
-     * @param <T> 数组元素泛型
+     * @param <T>   数组元素泛型
      * @param array 对象的数组
      * @return 是否为空
      */
@@ -47,7 +47,7 @@ public class ArrayUtil {
 
     /**
      * 判断数组是否为非空
-     * @param <T> 数组元素泛型
+     * @param <T>   数组元素泛型
      * @param array 对象的数组
      * @return 是否为非空
      */
@@ -81,8 +81,8 @@ public class ArrayUtil {
 
     /**
      * 查找指定对象在数组中的索引
-     * @param <T> 数组元素类型
-     * @param array 要搜索的数组
+     * @param <T>          数组元素类型
+     * @param array        要搜索的数组
      * @param objectToFind 要查找的对象
      * @return 对象在数组中的索引，如果没有找到返回-1
      */
@@ -92,10 +92,10 @@ public class ArrayUtil {
 
     /**
      * 从指定索引开始查找指定对象在数组中的索引
-     * @param <T> 数组元素类型
-     * @param array 要搜索的数组
+     * @param <T>          数组元素类型
+     * @param array        要搜索的数组
      * @param objectToFind 要查找的对象
-     * @param startIndex 开始搜索的索引
+     * @param startIndex   开始搜索的索引
      * @return 对象在数组中的索引，如果没有找到返回-1
      */
     public static <T> int indexOf(final T[] array, final T objectToFind, final int startIndex) {
@@ -124,8 +124,8 @@ public class ArrayUtil {
 
     /**
      * 从指定索引开始查找指定对象在数组中的最后一个索引
-     * @param <T> 数组元素类型
-     * @param array 要搜索的数组
+     * @param <T>          数组元素类型
+     * @param array        要搜索的数组
      * @param objectToFind 要查找的对象
      * @return 对象在数组中的最后一个索引，如果没有找到返回-1
      */
@@ -135,10 +135,10 @@ public class ArrayUtil {
 
     /**
      * 从指定索引开始查找指定对象在数组中的最后一个索引
-     * @param <T> 数组元素类型
-     * @param array 要搜索的数组
+     * @param <T>          数组元素类型
+     * @param array        要搜索的数组
      * @param objectToFind 要查找的对象
-     * @param startIndex 开始搜索的索引
+     * @param startIndex   开始搜索的索引
      * @return 对象在数组中的最后一个索引，如果没有找到返回-1
      */
     public static <T> int lastIndexOf(final T[] array, final T objectToFind, final int startIndex) {
@@ -170,8 +170,8 @@ public class ArrayUtil {
 
     /**
      * 检查指定数组中是否包含要查找的对象
-     * @param <T> 数组元素类型
-     * @param array 要搜索的数组
+     * @param <T>          数组元素类型
+     * @param array        要搜索的数组
      * @param objectToFind 要查找的对象
      * @return 如果要查找的对象在数组中，返回{@code true}；否则返回 {@code false}
      */
@@ -181,7 +181,7 @@ public class ArrayUtil {
 
     /**
      * 获得对象数组中第一个元素
-     * @param <T> 元素类型泛型
+     * @param <T>   元素类型泛型
      * @param array 要搜索的数组
      * @return 数组第一个元素,如果数组为空返回{@code null}
      */
@@ -192,7 +192,7 @@ public class ArrayUtil {
     /**
      * 获得对象数组指定位置的元素<br>
      * 如果数组下标越界，返回null
-     * @param <T> 元素类型泛型
+     * @param <T>   元素类型泛型
      * @param array 要搜索的数组
      * @param index 下标
      * @return 值
@@ -210,7 +210,7 @@ public class ArrayUtil {
 
     /**
      * 数组中是否包含{@code null}元素,
-     * @param <T> 数组元素类型
+     * @param <T>   数组元素类型
      * @param array 被检查的对象的数组
      * @return 如果数组中包含{@code null}元素返回true，否则返回false
      */
@@ -246,7 +246,7 @@ public class ArrayUtil {
 
     /**
      * 查找指定值在数组中的索引
-     * @param array 要搜索的数组
+     * @param array       要搜索的数组
      * @param valueToFind 要查找的值
      * @return 指定值在数组中的索引，如果没有找到返回-1
      */
@@ -256,9 +256,9 @@ public class ArrayUtil {
 
     /**
      * 从指定索引开始查找指定值在数组中的索引
-     * @param array 要搜索的数组
+     * @param array       要搜索的数组
      * @param valueToFind 要查找的值
-     * @param startIndex 开始搜索的索引
+     * @param startIndex  开始搜索的索引
      * @return 指定值在数组中的索引，如果没有找到返回-1
      */
     public static int indexOf(final byte[] array, final byte valueToFind, final int startIndex) {
@@ -279,7 +279,7 @@ public class ArrayUtil {
 
     /**
      * 查找指定值在数组中的最后一个索引
-     * @param array 要搜索的数组
+     * @param array       要搜索的数组
      * @param valueToFind 要查找的值
      * @return 指定值在数组中的索引，如果没有找到返回-1
      */
@@ -289,9 +289,9 @@ public class ArrayUtil {
 
     /**
      * 从指定索引开始查找指定值在数组中的最后一个索引
-     * @param array 要搜索的数组
+     * @param array       要搜索的数组
      * @param valueToFind 要查找的值
-     * @param startIndex 开始搜索的索引
+     * @param startIndex  开始搜索的索引
      * @return 指定值在数组中的索引，如果没有找到返回-1
      */
     public static int lastIndexOf(final byte[] array, final byte valueToFind, final int startIndex) {
@@ -316,7 +316,7 @@ public class ArrayUtil {
 
     /**
      * 检查指定数组中是否包含要查找的值
-     * @param array 要查找的值
+     * @param array       要查找的值
      * @param valueToFind 要查找的值
      * @return 如果要查找的值在数组中返回{@code true}，否则返回 {@code false}
      */
@@ -345,7 +345,7 @@ public class ArrayUtil {
 
     /**
      * 查找指定值在数组中的索引
-     * @param array 要搜索的数组
+     * @param array       要搜索的数组
      * @param valueToFind 要查找的值
      * @return 指定值在数组中的索引，如果没有找到返回-1
      */
@@ -355,9 +355,9 @@ public class ArrayUtil {
 
     /**
      * 从指定索引开始查找指定值在数组中的索引
-     * @param array 要搜索的数组
+     * @param array       要搜索的数组
      * @param valueToFind 要查找的值
-     * @param startIndex 开始搜索的索引
+     * @param startIndex  开始搜索的索引
      * @return 指定值在数组中的索引，如果没有找到返回-1
      */
     public static int indexOf(final short[] array, final short valueToFind, final int startIndex) {
@@ -378,7 +378,7 @@ public class ArrayUtil {
 
     /**
      * 查找指定值在数组中的最后一个索引
-     * @param array 要搜索的数组
+     * @param array       要搜索的数组
      * @param valueToFind 要查找的值
      * @return 指定值在数组中的索引，如果没有找到返回-1
      */
@@ -388,9 +388,9 @@ public class ArrayUtil {
 
     /**
      * 从指定索引开始查找指定值在数组中的最后一个索引
-     * @param array 要搜索的数组
+     * @param array       要搜索的数组
      * @param valueToFind 要查找的值
-     * @param startIndex 开始搜索的索引
+     * @param startIndex  开始搜索的索引
      * @return 指定值在数组中的索引，如果没有找到返回-1
      */
     public static int lastIndexOf(final short[] array, final short valueToFind, final int startIndex) {
@@ -415,7 +415,7 @@ public class ArrayUtil {
 
     /**
      * 检查指定数组中是否包含要查找的值
-     * @param array 要查找的值
+     * @param array       要查找的值
      * @param valueToFind 要查找的值
      * @return 如果要查找的值在数组中返回{@code true}，否则返回 {@code false}
      */
@@ -444,7 +444,7 @@ public class ArrayUtil {
 
     /**
      * 查找指定值在数组中的索引
-     * @param array 要搜索的数组
+     * @param array       要搜索的数组
      * @param valueToFind 要查找的值
      * @return 指定值在数组中的索引，如果没有找到返回-1
      */
@@ -454,9 +454,9 @@ public class ArrayUtil {
 
     /**
      * 从指定索引开始查找指定值在数组中的索引
-     * @param array 要搜索的数组
+     * @param array       要搜索的数组
      * @param valueToFind 要查找的值
-     * @param startIndex 开始搜索的索引
+     * @param startIndex  开始搜索的索引
      * @return 指定值在数组中的索引，如果没有找到返回-1
      */
     public static int indexOf(final int[] array, final int valueToFind, final int startIndex) {
@@ -477,7 +477,7 @@ public class ArrayUtil {
 
     /**
      * 查找指定值在数组中的最后一个索引
-     * @param array 要搜索的数组
+     * @param array       要搜索的数组
      * @param valueToFind 要查找的值
      * @return 指定值在数组中的索引，如果没有找到返回-1
      */
@@ -487,9 +487,9 @@ public class ArrayUtil {
 
     /**
      * 从指定索引开始查找指定值在数组中的最后一个索引
-     * @param array 要搜索的数组
+     * @param array       要搜索的数组
      * @param valueToFind 要查找的值
-     * @param startIndex 开始搜索的索引
+     * @param startIndex  开始搜索的索引
      * @return 指定值在数组中的索引，如果没有找到返回-1
      */
     public static int lastIndexOf(final int[] array, final int valueToFind, final int startIndex) {
@@ -514,7 +514,7 @@ public class ArrayUtil {
 
     /**
      * 检查指定数组中是否包含要查找的值
-     * @param array 要查找的值
+     * @param array       要查找的值
      * @param valueToFind 要查找的值
      * @return 如果要查找的值在数组中返回{@code true}，否则返回 {@code false}
      */
@@ -543,7 +543,7 @@ public class ArrayUtil {
 
     /**
      * 查找指定值在数组中的索引
-     * @param array 要搜索的数组
+     * @param array       要搜索的数组
      * @param valueToFind 要查找的值
      * @return 指定值在数组中的索引，如果没有找到返回-1
      */
@@ -553,9 +553,9 @@ public class ArrayUtil {
 
     /**
      * 从指定索引开始查找指定值在数组中的索引
-     * @param array 要搜索的数组
+     * @param array       要搜索的数组
      * @param valueToFind 要查找的值
-     * @param startIndex 开始搜索的索引
+     * @param startIndex  开始搜索的索引
      * @return 指定值在数组中的索引，如果没有找到返回-1
      */
     public static int indexOf(final long[] array, final long valueToFind, final int startIndex) {
@@ -576,7 +576,7 @@ public class ArrayUtil {
 
     /**
      * 查找指定值在数组中的最后一个索引
-     * @param array 要搜索的数组
+     * @param array       要搜索的数组
      * @param valueToFind 要查找的值
      * @return 指定值在数组中的索引，如果没有找到返回-1
      */
@@ -586,9 +586,9 @@ public class ArrayUtil {
 
     /**
      * 从指定索引开始查找指定值在数组中的最后一个索引
-     * @param array 要搜索的数组
+     * @param array       要搜索的数组
      * @param valueToFind 要查找的值
-     * @param startIndex 开始搜索的索引
+     * @param startIndex  开始搜索的索引
      * @return 指定值在数组中的索引，如果没有找到返回-1
      */
     public static int lastIndexOf(final long[] array, final long valueToFind, final int startIndex) {
@@ -613,7 +613,7 @@ public class ArrayUtil {
 
     /**
      * 检查指定数组中是否包含要查找的值
-     * @param array 要查找的值
+     * @param array       要查找的值
      * @param valueToFind 要查找的值
      * @return 如果要查找的值在数组中返回{@code true}，否则返回 {@code false}
      */
@@ -642,7 +642,7 @@ public class ArrayUtil {
 
     /**
      * 查找指定值在数组中的索引
-     * @param array 要搜索的数组
+     * @param array       要搜索的数组
      * @param valueToFind 要查找的值
      * @return 指定值在数组中的索引，如果没有找到返回-1
      */
@@ -652,9 +652,9 @@ public class ArrayUtil {
 
     /**
      * 从指定索引开始查找指定值在数组中的索引
-     * @param array 要搜索的数组
+     * @param array       要搜索的数组
      * @param valueToFind 要查找的值
-     * @param startIndex 开始搜索的索引
+     * @param startIndex  开始搜索的索引
      * @return 指定值在数组中的索引，如果没有找到返回-1
      */
     public static int indexOf(final float[] array, final float valueToFind, final int startIndex) {
@@ -675,7 +675,7 @@ public class ArrayUtil {
 
     /**
      * 查找指定值在数组中的最后一个索引
-     * @param array 要搜索的数组
+     * @param array       要搜索的数组
      * @param valueToFind 要查找的值
      * @return 指定值在数组中的索引，如果没有找到返回-1
      */
@@ -685,9 +685,9 @@ public class ArrayUtil {
 
     /**
      * 从指定索引开始查找指定值在数组中的最后一个索引
-     * @param array 要搜索的数组
+     * @param array       要搜索的数组
      * @param valueToFind 要查找的值
-     * @param startIndex 开始搜索的索引
+     * @param startIndex  开始搜索的索引
      * @return 指定值在数组中的索引，如果没有找到返回-1
      */
     public static int lastIndexOf(final float[] array, final float valueToFind, final int startIndex) {
@@ -712,7 +712,7 @@ public class ArrayUtil {
 
     /**
      * 检查指定数组中是否包含要查找的值
-     * @param array 要查找的值
+     * @param array       要查找的值
      * @param valueToFind 要查找的值
      * @return 如果要查找的值在数组中返回{@code true}，否则返回 {@code false}
      */
@@ -741,7 +741,7 @@ public class ArrayUtil {
 
     /**
      * 查找指定值在数组中的索引
-     * @param array 要搜索的数组
+     * @param array       要搜索的数组
      * @param valueToFind 要查找的值
      * @return 指定值在数组中的索引，如果没有找到返回-1
      */
@@ -751,9 +751,9 @@ public class ArrayUtil {
 
     /**
      * 从指定索引开始查找指定值在数组中的索引
-     * @param array 要搜索的数组
+     * @param array       要搜索的数组
      * @param valueToFind 要查找的值
-     * @param startIndex 开始搜索的索引
+     * @param startIndex  开始搜索的索引
      * @return 指定值在数组中的索引，如果没有找到返回-1
      */
     public static int indexOf(final double[] array, final double valueToFind, final int startIndex) {
@@ -774,7 +774,7 @@ public class ArrayUtil {
 
     /**
      * 查找指定值在数组中的最后一个索引
-     * @param array 要搜索的数组
+     * @param array       要搜索的数组
      * @param valueToFind 要查找的值
      * @return 指定值在数组中的索引，如果没有找到返回-1
      */
@@ -784,9 +784,9 @@ public class ArrayUtil {
 
     /**
      * 从指定索引开始查找指定值在数组中的最后一个索引
-     * @param array 要搜索的数组
+     * @param array       要搜索的数组
      * @param valueToFind 要查找的值
-     * @param startIndex 开始搜索的索引
+     * @param startIndex  开始搜索的索引
      * @return 指定值在数组中的索引，如果没有找到返回-1
      */
     public static int lastIndexOf(final double[] array, final double valueToFind, final int startIndex) {
@@ -811,7 +811,7 @@ public class ArrayUtil {
 
     /**
      * 检查指定数组中是否包含要查找的值
-     * @param array 要查找的值
+     * @param array       要查找的值
      * @param valueToFind 要查找的值
      * @return 如果要查找的值在数组中返回{@code true}，否则返回 {@code false}
      */
@@ -840,7 +840,7 @@ public class ArrayUtil {
 
     /**
      * 查找指定值在数组中的索引
-     * @param array 要搜索的数组
+     * @param array       要搜索的数组
      * @param valueToFind 要查找的值
      * @return 指定值在数组中的索引，如果没有找到返回-1
      */
@@ -850,9 +850,9 @@ public class ArrayUtil {
 
     /**
      * 从指定索引开始查找指定值在数组中的索引
-     * @param array 要搜索的数组
+     * @param array       要搜索的数组
      * @param valueToFind 要查找的值
-     * @param startIndex 开始搜索的索引
+     * @param startIndex  开始搜索的索引
      * @return 指定值在数组中的索引，如果没有找到返回-1
      */
     public static int indexOf(final boolean[] array, final boolean valueToFind, final int startIndex) {
@@ -873,7 +873,7 @@ public class ArrayUtil {
 
     /**
      * 查找指定值在数组中的最后一个索引
-     * @param array 要搜索的数组
+     * @param array       要搜索的数组
      * @param valueToFind 要查找的值
      * @return 指定值在数组中的索引，如果没有找到返回-1
      */
@@ -883,9 +883,9 @@ public class ArrayUtil {
 
     /**
      * 从指定索引开始查找指定值在数组中的最后一个索引
-     * @param array 要搜索的数组
+     * @param array       要搜索的数组
      * @param valueToFind 要查找的值
-     * @param startIndex 开始搜索的索引
+     * @param startIndex  开始搜索的索引
      * @return 指定值在数组中的索引，如果没有找到返回-1
      */
     public static int lastIndexOf(final boolean[] array, final boolean valueToFind, final int startIndex) {
@@ -910,7 +910,7 @@ public class ArrayUtil {
 
     /**
      * 检查指定数组中是否包含要查找的值
-     * @param array 要查找的值
+     * @param array       要查找的值
      * @param valueToFind 要查找的值
      * @return 如果要查找的值在数组中返回{@code true}，否则返回 {@code false}
      */
@@ -939,7 +939,7 @@ public class ArrayUtil {
 
     /**
      * 查找指定值在数组中的索引
-     * @param array 要搜索的数组
+     * @param array       要搜索的数组
      * @param valueToFind 要查找的值
      * @return 指定值在数组中的索引，如果没有找到返回-1
      */
@@ -949,9 +949,9 @@ public class ArrayUtil {
 
     /**
      * 从指定索引开始查找指定值在数组中的索引
-     * @param array 要搜索的数组
+     * @param array       要搜索的数组
      * @param valueToFind 要查找的值
-     * @param startIndex 开始搜索的索引
+     * @param startIndex  开始搜索的索引
      * @return 指定值在数组中的索引，如果没有找到返回-1
      */
     public static int indexOf(final char[] array, final char valueToFind, final int startIndex) {
@@ -972,7 +972,7 @@ public class ArrayUtil {
 
     /**
      * 查找指定值在数组中的最后一个索引
-     * @param array 要搜索的数组
+     * @param array       要搜索的数组
      * @param valueToFind 要查找的值
      * @return 指定值在数组中的索引，如果没有找到返回-1
      */
@@ -982,9 +982,9 @@ public class ArrayUtil {
 
     /**
      * 从指定索引开始查找指定值在数组中的最后一个索引
-     * @param array 要搜索的数组
+     * @param array       要搜索的数组
      * @param valueToFind 要查找的值
-     * @param startIndex 开始搜索的索引
+     * @param startIndex  开始搜索的索引
      * @return 指定值在数组中的索引，如果没有找到返回-1
      */
     public static int lastIndexOf(final char[] array, final char valueToFind, final int startIndex) {
@@ -1009,7 +1009,7 @@ public class ArrayUtil {
 
     /**
      * 检查指定数组中是否包含要查找的值
-     * @param array 要查找的值
+     * @param array       要查找的值
      * @param valueToFind 要查找的值
      * @return 如果要查找的值在数组中返回{@code true}，否则返回 {@code false}
      */
@@ -1224,7 +1224,7 @@ public class ArrayUtil {
     /**
      * 将布尔对象数组({@code Boolean[]})转换为布尔基础类型数组({@code boolean[]})。<br>
      * 对于{@code null}输入数组，此方法返回{@code null}。
-     * @param array {@code Boolean}数组
+     * @param array        {@code Boolean}数组
      * @param valueForNull 当数组元素为{@code null}时，要插入的值
      * @return {@code boolean} 数组, 如果输入数组为{@code null} 则返回 {@code null}
      */
@@ -1268,7 +1268,7 @@ public class ArrayUtil {
     /**
      * 将字节对象数组({@code Byte[]})转换为字节基础类型数组({@code byte[]})。<br>
      * 对于{@code null}输入数组，此方法返回{@code null}。
-     * @param array {@code Byte}数组
+     * @param array        {@code Byte}数组
      * @param valueForNull 当数组元素为{@code null}时，要插入的值
      * @return {@code byte} 数组
      */
@@ -1311,7 +1311,7 @@ public class ArrayUtil {
     /**
      * 将字符对象数组({@code Character[]})转换为字符基础类型数组({@code char[]})。<br>
      * 对于{@code null}输入数组，此方法返回{@code null}。
-     * @param array {@code Character} 数组
+     * @param array        {@code Character} 数组
      * @param valueForNull 当数组元素为{@code null}时，要插入的值
      * @return a {@code char} 数组
      */
@@ -1353,7 +1353,7 @@ public class ArrayUtil {
     /**
      * 将整型对象数组({@code Long[]})转换为长整型基础类型数组({@code long[]})。<br>
      * 对于{@code null}输入数组，此方法返回{@code null}。
-     * @param array {@code Long} 数组
+     * @param array        {@code Long} 数组
      * @param valueForNull 当数组元素为{@code null}时，要插入的值
      * @return {@code long} 数组
      */
@@ -1394,7 +1394,7 @@ public class ArrayUtil {
     /**
      * 将长整型对象数组({@code Integer[]})转换为整型基础类型数组({@code int[]})。<br>
      * 对于{@code null}输入数组，此方法返回{@code null}。
-     * @param array {@code Integer} 数组
+     * @param array        {@code Integer} 数组
      * @param valueForNull 当数组元素为{@code null}时，要插入的值
      * @return {@code int} 数组
      */
@@ -1436,7 +1436,7 @@ public class ArrayUtil {
     /**
      * 将短整型对象数组({@code Short[]})转换为短整型基础类型数组({@code short[]})。<br>
      * 对于{@code null}输入数组，此方法返回{@code null}。
-     * @param array {@code Short} 数组
+     * @param array        {@code Short} 数组
      * @param valueForNull 当数组元素为{@code null}时，要插入的值
      * @return {@code short} 数组
      */
@@ -1479,7 +1479,7 @@ public class ArrayUtil {
     /**
      * 将双精度浮点对象数组({@code Double[]})转换为双精度浮点基础类型数组({@code double[]})。<br>
      * 对于{@code null}输入数组，此方法返回{@code null}。
-     * @param array {@code Double} 数组
+     * @param array        {@code Double} 数组
      * @param valueForNull 当数组元素为{@code null}时，要插入的值
      * @return {@code double} 数组
      */
@@ -1522,7 +1522,7 @@ public class ArrayUtil {
     /**
      * 将浮点对象数组({@code Float[]})转换为浮点基础类型数组({@code float[]})。<br>
      * 对于{@code null}输入数组，此方法返回{@code null}。
-     * @param array {@code Float} 数组
+     * @param array        {@code Float} 数组
      * @param valueForNull 当数组元素为{@code null}时，要插入的值
      * @return {@code float} 数组
      */
@@ -1580,12 +1580,370 @@ public class ArrayUtil {
         return array;
     }
 
+    // Array concat
+    // ----------------------------------------------------------------------
+
+    /**
+     * 拼装多个同类型数组<br>
+     * 
+     * <pre>
+     * #concat()                          -> 返回空数组（Object[0]）
+     * #concat(null, null)                -> 返回空数组
+     * #concat(new String[0])             -> 返回 String[0]
+     * #concat(new String[]{"A"}, {"B"})  -> ["A", "B"]
+     * </pre>
+     * 
+     * @param arrays 待拼装的数组（可变参数，可为 0 个）
+     * @param <T>    数组元素类型
+     * @return 拼装后的新数组，不会返回null
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T[] concat(T[]... arrays) {
+
+        if (arrays == null || arrays.length == 0) {
+            return (T[]) ArrayConstant.EMPTY_OBJECT_ARRAY;
+        }
+
+        int totalLength = 0;
+        Class<?> componentType = null;
+
+        // 计算长度 & 获取组件类型
+        for (T[] array : arrays) {
+            if (array == null || array.length == 0) {
+                continue;
+            }
+            totalLength += array.length;
+            if (componentType == null) {
+                componentType = array.getClass().getComponentType();
+            }
+        }
+
+        // 全部为 null / 空数组
+        if (componentType == null) {
+            return (T[]) ArrayConstant.EMPTY_OBJECT_ARRAY;
+        }
+
+        T[] result = (T[]) Array.newInstance(componentType, totalLength);
+
+        // 拷贝
+        int offset = 0;
+        for (T[] array : arrays) {
+            if (array == null || array.length == 0) {
+                continue;
+            }
+            System.arraycopy(array, 0, result, offset, array.length);
+            offset += array.length;
+        }
+        return result;
+    }
+
+    /**
+     * 拼装数组
+     * @param arrays 待拼装的数组
+     * @return 拼装后的新数组
+     */
+    public static boolean[] concat(boolean[]... arrays) {
+        if (arrays == null || arrays.length == 0) {
+            return ArrayConstant.EMPTY_BOOLEAN_ARRAY;
+        }
+
+        int totalLength = 0;
+        for (boolean[] array : arrays) {
+            if (array != null) {
+                totalLength += array.length;
+            }
+        }
+
+        if (totalLength == 0) {
+            return ArrayConstant.EMPTY_BOOLEAN_ARRAY;
+        }
+
+        boolean[] result = new boolean[totalLength];
+        int offset = 0;
+
+        for (boolean[] array : arrays) {
+            if (array == null || array.length == 0) {
+                continue;
+            }
+            System.arraycopy(array, 0, result, offset, array.length);
+            offset += array.length;
+        }
+
+        return result;
+    }
+
+    /**
+     * 拼装数组
+     * @param arrays 待拼装的数组
+     * @return 拼装后的新数组
+     */
+    public static byte[] concat(byte[]... arrays) {
+        if (arrays == null || arrays.length == 0) {
+            return ArrayConstant.EMPTY_BYTE_ARRAY;
+        }
+
+        int totalLength = 0;
+        for (byte[] array : arrays) {
+            if (array != null) {
+                totalLength += array.length;
+            }
+        }
+
+        if (totalLength == 0) {
+            return ArrayConstant.EMPTY_BYTE_ARRAY;
+        }
+
+        byte[] result = new byte[totalLength];
+        int offset = 0;
+
+        for (byte[] array : arrays) {
+            if (array == null || array.length == 0) {
+                continue;
+            }
+            System.arraycopy(array, 0, result, offset, array.length);
+            offset += array.length;
+        }
+
+        return result;
+    }
+
+    /**
+     * 拼装数组
+     * @param arrays 待拼装的数组
+     * @return 拼装后的新数组
+     */
+    public static char[] concat(char[]... arrays) {
+        if (arrays == null || arrays.length == 0) {
+            return ArrayConstant.EMPTY_CHAR_ARRAY;
+        }
+
+        int totalLength = 0;
+        for (char[] array : arrays) {
+            if (array != null) {
+                totalLength += array.length;
+            }
+        }
+
+        if (totalLength == 0) {
+            return ArrayConstant.EMPTY_CHAR_ARRAY;
+        }
+
+        char[] result = new char[totalLength];
+        int offset = 0;
+
+        for (char[] array : arrays) {
+            if (array == null || array.length == 0) {
+                continue;
+            }
+            System.arraycopy(array, 0, result, offset, array.length);
+            offset += array.length;
+        }
+
+        return result;
+    }
+
+    /**
+     * 拼装数组
+     * @param arrays 待拼装的数组
+     * @return 拼装后的新数组
+     */
+    public static short[] concat(short[]... arrays) {
+        if (arrays == null || arrays.length == 0) {
+            return ArrayConstant.EMPTY_SHORT_ARRAY;
+        }
+
+        int totalLength = 0;
+        for (short[] array : arrays) {
+            if (array != null) {
+                totalLength += array.length;
+            }
+        }
+
+        if (totalLength == 0) {
+            return ArrayConstant.EMPTY_SHORT_ARRAY;
+        }
+
+        short[] result = new short[totalLength];
+        int offset = 0;
+
+        for (short[] array : arrays) {
+            if (array == null || array.length == 0) {
+                continue;
+            }
+            System.arraycopy(array, 0, result, offset, array.length);
+            offset += array.length;
+        }
+
+        return result;
+    }
+
+    /**
+     * 拼装数组
+     * @param arrays 待拼装的数组
+     * @return 拼装后的新数组
+     */
+    public static int[] concat(int[]... arrays) {
+        if (arrays == null || arrays.length == 0) {
+            return ArrayConstant.EMPTY_INT_ARRAY;
+        }
+
+        int totalLength = 0;
+        for (int[] array : arrays) {
+            if (array != null) {
+                totalLength += array.length;
+            }
+        }
+
+        if (totalLength == 0) {
+            return ArrayConstant.EMPTY_INT_ARRAY;
+        }
+
+        int[] result = new int[totalLength];
+        int offset = 0;
+
+        for (int[] array : arrays) {
+            if (array == null || array.length == 0) {
+                continue;
+            }
+            System.arraycopy(array, 0, result, offset, array.length);
+            offset += array.length;
+        }
+
+        return result;
+    }
+
+    /**
+     * 拼装数组
+     * @param arrays 待拼装的数组
+     * @return 拼装后的新数组
+     */
+    public static long[] concat(long[]... arrays) {
+        if (arrays == null || arrays.length == 0) {
+            return ArrayConstant.EMPTY_LONG_ARRAY;
+        }
+
+        int totalLength = 0;
+        for (long[] array : arrays) {
+            if (array != null) {
+                totalLength += array.length;
+            }
+        }
+
+        if (totalLength == 0) {
+            return ArrayConstant.EMPTY_LONG_ARRAY;
+        }
+
+        long[] result = new long[totalLength];
+        int offset = 0;
+
+        for (long[] array : arrays) {
+            if (array == null || array.length == 0) {
+                continue;
+            }
+            System.arraycopy(array, 0, result, offset, array.length);
+            offset += array.length;
+        }
+
+        return result;
+    }
+
+    /**
+     * 拼装数组
+     * @param arrays 待拼装的数组
+     * @return 拼装后的新数组
+     */
+    public static float[] concat(float[]... arrays) {
+        if (arrays == null || arrays.length == 0) {
+            return ArrayConstant.EMPTY_FLOAT_ARRAY;
+        }
+
+        int totalLength = 0;
+        for (float[] array : arrays) {
+            if (array != null) {
+                totalLength += array.length;
+            }
+        }
+
+        if (totalLength == 0) {
+            return ArrayConstant.EMPTY_FLOAT_ARRAY;
+        }
+
+        float[] result = new float[totalLength];
+        int offset = 0;
+
+        for (float[] array : arrays) {
+            if (array == null || array.length == 0) {
+                continue;
+            }
+            System.arraycopy(array, 0, result, offset, array.length);
+            offset += array.length;
+        }
+
+        return result;
+    }
+
+    /**
+     * 拼装数组
+     * @param arrays 待拼装的数组
+     * @return 拼装后的新数组
+     */
+    public static double[] concat(double[]... arrays) {
+        if (arrays == null || arrays.length == 0) {
+            return ArrayConstant.EMPTY_DOUBLE_ARRAY;
+        }
+
+        int totalLength = 0;
+        for (double[] array : arrays) {
+            if (array != null) {
+                totalLength += array.length;
+            }
+        }
+
+        if (totalLength == 0) {
+            return ArrayConstant.EMPTY_DOUBLE_ARRAY;
+        }
+
+        double[] result = new double[totalLength];
+        int offset = 0;
+
+        for (double[] array : arrays) {
+            if (array == null || array.length == 0) {
+                continue;
+            }
+            System.arraycopy(array, 0, result, offset, array.length);
+            offset += array.length;
+        }
+
+        return result;
+    }
+
+    // Array Find
+    // ----------------------------------------------------------------------
+    /**
+     * 返回数组中第一个满足条件的元素
+     * @param array     数组
+     * @param condition 条件
+     * @param <T>       元素类型
+     * @return 第一个满足条件的元素，未找到返回 null
+     */
+    public static <T> T findFirst(T[] array, Predicate<T> condition) {
+        if (array == null || condition == null) {
+            return null;
+        }
+        for (T item : array) {
+            if (condition.test(item)) {
+                return item;
+            }
+        }
+        return null;
+    }
+
     // Array Edit
     // ----------------------------------------------------------------------
     /**
      * 过滤过程通过传入的Filter实现来过滤返回需要的元素内容
-     * @param <T> 数组元素类型
-     * @param array 数组
+     * @param <T>    数组元素类型
+     * @param array  数组
      * @param filter 过滤器接口，用于定义过滤规则，{@code null}返回原集合
      * @return 过滤后的数组
      */
@@ -1606,11 +1964,11 @@ public class ArrayUtil {
 
     /**
      * 按照指定规则，转换数组中的元素
-     * @param <T> 原数组类型
-     * @param <R> 目标数组类型
-     * @param array 被转换的数组
+     * @param <T>           原数组类型
+     * @param <R>           目标数组类型
+     * @param array         被转换的数组
      * @param componentType 目标的元素类型
-     * @param mapper 转换规则函数
+     * @param mapper        转换规则函数
      * @return 转换后的数组
      */
     public static <T, R> R[] map(T[] array, Class<R> componentType, Function<? super T, ? extends R> mapper) {
@@ -1623,9 +1981,9 @@ public class ArrayUtil {
 
     /**
      * 创建具有指定组件类型和长度的新数组
-     * @param <T> 数组元素类型
+     * @param <T>           数组元素类型
      * @param componentType 数组元素类型
-     * @param length 数组长度
+     * @param length        数组长度
      * @return 新数组
      * @see Array#newInstance(Class, int)
      */
@@ -1657,7 +2015,7 @@ public class ArrayUtil {
     // ----------------------------------------------------------------------
     /**
      * 将可变参数转换为数组
-     * @param <T> 元素类型
+     * @param <T>     元素类型
      * @param varargs 可变参数
      * @return 数组
      */
