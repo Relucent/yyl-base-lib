@@ -426,6 +426,23 @@ public class StringUtil {
     }
 
     /**
+     * 将指定字符串重复拼接指定次数
+     * @param str   字符串
+     * @param times 重复次数
+     * @return 拼接后的字符串
+     */
+    public static String repeat(CharSequence str, int times) {
+        if (isEmpty(str) || times <= 0) {
+            return StringConstant.EMPTY;
+        }
+        StringBuilder buffer = new StringBuilder(str.length() * times);
+        for (int i = 0; i < times; i++) {
+            buffer.append(str);
+        }
+        return buffer.toString();
+    }
+
+    /**
      * 将所提供的集合{@code Iterator}元素连接成字符串。
      * @param iterable  要连接在一起的集合
      * @param separator 分隔符
