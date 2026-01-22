@@ -128,7 +128,7 @@ public class FilenameUtil {
      * @param path 文件路径
      * @return 最后一个路径分割的索引
      */
-    private static int indexOfLastSeparator(String path) {
+    public static int indexOfLastSeparator(String path) {
         if (path == null) {
             return -1;
         }
@@ -142,12 +142,21 @@ public class FilenameUtil {
      * @param path 文件路径
      * @return 文件路径扩展名分隔符字符的索引，如果文件没有扩展名返回 -1
      */
-    private static int indexOfExtension(String path) {
+    public static int indexOfExtension(String path) {
         if (path == null) {
             return -1;
         }
         int extensionPos = path.lastIndexOf(FilenameConstant.EXTENSION_SEPARATOR);
         int lastSeparator = indexOfLastSeparator(path);
         return lastSeparator > extensionPos ? -1 : extensionPos;
+    }
+
+    /**
+     * 检查字符是否为分隔符
+     * @param ch 要检查的字符
+     * @return 如果它是分隔符，则返回 true
+     */
+    public static boolean isSeparator(final char ch) {
+        return ch == FilenameConstant.UNIX_SEPARATOR || ch == FilenameConstant.WINDOWS_SEPARATOR;
     }
 }

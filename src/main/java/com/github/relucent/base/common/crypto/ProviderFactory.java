@@ -18,7 +18,9 @@ public class ProviderFactory {
         Provider provider = null;
         // BouncyCastle就是一个提供了很多哈希算法和加密算法的第三方库，它提供了Java标准库没有的一些算法。
         try {
-            provider = new org.bouncycastle.jce.provider.BouncyCastleProvider();
+            // provider = new org.bouncycastle.jce.provider.BouncyCastleProvider();
+            Class<?> clazz = Class.forName("org.bouncycastle.jce.provider.BouncyCastleProvider");
+            provider = (Provider) clazz.getDeclaredConstructor().newInstance();
         } catch (Throwable e) {
             // ignore
         }
