@@ -198,7 +198,7 @@ public class UrlUtil {
      * @see CodecUtil#encodeURI(String)
      */
     public static String encode(String url) {
-        return CodecUtil.encodeURI(url);
+        return CodecUtil.encodeUri(url);
     }
 
     /**

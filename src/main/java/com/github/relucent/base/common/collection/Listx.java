@@ -9,7 +9,7 @@ import com.github.relucent.base.common.convert.ConvertUtil;
  * 增强版List接口的实现类。<br>
  */
 @SuppressWarnings("serial")
-public class Listx extends ListWrapper<Object> implements Cloneable {
+public class Listx extends ListWrapper<Object> {
 
     // ==============================Fields==============================================
     // ...

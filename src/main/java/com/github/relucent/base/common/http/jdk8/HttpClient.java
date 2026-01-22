@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.Proxy;
-import java.security.cert.X509Certificate;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -14,12 +13,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 
 import com.github.relucent.base.common.http.jdk8.HttpRequest.BodyPublisher;
 import com.github.relucent.base.common.http.jdk8.HttpResponse.BodyHandler;
@@ -28,6 +22,7 @@ import com.github.relucent.base.common.http.jdk8.internal.HttpResponseImpl;
 import com.github.relucent.base.common.http.jdk8.internal.HttpResponseInfoImpl;
 import com.github.relucent.base.common.io.IoUtil;
 import com.github.relucent.base.common.lang.StringUtil;
+import com.github.relucent.base.common.net.SslUtil;
 
 /**
  * HTTP工具类<br>
@@ -47,9 +42,6 @@ public class HttpClient implements AutoCloseable {
         this.connectTimeoutMillis = builder.connectTimeoutMillis;
         this.readTimeoutMillis = builder.readTimeoutMillis;
         this.ignoreSslVerification = builder.ignoreSslVerification;
-        if (ignoreSslVerification) {
-            disableSslVerification();
-        }
     }
 
     public static Builder newBuilder() {
@@ -130,7 +122,8 @@ public class HttpClient implements AutoCloseable {
                 conn = (HttpURLConnection) request.uri().toURL().openConnection();
             }
             if (conn instanceof HttpsURLConnection && ignoreSslVerification) {
-                ((HttpsURLConnection) conn).setHostnameVerifier((hostname, session) -> true);
+                ((HttpsURLConnection) conn).setSSLSocketFactory(SslUtil.SKIP_SSL_SOCKET_FACTORY);
+                ((HttpsURLConnection) conn).setHostnameVerifier(SslUtil.SKIP_HOSTNAME_VERIFIER);
             }
 
             conn.setConnectTimeout(connectTimeoutMillis);
@@ -154,7 +147,8 @@ public class HttpClient implements AutoCloseable {
             }
 
             BodyPublisher bodyPublisher = request.bodyPublisher();
-            if (StringUtil.isEmpty(requestHeaders.firstValue("Content-Type"))) {
+            if (StringUtil.isEmpty(requestHeaders.firstValue("Content-Type"))
+                    && StringUtil.isNotBlank(bodyPublisher.contentType())) {
                 conn.setRequestProperty("Content-Type", bodyPublisher.contentType());
             }
 
@@ -188,36 +182,6 @@ public class HttpClient implements AutoCloseable {
             }
         } finally {
             IoUtil.closeQuietly(conn);
-        }
-    }
-
-    /**
-     * 禁用 HTTPS 证书校验
-     */
-    private static void disableSslVerification() {
-        try {
-            TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
-                public X509Certificate[] getAcceptedIssuers() {
-                    return new X509Certificate[0];
-                }
-
-                public void checkClientTrusted(X509Certificate[] certs, String authType) {
-                }
-
-                public void checkServerTrusted(X509Certificate[] certs, String authType) {
-                }
-            } };
-            SSLContext sc = SSLContext.getInstance("TLS");
-            sc.init(null, trustAllCerts, new java.security.SecureRandom());
-            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-            HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
-                @Override
-                public boolean verify(String hostname, SSLSession session) {
-                    return true;
-                }
-            });
-        } catch (Exception e) {
-            throw new RuntimeException(e);
         }
     }
 
