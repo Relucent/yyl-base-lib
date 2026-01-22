@@ -9,7 +9,7 @@ import com.github.relucent.base.common.convert.ConvertUtil;
  * 增强版Map接口的实现类。<br>
  */
 @SuppressWarnings("serial")
-public class Mapx extends MapWrapper<String, Object> implements Cloneable {
+public class Mapx extends MapWrapper<String, Object> {
 
     // ==============================Fields==============================================
     // ...
