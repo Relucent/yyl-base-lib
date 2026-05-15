@@ -10,7 +10,7 @@ import java.util.Objects;
  */
 public class ArrayIterator<E> implements Iterator<E> {
 
-    // =================================Fields=================================================
+    // =================================Fields========================================
     /** 数组 */
     private final Object array;
     /** 数组长度 */

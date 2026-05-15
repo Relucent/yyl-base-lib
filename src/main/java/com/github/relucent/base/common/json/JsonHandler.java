@@ -40,12 +40,12 @@ public interface JsonHandler {
      * @param json JSON字符串
      * @return MAP对象,如果解析失败返回null
      */
-    Mapx toMap(String json);
+    Mapx decodeMap(String json);
 
     /**
      * 将Java对象解析为LIST对象
      * @param json LIST字符串
      * @return LIST对象,如果解析失败返回null
      */
-    Listx toList(String json);
+    Listx decodeList(String json);
 }

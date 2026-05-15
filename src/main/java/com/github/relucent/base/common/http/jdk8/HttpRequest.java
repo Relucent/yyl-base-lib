@@ -7,6 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import com.github.relucent.base.common.http.HttpMethod;
 import com.github.relucent.base.common.http.jdk8.internal.HttpRequestBuilderImpl;
 import com.github.relucent.base.common.http.jdk8.internal.HttpRequestPublishers;
 import com.github.relucent.base.common.http.jdk8.internal.HttpRequestPublishers.MultipartBodyPublisher;
@@ -33,6 +34,8 @@ public interface HttpRequest {
         Builder uri(URI uri);
 
         Builder uri(String uri);
+
+        Builder method(HttpMethod method, BodyPublisher bodyPublisher);
 
         Builder GET();
 

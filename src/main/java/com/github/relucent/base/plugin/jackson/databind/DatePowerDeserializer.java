@@ -14,13 +14,13 @@ import com.github.relucent.base.common.time.DateUtil;
  */
 public class DatePowerDeserializer extends JsonDeserializer<Date> {
 
-    /** Singleton instance to use. */
-    public static final DatePowerDeserializer INSTANCE = new DatePowerDeserializer();
+	/** Singleton instance to use. */
+	public static final DatePowerDeserializer INSTANCE = new DatePowerDeserializer();
 
-    @Override
-    public Date deserialize(JsonParser parser, DeserializationContext context)
-            throws IOException, JsonProcessingException {
-        String text = parser.getText();
-        return DateUtil.parseDate(text);
-    }
+	@Override
+	public Date deserialize(JsonParser parser, DeserializationContext context)
+			throws IOException, JsonProcessingException {
+		String text = parser.getText();
+		return DateUtil.parseDate(text);
+	}
 }

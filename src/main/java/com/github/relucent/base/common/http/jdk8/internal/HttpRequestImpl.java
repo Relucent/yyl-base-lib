@@ -17,7 +17,7 @@ public class HttpRequestImpl implements HttpRequest {
 
     HttpRequestImpl(HttpRequestBuilderImpl builder) {
         this.uri = builder.uri;
-        this.method = builder.method;
+        this.method = builder.method.name();
         this.headers = builder.headers.build();
         this.bodyPublisher = builder.bodyPublisher;
     }

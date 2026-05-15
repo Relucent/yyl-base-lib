@@ -35,6 +35,9 @@ out/
 *.iws
 *.iml
 
+# VSCode
+.vscode
+
 # BlueJ Files
 *.ctxt
 

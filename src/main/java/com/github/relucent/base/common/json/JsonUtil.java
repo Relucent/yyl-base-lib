@@ -87,8 +87,8 @@ public class JsonUtil {
 	 * @param json JSON字符串
 	 * @return MAP对象,如果类型不匹配或者转换出现异常则返回null.
 	 */
-	public static Mapx toMap(String json) {
-		return getHandler().toMap(json);
+	public static Mapx decodeMap(String json) {
+		return getHandler().decodeMap(json);
 	}
 
 	/**
@@ -96,8 +96,8 @@ public class JsonUtil {
 	 * @param json JSON字符串
 	 * @return LIST对象,如果类型不匹配或者转换出现异常则返回null.
 	 */
-	public static Listx toList(String json) {
-		return getHandler().toList(json);
+	public static Listx decodeList(String json) {
+		return getHandler().decodeList(json);
 	}
 
 	/**

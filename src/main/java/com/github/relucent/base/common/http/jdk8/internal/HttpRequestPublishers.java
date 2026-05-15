@@ -89,9 +89,9 @@ public class HttpRequestPublishers {
                 if (sb.length() > 0) {
                     sb.append("&");
                 }
-                sb.append(CodecUtil.encodeURI(entry.getKey()));
+                sb.append(CodecUtil.encodeUri(entry.getKey()));
                 sb.append("=");
-                sb.append(CodecUtil.encodeURI(entry.getValue()));
+                sb.append(CodecUtil.encodeUri(entry.getValue()));
             }
             this.body = sb.toString().getBytes(StandardCharsets.UTF_8);
         }

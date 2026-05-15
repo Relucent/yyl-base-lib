@@ -97,7 +97,7 @@ public class GsonHandler implements JsonHandler {
 	 * @return JSON对应的Map对象，如果无法解析将返回NULL.
 	 */
 	@Override
-	public Mapx toMap(String json) {
+	public Mapx decodeMap(String json) {
 		try {
 			@SuppressWarnings("deprecation")
 			JsonElement node = new JsonParser().parse(json);
@@ -115,7 +115,7 @@ public class GsonHandler implements JsonHandler {
 	 */
 
 	@Override
-	public Listx toList(String json) {
+	public Listx decodeList(String json) {
 		try {
 			@SuppressWarnings("deprecation")
 			JsonElement node = new JsonParser().parse(json);
