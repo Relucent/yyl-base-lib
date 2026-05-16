@@ -334,9 +334,6 @@ public class JacksonHandler implements JsonHandler {
 
 		// 支持结束
 		om.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-		om.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-		// 反序列化忽略不需要的字段
-		om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
 		// 自动注册 JavaTimeModule、Jdk8Module 等
 		om.findAndRegisterModules();
