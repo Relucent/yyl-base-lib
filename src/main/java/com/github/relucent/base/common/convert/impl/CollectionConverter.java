@@ -32,7 +32,7 @@ public class CollectionConverter implements Converter<Collection<?>> {
 
         Collection<?> target = newCollection(TypeUtil.getClass(toType), TypeUtil.getClass(elementType));
 
-        if (target == null) {
+        if (target == null || source == null) {
             return null;
         }
 

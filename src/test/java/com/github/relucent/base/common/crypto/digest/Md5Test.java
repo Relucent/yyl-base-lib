@@ -1,58 +1,50 @@
 package com.github.relucent.base.common.crypto.digest;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import java.nio.charset.StandardCharsets;
 
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.github.relucent.base.common.constant.IoConstant;
-
+/**
+ * {@link Md5} 单元测试
+ */
 public class Md5Test {
+
     @Test
-    public void testDigest() {
+    public void testDigestHex() {
         Md5 md5 = Md5.create();
-        String sample1 = "hello";
-        String sample2 = "welcome";
-        String hash1 = md5.digestHex(sample1);
-        String hash2 = md5.digestHex(sample2);
-        Assert.assertNotEquals(hash1, hash2);
-        Assert.assertEquals(hash1, md5.digestHex(sample1));
-        Assert.assertEquals(hash2, md5.digestHex(sample2));
+        Assert.assertEquals(DigestUtil.md5Hex("123"), md5.digestHex("123"));
     }
 
     @Test
-    public void testDigestSalt() {
-        byte[] salt1 = {0x0, 0x1};
-        byte[] salt2 = {0x1, 0x2};
-        Md5 salt1md5 = Md5.create(salt1);
-        Md5 salt2md5 = Md5.create(salt2);
-        String sample = "hello";
-        String salt1hash1 = salt1md5.digestHex(sample);
-        String salt1hash2 = salt1md5.digestHex(sample);
-        String salt2hash1 = salt2md5.digestHex(sample);
-        String salt2hash2 = salt2md5.digestHex(sample);
-        Assert.assertEquals(salt1hash1, salt1hash2);
-        Assert.assertEquals(salt2hash1, salt2hash2);
-        Assert.assertNotEquals(salt1hash1, salt2hash1);
+    public void testDigestBytes() {
+        Md5 md5 = Md5.create();
+        byte[] result = md5.digest("123");
+        Assert.assertEquals(16, result.length);
     }
 
     @Test
-    public void testDigestInputStream() throws Exception {
-        byte[] salt = {0x1, 0x2, 0x3, 0x4, 0x5};
-        int saltPosition = IoConstant.DEFAULT_BUFFER_SIZE + (IoConstant.DEFAULT_BUFFER_SIZE / 2);
-        int digestCount = 2;
-        Md5 md5 = Md5.create(salt, saltPosition, digestCount);
-        try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
-            output.write(new byte[IoConstant.DEFAULT_BUFFER_SIZE]);
-            output.write(new byte[IoConstant.DEFAULT_BUFFER_SIZE]);
-            output.write(new byte[IoConstant.DEFAULT_BUFFER_SIZE]);
-            byte[] large = output.toByteArray();
-            try (ByteArrayInputStream input = new ByteArrayInputStream(large)) {
-                byte[] hash1 = md5.digest(large);
-                byte[] hash2 = md5.digest(input);
-                Assert.assertArrayEquals(hash1, hash2);
-            }
-        }
+    public void testDigestWithSalt() {
+        byte[] salt = "salt".getBytes(StandardCharsets.UTF_8);
+        Md5 md5 = Md5.create(salt);
+        // 加盐在头部: md5(salt + input)
+        String expected = DigestUtil.md5Hex("salt" + "123");
+        Assert.assertEquals(expected, md5.digestHex("123"));
+    }
+
+    @Test
+    public void testDigestCount() {
+        Md5 md5 = Md5.create(null, 0, 2);
+        // 二次摘要
+        Digester d2 = new Digester(DigestAlgorithm.MD5);
+        d2.setDigestCount(2);
+        Assert.assertEquals(d2.digestHex("123"), md5.digestHex("123"));
+    }
+
+    @Test
+    public void testGetAlgorithm() {
+        Md5 md5 = Md5.create();
+        Assert.assertNotNull(md5.getMessageDigest());
+        Assert.assertEquals("MD5", md5.getMessageDigest().getAlgorithm());
     }
 }

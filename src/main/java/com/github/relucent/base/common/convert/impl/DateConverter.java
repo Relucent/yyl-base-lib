@@ -58,7 +58,7 @@ public class DateConverter implements BasicConverter<Date> {
 
         final String value = String.valueOf(source);
         Matcher dateMatcher = DATE_PATTERN.matcher(value);
-        if (dateMatcher.matches() && dateMatcher.find()) {
+        if (dateMatcher.matches()) {
             String msel = dateMatcher.group(1);
             return Long.parseLong(msel);
         }

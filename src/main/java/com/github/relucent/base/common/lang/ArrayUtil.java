@@ -1981,6 +1981,11 @@ public class ArrayUtil {
 
     /**
      * 创建具有指定组件类型和长度的新数组
+     * <p>
+     * <b>注意：</b>本方法泛型签名{@code T[]}无法表达原始类型数组（如{@code int[]}），
+     * 当{@code componentType}为原始类型（如{@code int.class}）时返回值不能被转换为{@code Object[]}，
+     * 会在调用方触发{@link ClassCastException}。如需创建原始类型数组，请直接使用
+     * {@link Array#newInstance(Class, int)}。
      * @param <T>           数组元素类型
      * @param componentType 数组元素类型
      * @param length        数组长度

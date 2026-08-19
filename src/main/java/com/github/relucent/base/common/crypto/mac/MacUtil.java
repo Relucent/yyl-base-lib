@@ -1,5 +1,7 @@
 package com.github.relucent.base.common.crypto.mac;
 
+import java.security.Provider;
+
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -14,64 +16,68 @@ import com.github.relucent.base.common.lang.StringUtil;
  */
 public class MacUtil {
 
-    // =================================Methods================================================
-    /**
-     * 使用指定算法和密钥对数据进行 HMAC 运算，返回原始字节数组。
-     * @param data      要签名的消息
-     * @param key       密钥（对称）
-     * @param algorithm 使用的 HMAC 算法
-     * @return HMAC 值的字节数组
-     */
-    public static byte[] hmac(byte[] data, byte[] key, HmacAlgorithm algorithm) {
-        try {
-            Mac mac = Mac.getInstance(algorithm.getAlgorithm(), ProviderFactory.getProvider());
-            SecretKeySpec secretKeySpec = new SecretKeySpec(key, algorithm.getAlgorithm());
-            mac.init(secretKeySpec);
-            return mac.doFinal(data);
-        } catch (Exception e) {
-            throw new RuntimeException("HMAC calculation failed", e);
-        }
-    }
+	// =================================Methods================================================
+	/**
+	 * 使用指定算法和密钥对数据进行 HMAC 运算，返回原始字节数组。
+	 * @param data      要签名的消息
+	 * @param key       密钥（对称）
+	 * @param algorithm 使用的 HMAC 算法
+	 * @return HMAC 值的字节数组
+	 */
+	public static byte[] hmac(byte[] data, byte[] key, HmacAlgorithm algorithm) {
+		try {
+			// 未加载 BouncyCastle 时 Provider 为 null，此时退化使用 JDK 默认 Provider（null 传入会触发 NPE）
+			Provider provider = ProviderFactory.getProvider();
+			Mac mac = (provider == null) //
+					? Mac.getInstance(algorithm.getAlgorithm())//
+					: Mac.getInstance(algorithm.getAlgorithm(), provider);
+			SecretKeySpec secretKeySpec = new SecretKeySpec(key, algorithm.getAlgorithm());
+			mac.init(secretKeySpec);
+			return mac.doFinal(data);
+		} catch (Exception e) {
+			throw new RuntimeException("HMAC calculation failed", e);
+		}
+	}
 
-    /**
-     * 使用指定算法和密钥对数据进行 HMAC 运算，返回原始字节数组。
-     * @param data      要签名的消息
-     * @param key       密钥（对称）
-     * @param algorithm 使用的 HMAC 算法
-     * @return HMAC 值的字节数组
-     */
-    public static byte[] hmac(String data, String key, HmacAlgorithm algorithm) {
-        return hmac(StringUtil.getBytes(data), StringUtil.getBytes(key), algorithm);
-    }
+	/**
+	 * 使用指定算法和密钥对数据进行 HMAC 运算，返回原始字节数组。
+	 * @param data      要签名的消息
+	 * @param key       密钥（对称）
+	 * @param algorithm 使用的 HMAC 算法
+	 * @return HMAC 值的字节数组
+	 */
+	public static byte[] hmac(String data, String key, HmacAlgorithm algorithm) {
+		return hmac(StringUtil.getBytes(data), StringUtil.getBytes(key), algorithm);
+	}
 
-    /**
-     * 返回十六进制格式的 HMAC 字符串，常用于日志或调试输出。
-     * @param data      要签名的消息
-     * @param key       密钥
-     * @param algorithm 使用的 HMAC 算法
-     * @return HMAC 值的十六进制表示
-     */
-    public static String hmacHex(String data, String key, HmacAlgorithm algorithm) {
-        byte[] result = hmac(data, key, algorithm);
-        return Hex.encodeHexString(result);
-    }
+	/**
+	 * 返回十六进制格式的 HMAC 字符串，常用于日志或调试输出。
+	 * @param data      要签名的消息
+	 * @param key       密钥
+	 * @param algorithm 使用的 HMAC 算法
+	 * @return HMAC 值的十六进制表示
+	 */
+	public static String hmacHex(String data, String key, HmacAlgorithm algorithm) {
+		byte[] result = hmac(data, key, algorithm);
+		return Hex.encodeHexString(result);
+	}
 
-    /**
-     * 返回 Base64 格式的 HMAC 字符串，适合 Web、JWT 等需要可打印编码的场景。
-     * @param data      要签名的消息
-     * @param key       密钥
-     * @param algorithm 使用的 HMAC 算法
-     * @return HMAC 值的 Base64 编码
-     */
-    public static String hmacBase64(String data, String key, HmacAlgorithm algorithm) {
-        byte[] result = hmac(data, key, algorithm);
-        return Base64.encode(result);
-    }
+	/**
+	 * 返回 Base64 格式的 HMAC 字符串，适合 Web、JWT 等需要可打印编码的场景。
+	 * @param data      要签名的消息
+	 * @param key       密钥
+	 * @param algorithm 使用的 HMAC 算法
+	 * @return HMAC 值的 Base64 编码
+	 */
+	public static String hmacBase64(String data, String key, HmacAlgorithm algorithm) {
+		byte[] result = hmac(data, key, algorithm);
+		return Base64.encode(result);
+	}
 
-    // =================================Constructors===========================================
-    /**
-     * 工具类。私有构造函数
-     */
-    public MacUtil() {
-    }
+	// =================================Constructors===========================================
+	/**
+	 * 工具类。私有构造函数
+	 */
+	public MacUtil() {
+	}
 }

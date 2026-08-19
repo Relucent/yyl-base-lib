@@ -122,9 +122,10 @@ public class ArrayConverter implements BasicConverter<Object> {
      * @param targetComponentType 要转换的数组元素类型
      * @return 数组，只包含一个元素
      */
-    private Object[] convertToSingleElementArray(Object value, Class<?> targetComponentType) {
-        Object[] array = ArrayUtil.newArray(targetComponentType, 1);
-        array[0] = convertComponentType(value, targetComponentType);
+    private Object convertToSingleElementArray(Object value, Class<?> targetComponentType) {
+        // 使用 Array.newInstance 而非 ArrayUtil.newArray，以支持原始类型数组（如 int[]）
+        Object array = Array.newInstance(targetComponentType, 1);
+        Array.set(array, 0, convertComponentType(value, targetComponentType));
         return array;
     }
 }

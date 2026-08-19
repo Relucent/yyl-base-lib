@@ -26,7 +26,7 @@ public class CharSequenceUtil {
 	// ==============================Methods==========================================
 	/**
 	 * 返回一个新的{@code CharSequence}，它是该序列的子序列，从指定索引处的{@code char}值开始。
-	 * @param cs 指定的序列
+	 * @param cs    指定的序列
 	 * @param start 起始索引
 	 * @return 新的序列
 	 */
@@ -55,7 +55,7 @@ public class CharSequenceUtil {
 	/**
 	 * 字符串是否以给定字符开始
 	 * @param cs 字符串
-	 * @param c 字符
+	 * @param c  字符
 	 * @return 是否开始
 	 */
 	public static boolean startWith(CharSequence cs, char c) {
@@ -238,8 +238,8 @@ public class CharSequenceUtil {
 	// -----------------------------------------------------------------------
 	/**
 	 * 返回字符在指定文本中第一次出现时的索引，从指定索引开始搜索
-	 * @param text 指定文本
-	 * @param ch 查找的字符
+	 * @param text  指定文本
+	 * @param ch    查找的字符
 	 * @param start 开始检索位置
 	 * @return 指定字符第一次出现时的索引, 如果未找到则返回 -1
 	 */
@@ -274,13 +274,15 @@ public class CharSequenceUtil {
 
 	/**
 	 * 返回字符串在指定文本中第一次出现时的索引，从指定索引开始搜索
-	 * @param text 指定文本
+	 * @param text   指定文本
 	 * @param search 查找的字符序列
-	 * @param start 开始检索位置
+	 * @param start  开始检索位置
 	 * @return 子字符序列第一次出现时的索引, 如果未找到则返回 -1
 	 */
 	static int indexOf(final CharSequence text, final CharSequence search, final int start) {
-		if (text instanceof String) {
+		if (text == null || search == null) {
+			return NOT_FOUND;
+		} else if (text instanceof String) {
 			return ((String) text).indexOf(search.toString(), start);
 		} else if (text instanceof StringBuilder) {
 			return ((StringBuilder) text).indexOf(search.toString(), start);
@@ -292,9 +294,9 @@ public class CharSequenceUtil {
 
 	/**
 	 * 返回指定字符最后一次出现时的索引，从指定索引开始向后搜索。
-	 * @param cs 要处理的字符序列
+	 * @param cs     要处理的字符序列
 	 * @param search 查找的字符
-	 * @param start 开始检索的索引
+	 * @param start  开始检索的索引
 	 * @return 指定字符最后一次出现时的索引, 如果没找到则返回 -1
 	 */
 	static int lastIndexOf(final CharSequence cs, final int search, int start) {
@@ -335,10 +337,11 @@ public class CharSequenceUtil {
 	}
 
 	/**
-	 * 返回指定字符序列最后一次出现时的索引，从指定索引开始向后搜索。 Used by the lastIndexOf(CharSequence methods) as a green implementation of lastIndexOf
-	 * @param cs 要处理的字符序列
+	 * 返回指定字符序列最后一次出现时的索引，从指定索引开始向后搜索。 Used by the lastIndexOf(CharSequence methods) as a green implementation of
+	 * lastIndexOf
+	 * @param cs     要处理的字符序列
 	 * @param search 要检索的字符序列
-	 * @param start 开始检索的索引
+	 * @param start  开始检索的索引
 	 * @return 指定字符最后一次出现时的索引, 如果没找到则返回 -1
 	 */
 	static int lastIndexOf(final CharSequence cs, final CharSequence search, int start) {
@@ -403,16 +406,16 @@ public class CharSequenceUtil {
 
 	/**
 	 * 区域匹配
-	 * @param cs 要处理的字符序列 {@code CharSequence}
+	 * @param cs         要处理的字符序列 {@code CharSequence}
 	 * @param ignoreCase 是否不区分大小写
-	 * @param thisStart 字符序列{@code cs}开始的索引位置
-	 * @param substring 要查找的字符序列{@code CharSequence}
-	 * @param start 字符序列{@code substring}开始的索引
-	 * @param length 区域的字符长度
+	 * @param thisStart  字符序列{@code cs}开始的索引位置
+	 * @param substring  要查找的字符序列{@code CharSequence}
+	 * @param start      字符序列{@code substring}开始的索引
+	 * @param length     区域的字符长度
 	 * @return 区域是否匹配
 	 */
-	static boolean regionMatches(final CharSequence cs, final boolean ignoreCase, final int thisStart, final CharSequence substring, final int start,
-			final int length) {
+	static boolean regionMatches(final CharSequence cs, final boolean ignoreCase, final int thisStart,
+			final CharSequence substring, final int start, final int length) {
 		if (cs instanceof String && substring instanceof String) {
 			return ((String) cs).regionMatches(ignoreCase, thisStart, (String) substring, start, length);
 		}
@@ -459,10 +462,10 @@ public class CharSequenceUtil {
 
 	/**
 	 * 指定范围内查找指定字符
-	 * @param cs 要处理的字符序列 {@code CharSequence}
-	 * @param ch 被查找的字符
-	 * @param start 起始位置，如果小于0，从0开始查找
-	 * @param end 终止位置
+	 * @param cs         要处理的字符序列 {@code CharSequence}
+	 * @param ch         被查找的字符
+	 * @param start      起始位置，如果小于0，从0开始查找
+	 * @param end        终止位置
 	 * @param ignoreCase 是否不区分大小写
 	 * @return 位置
 	 */
@@ -482,13 +485,14 @@ public class CharSequenceUtil {
 
 	/**
 	 * 是否匹配
-	 * @param cs 要处理的字符序列
+	 * @param cs     要处理的字符序列
 	 * @param search 要检索的字符序列
-	 * @param len2 匹配长度
+	 * @param len2   匹配长度
 	 * @param start1 匹配位置
 	 * @return 是否匹配
 	 */
-	private static boolean checkLaterThan(final CharSequence cs, final CharSequence search, final int len2, final int start1) {
+	private static boolean checkLaterThan(final CharSequence cs, final CharSequence search, final int len2,
+			final int start1) {
 		for (int i = 1, j = len2 - 1; i <= j; i++, j--) {
 			if (cs.charAt(start1 + i) != search.charAt(i) || cs.charAt(start1 + j) != search.charAt(j)) {
 				return false;
