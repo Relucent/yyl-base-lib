@@ -53,3 +53,7 @@ hs_err_pid*
 # Log File
 *.log
 *.log.*
+
+# Other
+.workbuddy
+

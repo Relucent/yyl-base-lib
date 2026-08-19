@@ -25,9 +25,18 @@ public class ZoneUtil {
 
     /**
      * 设置默认时区ID
-     * @param zoneId 时区ID
+     * @param zoneId 时区ID，为 {@code null} 时重置为系统默认时区
      */
     public static void setDefaultZoneId(ZoneId zoneId) {
         DEFAULT_ZONE_ID.set(ObjectUtil.defaultIfNull(zoneId, ZoneId.systemDefault()));
+    }
+
+    /**
+     * 重置默认时区ID为系统默认时区{@link ZoneId#systemDefault()}<br>
+     * 由于默认时区是全局静态状态，单元测试中修改后应在 {@code @After} 中调用本方法还原，避免污染其他测试
+     * @return 重置前的时区ID
+     */
+    public static ZoneId resetDefaultZoneId() {
+        return DEFAULT_ZONE_ID.getAndSet(ZoneId.systemDefault());
     }
 }

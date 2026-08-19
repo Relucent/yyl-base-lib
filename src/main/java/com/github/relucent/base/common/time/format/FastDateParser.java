@@ -420,10 +420,14 @@ class FastDateParser implements DateParser, Serializable {
             case 'X':
                 return ISO8601TimeZoneStrategy.getStrategy(width);
             case 'Z':
+                // 与 FastDatePrinter 的 'Z' 规则保持一致：
+                // 宽度1 打印 "+0800"（无冒号），宽度>=2 打印 "+08:00"（带冒号）
                 if (width == 2) {
                     return ISO8601TimeZoneStrategy.ISO_8601_3_STRATEGY;
                 }
                 //$FALL-THROUGH$
+                // 宽度1 与 宽度>=3 都使用区域/时区文本策略：
+                // 其内部 RFC_822_TIME_ZONE 已同时兼容 "+0800" 与 "+08:00" 两种形式，因此与打印结果对称
             case 'z':
                 return getLocaleSpecificStrategy(Calendar.ZONE_OFFSET, locale, definingCalendar);
             }
@@ -452,8 +456,11 @@ class FastDateParser implements DateParser, Serializable {
                 case '[':
                 case '{':
                     buf.append('\\');
+                    buf.append(c);
+                    break;
                 default:
                     buf.append(c);
+                    break;
                 }
             }
             if (buf.charAt(buf.length() - 1) == '.') {
@@ -804,7 +811,10 @@ class FastDateParser implements DateParser, Serializable {
      * 处理解析模式中时区字段的策略<br>
      */
     static class TimeZoneStrategy extends PatternStrategy {
-        private static final String RFC_822_TIME_ZONE = "[+-]\\d{4}";
+        /**
+         * RFC822 形式的时区，如 {@code +0800}；同时兼容 ISO8601 带冒号的形式（{@code +08:00}）与零时区的 {@code Z}
+         */
+        private static final String RFC_822_TIME_ZONE = "[+-]\\d{2}:?\\d{2}|Z";
         private static final String GMT_OPTION = GmtTimeZone.GMT_ID + "[+-]\\d{1,2}:\\d{2}";
 
         private final Locale locale;

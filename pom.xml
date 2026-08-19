@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.relucent</groupId>
 	<artifactId>yyl-base-lib</artifactId>
-	<version>0.4.1</version>
+	<version>0.4.2</version>
 	<name>Common Base Library</name>
 	<description>Common Base Library</description>
 	<url>https://github.com/Relucent/yyl-base-lib</url>
@@ -37,11 +37,12 @@
 		<!-- DependencyVersions -->
 		<bouncycastle.version>1.84</bouncycastle.version>
 		<commons-logging.version>1.2</commons-logging.version>
-		<jackson.databind.version>2.14.1</jackson.databind.version>
+		<jackson.version>2.22.2</jackson.version>
 		<javax.servlet.version>3.0.1</javax.servlet.version>
-		<jedis.version>4.1.0</jedis.version>
+		<jedis.version>6.2.0</jedis.version>
 		<jsqlparser.version>3.1</jsqlparser.version>
 		<junit.version>4.13.1</junit.version>
+		<gson.version>2.13.1</gson.version>
 		<log4j2.version>2.25.4</log4j2.version>
 		<logback.version>1.2.13</logback.version>
 		<mybatis.version>3.5.6</mybatis.version>
@@ -64,7 +65,7 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>${jackson.databind.version}</version>
+			<version>${jackson.version}</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
@@ -102,6 +103,12 @@
 			<groupId>redis.clients</groupId>
 			<artifactId>jedis</artifactId>
 			<version>${jedis.version}</version>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>${gson.version}</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>

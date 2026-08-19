@@ -19,5 +19,12 @@ public enum DateUnit {
     /** 分钟(0-59) */
     MINUTE,
     /** 秒钟(0-59) */
-    SECOND;
+    SECOND,
+    /**
+     * 周<br>
+     * 注意：该枚举值追加在末尾而不是按时间粒度插入中间，<br>
+     * 因为向枚举中间插入值会改变已有枚举值的 {@code ordinal}，<br>
+     * 破坏依赖 {@code ordinal} 的已编译代码（如编译期生成的 switch 映射表）。
+     */
+    WEEK;
 }

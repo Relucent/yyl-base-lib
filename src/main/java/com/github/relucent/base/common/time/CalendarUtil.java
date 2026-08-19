@@ -1,5 +1,6 @@
 package com.github.relucent.base.common.time;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -70,7 +71,7 @@ public class CalendarUtil {
         switch (unit) {
         case YEAR: {// 年
             int year = calendar.get(Calendar.YEAR);
-            begin.set(year, Calendar.JANUARY, 1, 0, 0, 0);// _年1月0日0时0分0秒
+            begin.set(year, Calendar.JANUARY, 1, 0, 0, 0);// 年1月1日0时0分0秒
             break;
         }
         case HALFYEAR: {// 半年
@@ -82,8 +83,8 @@ public class CalendarUtil {
         }
         case QUARTER: {// 季度
             int year = calendar.get(Calendar.YEAR);
-            int quarter = getFieldValue(calendar, DateUnit.QUARTER); // 季度
-            int month = quarter * 3;// 季度的开始月 JANUARY_01|APRIL_04|JULY_07|OCTOBER_10
+            int quarter = getFieldValue(calendar, DateUnit.QUARTER); // 季度(1-4)
+            int month = (quarter - 1) * 3;// 季度的开始月 JANUARY_01|APRIL_04|JULY_07|OCTOBER_10
             begin.set(year, month, 1, 0, 0, 0);// 年月日时分秒
             break;
         }
@@ -100,7 +101,7 @@ public class CalendarUtil {
             begin.set(year, month, date, 0, 0, 0);// 年月日时分秒
             break;
         }
-        case HOUR_OF_DAY: {// 小时(0-24)
+        case HOUR_OF_DAY: {// 小时(0-23)
             int year = calendar.get(Calendar.YEAR);
             int month = calendar.get(Calendar.MONTH);
             int date = calendar.get(Calendar.DATE);
@@ -108,7 +109,7 @@ public class CalendarUtil {
             begin.set(year, month, date, hourOfDay, 0, 0);// 年月日时分秒
             break;
         }
-        case MINUTE: {// 小时(0-24)
+        case MINUTE: {// 分钟(0-59)
             int year = calendar.get(Calendar.YEAR);
             int month = calendar.get(Calendar.MONTH);
             int date = calendar.get(Calendar.DATE);
@@ -117,7 +118,7 @@ public class CalendarUtil {
             begin.set(year, month, date, hourOfDay, minute, 0);// 年月日时分秒
             break;
         }
-        case SECOND: {// 小时(0-24)
+        case SECOND: {// 秒(0-59)
             int year = calendar.get(Calendar.YEAR);
             int month = calendar.get(Calendar.MONTH);
             int date = calendar.get(Calendar.DATE);
@@ -125,6 +126,11 @@ public class CalendarUtil {
             int minute = calendar.get(Calendar.MINUTE);
             int second = calendar.get(Calendar.SECOND);
             begin.set(year, month, date, hourOfDay, minute, second);// 年月日时分秒
+            break;
+        }
+        case WEEK: {// 周(周一为一周的开始)
+            begin = getBegin(calendar, DateUnit.DATE);// 先对齐到当天0点
+            begin.add(Calendar.DATE, -daysFromMonday(begin));// 再回退到本周周一
             break;
         }
         default:
@@ -135,7 +141,20 @@ public class CalendarUtil {
     }
 
     /**
+     * 计算日历时间距离其所在周周一的天数<br>
+     * {@link Calendar#DAY_OF_WEEK} 以周日为一周第一天（SUNDAY=1 ... SATURDAY=7），
+     * 换算为「周一为第0天」的偏移量
+     */
+    private static int daysFromMonday(Calendar calendar) {
+        return (calendar.get(Calendar.DAY_OF_WEEK) + 5) % 7;
+    }
+
+    /**
      * 得到某一时间指定周期的結束时间
+     * <p>
+     * 注：对于月/季度/半年这类需要推算月末的周期，实现会先把日期置为 1，再用
+     * {@link Calendar#getActualMaximum(int)} 取得该月实际天数，避免「当月天数少于原日期」时
+     * 被 {@link Calendar} 自动滚动到下一个月（例如 1月31日 当月最大天数为 31，而 2月31日 会滚到 3月）。
      * @param calendar 指定的时间
      * @param unit 指定的单位类型
      * @return 指定时间指定周期的結束时间
@@ -145,7 +164,7 @@ public class CalendarUtil {
         switch (unit) {
         case YEAR: { // 年
             int year = calendar.get(Calendar.YEAR);
-            end.set(year, Calendar.DECEMBER, 31, 23, 59, 59);// _年12月31日23时59分59秒
+            end.set(year, Calendar.DECEMBER, 31, 23, 59, 59);// 年12月31日23时59分59秒
             break;
         }
         case HALFYEAR: {// 半年
@@ -163,8 +182,8 @@ public class CalendarUtil {
             break;
         }
         case QUARTER: {// 季度
-            int quarter = getFieldValue(calendar, DateUnit.QUARTER);// 季度
-            int endMonth = quarter * 3 + 2;// 季度的结束月 MARCH_03|JUNE_06|SEPTEMBER_09|DECEMBER_12
+            int quarter = getFieldValue(calendar, DateUnit.QUARTER);// 季度(1-4)
+            int endMonth = (quarter - 1) * 3 + 2;// 季度的结束月 MARCH_03|JUNE_06|SEPTEMBER_09|DECEMBER_12
             int year = calendar.get(Calendar.YEAR);
             end.set(Calendar.YEAR, year);
             end.set(Calendar.MONTH, endMonth);
@@ -196,7 +215,7 @@ public class CalendarUtil {
             end.set(year, month, date, 23, 59, 59);// 年月日时分秒
             break;
         }
-        case HOUR_OF_DAY: {// 小时(0-24)
+        case HOUR_OF_DAY: {// 小时(0-23)
             int year = calendar.get(Calendar.YEAR);
             int month = calendar.get(Calendar.MONTH);
             int date = calendar.get(Calendar.DATE);
@@ -204,7 +223,7 @@ public class CalendarUtil {
             end.set(year, month, date, hourOfDay, 59, 59);// 年月日时分秒
             break;
         }
-        case MINUTE: {// 分钟(0-24)
+        case MINUTE: {// 分钟(0-59)
             int year = calendar.get(Calendar.YEAR);
             int month = calendar.get(Calendar.MONTH);
             int date = calendar.get(Calendar.DATE);
@@ -213,7 +232,7 @@ public class CalendarUtil {
             end.set(year, month, date, hourOfDay, minute, 59);// 年月日时分秒
             break;
         }
-        case SECOND: {// 秒钟(0-24)
+        case SECOND: {// 秒(0-59)
             int year = calendar.get(Calendar.YEAR);
             int month = calendar.get(Calendar.MONTH);
             int date = calendar.get(Calendar.DATE);
@@ -221,6 +240,11 @@ public class CalendarUtil {
             int minute = calendar.get(Calendar.MINUTE);
             int second = calendar.get(Calendar.SECOND);
             end.set(year, month, date, hourOfDay, minute, second);// 年月日时分秒
+            break;
+        }
+        case WEEK: {// 周(周日为一周的结束)
+            end = getEnd(calendar, DateUnit.DATE);// 先对齐到当天末尾
+            end.add(Calendar.DATE, 6 - daysFromMonday(end));// 再前进到本周周日
             break;
         }
         default:
@@ -231,10 +255,20 @@ public class CalendarUtil {
     }
 
     /**
-     * 返回给定日历给定周期类型字段的值。
+     * 返回给定日历给定周期类型字段的值。<br>
+     * 返回值的取值范围：<br>
+     * <ul>
+     * <li>{@link DateUnit#YEAR} 返回年份（如 2026）</li>
+     * <li>{@link DateUnit#HALFYEAR} 返回 0(上半年) 或 1(下半年)</li>
+     * <li>{@link DateUnit#QUARTER} 返回季度 1-4</li>
+     * <li>{@link DateUnit#MONTH} 返回月份 0-11（注意取值与 {@link Calendar#MONTH} 一致，从 0 开始，即 0 表示一月）</li>
+     * <li>{@link DateUnit#DATE} 返回日期 1-31</li>
+     * <li>{@link DateUnit#WEEK} 返回周内天序号 1-7（周一=1 ... 周日=7，与 {@link DayOfWeek#getValue()} 一致）</li>
+     * </ul>
+     * 不支持的周期类型返回 {@code -1}
      * @param calendar 时间
      * @param unit 指定的单位类型
-     * @return 所在季度(0-1)
+     * @return 日历字段的值
      */
     public static int getFieldValue(Calendar calendar, DateUnit unit) {
         switch (unit) {
@@ -243,11 +277,13 @@ public class CalendarUtil {
         case HALFYEAR:// 半年
             return calendar.get(Calendar.MONTH) < Calendar.JULY ? 0 : 1;// 小于[7月]
         case QUARTER:// 季度
-            return calendar.get(Calendar.MONTH) / 3;
+            return calendar.get(Calendar.MONTH) / 3 + 1; // 月份0-11映射为季度1-4
         case MONTH:// 月份
             return calendar.get(Calendar.MONTH);
         case DATE:// 日期
             return calendar.get(Calendar.DAY_OF_MONTH);
+        case WEEK:// 周内天序号(周一=1 ... 周日=7)
+            return daysFromMonday(calendar) + 1;
         default:
             return -1;
         }

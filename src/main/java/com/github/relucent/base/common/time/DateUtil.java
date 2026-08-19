@@ -7,10 +7,10 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
+import com.github.relucent.base.common.lang.ObjectUtil;
 import com.github.relucent.base.common.lang.StringUtil;
 
 /**
@@ -18,6 +18,7 @@ import com.github.relucent.base.common.lang.StringUtil;
  */
 public class DateUtil {
 
+	// =================================Fields================================================
 	/** ISO日期格式 */
 	public static final String ISO8601_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
 	/** 默认日期格式 */
@@ -53,12 +54,14 @@ public class DateUtil {
 			"yyyy"//
 	};
 
+	// =================================Constructors===========================================
 	/**
 	 * 工具类方法，实例不应在标准编程中构造。
 	 */
 	protected DateUtil() {
 	}
 
+	// =================================Methods================================================
 	/**
 	 * 获得当前时间
 	 * @return 当前时间
@@ -84,7 +87,7 @@ public class DateUtil {
 	}
 
 	/**
-	 * 转换 {@link LocalDate} 为 {@link Calendar} 类型
+	 * 转换 {@link LocalDate} 为 {@link Date} 类型
 	 * @param localDate {@link LocalDate}
 	 * @return {@link Date}
 	 */
@@ -93,7 +96,7 @@ public class DateUtil {
 	}
 
 	/**
-	 * 转换 {@link LocalDateTime} 为 {@link Calendar} 类型
+	 * 转换 {@link LocalDateTime} 为 {@link Date} 类型
 	 * @param localDateTime {@link LocalDateTime}
 	 * @return {@link Date}
 	 */
@@ -113,16 +116,18 @@ public class DateUtil {
 	/**
 	 * 根据字符串解析日期
 	 * @param source 日期字符串
-	 * @param zoneId 时区ID
+	 * @param zoneId 时区ID，为 {@code null} 时使用 {@link ZoneUtil#getDefaultZoneId()} 默认时区
 	 * @return 日期对象，如果不能正确解析返回 {@code null}
 	 */
 	public static Date parseDate(String source, ZoneId zoneId) {
 		if (StringUtil.isBlank(source)) {
 			return null;
 		}
+		ZoneId zone = ObjectUtil.defaultIfNull(zoneId, ZoneUtil.getDefaultZoneId());
 		try {
-			return forceParseDate(source, zoneId);
-		} catch (Exception e) {
+			return forceParseDate(source, zone);
+		} catch (ParseException | RuntimeException e) {
+			// 宽容语义：无法解析（含非法模式等运行时异常）时返回 null，与历史行为保持一致
 			return null;
 		}
 	}
@@ -141,7 +146,7 @@ public class DateUtil {
 	 * 根据指定的日期格式解析日期
 	 * @param source  日期字符串
 	 * @param pattern 日期格式
-	 * @param zoneId  时区ID
+	 * @param zoneId  时区ID，为 {@code null} 时使用 {@link ZoneUtil#getDefaultZoneId()} 默认时区
 	 * @return 日期对象，如果不能正确解析返回 {@code null}
 	 */
 	public static Date parseDate(String source, String pattern, ZoneId zoneId) {
@@ -149,10 +154,12 @@ public class DateUtil {
 			return null;
 		}
 		try {
+			// SimpleDateFormat 不是线程安全的，因此每次调用都新建实例，不要优化为静态缓存
 			SimpleDateFormat format = new SimpleDateFormat(pattern);
-			format.setTimeZone(TimeZone.getTimeZone(zoneId));
+			format.setTimeZone(TimeZone.getTimeZone(ObjectUtil.defaultIfNull(zoneId, ZoneUtil.getDefaultZoneId())));
 			return format.parse(source);
-		} catch (Exception e) {
+		} catch (ParseException | RuntimeException e) {
+			// 宽容语义：无法解析（含非法模式等运行时异常）时返回 null，与历史行为保持一致
 			return null;
 		}
 	}
@@ -198,12 +205,13 @@ public class DateUtil {
 	 * 格式化日期对象
 	 * @param date    日期对象
 	 * @param pattern 日期格式
-	 * @param zoneId  时区
+	 * @param zoneId  时区，为 {@code null} 时使用 {@link ZoneUtil#getDefaultZoneId()} 默认时区
 	 * @return 日期字符串
 	 */
 	public static String format(Date date, String pattern, ZoneId zoneId) {
+		// SimpleDateFormat 不是线程安全的，因此每次调用都新建实例，不要优化为静态缓存
 		SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
-		dateFormat.setTimeZone(TimeZone.getTimeZone(zoneId));
+		dateFormat.setTimeZone(TimeZone.getTimeZone(ObjectUtil.defaultIfNull(zoneId, ZoneUtil.getDefaultZoneId())));
 		return format(date, dateFormat);
 	}
 
@@ -234,10 +242,11 @@ public class DateUtil {
 	}
 
 	/**
-	 * 返回给定日历给定周期类型字段的值。
+	 * 返回给定日期给定周期类型字段的值。<br>
+	 * 取值约定参见 {@link CalendarUtil#getFieldValue(java.util.Calendar, DateUnit)}（其中 QUARTER 返回 1-4）
 	 * @param date 时间
 	 * @param unit 时间周期
-	 * @return 所在季度(0-1)
+	 * @return 日历字段的值，不支持的周期类型返回 {@code -1}
 	 */
 	public static int getFieldValue(Date date, DateUnit unit) {
 		return CalendarUtil.getFieldValue(CalendarUtil.toCalendar(date), unit);
@@ -254,10 +263,10 @@ public class DateUtil {
 	}
 
 	/**
-	 * 获得两个时间之中最大的时间
+	 * 获得两个时间之中最小的时间
 	 * @param a 第一个时间
 	 * @param b 第二个时间
-	 * @return 两个时间之中最大的时间
+	 * @return 两个时间之中最小的时间
 	 */
 	public static Date min(Date a, Date b) {
 		return b.after(a) ? a : b; // b>a?a:b
@@ -275,7 +284,8 @@ public class DateUtil {
 		}
 		try {
 			return format.format(date);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
+			// 宽容语义：格式化失败（含非法模式等）时返回 null，与历史行为保持一致
 			return null;
 		}
 	}

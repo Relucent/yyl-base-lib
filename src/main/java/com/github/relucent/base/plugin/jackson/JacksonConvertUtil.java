@@ -1,6 +1,5 @@
 package com.github.relucent.base.plugin.jackson;
 
-import java.util.Iterator;
 import java.util.Map;
 
 import com.fasterxml.jackson.core.TreeNode;
@@ -34,8 +33,7 @@ public class JacksonConvertUtil {
 			throw new IllegalArgumentException("Expected ObjectNode but got: " + node.getNodeType());
 		}
 		Mapx map = new Mapx();
-		for (Iterator<Map.Entry<String, JsonNode>> it = node.fields(); it.hasNext();) {
-			Map.Entry<String, JsonNode> entry = it.next();
+		for (Map.Entry<String, JsonNode> entry : node.properties()) {
 			map.put(entry.getKey(), convertValue(entry.getValue()));
 		}
 		return map;

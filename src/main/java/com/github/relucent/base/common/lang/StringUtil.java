@@ -229,7 +229,7 @@ public class StringUtil {
 	 * StringUtil.substring("abc", -4, 2)  = "ab"
 	 * </pre>
 	 *
-	 * @param str   获取子字符串的字符串
+	 * @param str   指定的字符串
 	 * @param start 从开始的位置开始
 	 * @param end   结束位置（不包括）
 	 * @return 子字符串
@@ -258,6 +258,26 @@ public class StringUtil {
 			end = 0;
 		}
 		return str.substring(start, end);
+	}
+
+	/**
+	 * 返回源字符串中在‌指定子串首次出现之前‌的内容 。如果源字符串中不存在指定子串，则返回空字符串
+	 * @param str       源字符串
+	 * @param separator 指定子串
+	 * @return 源字符串中在‌指定子串首次出现之前‌的内容
+	 */
+	public static String substringBefore(String str, String separator) {
+		if (isEmpty(str) || separator == null) {
+			return str;
+		}
+		if (separator.length() == 0) {
+			return StringConstant.EMPTY;
+		}
+		int pos = str.indexOf(separator);
+		if (pos == INDEX_NOT_FOUND) {
+			return str;
+		}
+		return str.substring(0, pos);
 	}
 
 	/**

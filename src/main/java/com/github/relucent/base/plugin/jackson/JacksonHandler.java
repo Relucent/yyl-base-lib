@@ -48,7 +48,7 @@ public class JacksonHandler implements JsonHandler {
 	public JacksonHandler(ObjectMapper objectMapper) {
 		this.objectMapper = objectMapper.copy();
 		this.prettyWriter = objectMapper.copy().writerWithDefaultPrettyPrinter();
-		this.ignoreNullWriter = objectMapper.copy().setSerializationInclusion(JsonInclude.Include.NON_NULL).writer();
+		this.ignoreNullWriter = objectMapper.copy().setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL).writer();
 	}
 
 	/**
@@ -333,7 +333,7 @@ public class JacksonHandler implements JsonHandler {
 		om.setTimeZone(TimeZone.getTimeZone("UTC"));
 
 		// 支持结束
-		om.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+		om.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL);
 
 		// 自动注册 JavaTimeModule、Jdk8Module 等
 		om.findAndRegisterModules();

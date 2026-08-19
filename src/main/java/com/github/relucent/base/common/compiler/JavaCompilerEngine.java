@@ -72,8 +72,12 @@ public class JavaCompilerEngine {
             boolean hasWarnings = false;
             boolean hasErrors = false;
             for (Diagnostic<? extends JavaFileObject> diagnostic : collector.getDiagnostics()) {
+                if (diagnostic.getKind() == Diagnostic.Kind.NOTE) {
+                    // NOTE 只是提示信息（例如 JDK9+ 关于注解处理已启用的提示、使用了过时 API 的提示），
+                    // 不应视为编译警告，否则在较高版本 JDK 上会导致编译始终失败
+                    continue;
+                }
                 switch (diagnostic.getKind()) {
-                case NOTE:
                 case MANDATORY_WARNING:
                 case WARNING:
                     hasWarnings = true;

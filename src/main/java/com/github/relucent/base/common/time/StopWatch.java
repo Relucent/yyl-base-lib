@@ -28,7 +28,7 @@ import com.github.relucent.base.common.constant.StringConstant;
  * stopWatch.stop();
  *
  * // 打印出耗时
- * Console.log(sw.prettyPrint());
+ * System.out.println(stopWatch.prettyPrint());
  *
  * </pre>
  */

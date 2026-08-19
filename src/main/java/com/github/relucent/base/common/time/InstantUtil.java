@@ -8,6 +8,7 @@ import java.util.Date;
  * 时间戳 {@link Instant} 工具类封装
  */
 public class InstantUtil {
+
     // ==============================Constructors=====================================
     /**
      * 工具类方法，实例不应在标准编程中构造。

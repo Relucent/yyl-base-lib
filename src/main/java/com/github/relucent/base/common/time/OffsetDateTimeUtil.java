@@ -48,9 +48,15 @@ public class OffsetDateTimeUtil {
 
     /**
      * 解析日期格式字符串<br>
-     * 会通过尝试各种不同时间格式的解析器来解析时间字符串，如果最终依旧无法解析则返回{@code null}
+     * 会通过尝试各种不同时间格式的解析器来解析时间字符串，如果最终依旧无法解析则返回{@code null}<br>
+     * 解析结果的处理规则（与 {@link ZonedDateTimeUtil#parse(String)} 保持一致）：
+     * <ul>
+     * <li>文本自带偏移量（如 {@code 2026-09-11T17:11:12+08:00}）时保留原始偏移量</li>
+     * <li>文本只带时区名（如 {@code 2026-09-11T17:11:12[Asia/Shanghai]}）时转换为对应的偏移量</li>
+     * <li>文本不带任何时区信息（如 {@code 2026-09-11 17:11:12}）时，按 {@link ZoneUtil#getDefaultZoneId()} 默认时区补齐偏移量</li>
+     * </ul>
      * @param text 时间文本
-     * @return 带偏移的日期时间{@code OffsetDateTime}
+     * @return 带偏移的日期时间{@code OffsetDateTime}，无法解析时返回{@code null}
      */
     public static OffsetDateTime parse(String text) {
         TemporalAccessor temporal = TemporalAccessorUtil.parse(text);
