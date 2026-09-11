@@ -89,7 +89,7 @@ public class ThreadUtil {
             }
         }
         final CountDownLatch latch = new CountDownLatch(tasks.size());
-        final Semaphore semaphore = new Semaphore(Math.min(1, permits));
+        final Semaphore semaphore = new Semaphore(Math.max(1, Math.min(permits, tasks.size())));
         final Queue<Exception> exceptionQueue = new ConcurrentLinkedQueue<>();
         final GlobalThreadPool pool = GlobalThreadPool.getInstance();
         for (final Runnable task : tasks) {

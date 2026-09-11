@@ -22,6 +22,12 @@ public class ArrayConverter implements BasicConverter<Object> {
 
     public static final ArrayConverter INSTANCE = new ArrayConverter();
 
+    /**
+     * 将对象转换为数组
+     * @param source 源对象
+     * @param toType 目标数组类型
+     * @return 转换后的数组；元素类型无法转换时返回{@code null}
+     */
     @Override
     public Object convertInternal(Object source, Class<? extends Object> toType) {
         if (source == null) {
@@ -31,6 +37,7 @@ public class ArrayConverter implements BasicConverter<Object> {
             Class<?> targetComponentType = toType.getComponentType();
             return source.getClass().isArray() ? convertArrayToArray(source, targetComponentType) : convertObjectToArray(source, targetComponentType);
         } catch (Exception ignore) {
+            // 元素类型无法转换，按转换失败处理
             return null;
         }
     }

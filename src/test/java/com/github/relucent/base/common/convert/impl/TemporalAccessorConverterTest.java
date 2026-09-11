@@ -9,12 +9,15 @@ import java.time.Month;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.chrono.Era;
+import java.time.chrono.IsoEra;
 import java.time.temporal.TemporalAccessor;
 import java.util.Date;
 
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.github.relucent.base.common.convert.ConvertUtil;
 import com.github.relucent.base.common.time.ZoneUtil;
 
 /**
@@ -146,5 +149,48 @@ public class TemporalAccessorConverterTest {
 	public void testConvertUnmatchedString() {
 		// 无法解析的字符串返回 null
 		Assert.assertNull(TemporalAccessorConverter.INSTANCE.convert("not-a-date", LocalDate.class));
+	}
+
+	@Test
+	public void testConvertSameEra() {
+		Assert.assertSame(IsoEra.CE, TemporalAccessorConverter.INSTANCE.convert(IsoEra.CE, Era.class));
+	}
+
+	@Test
+	public void testConvertNumberToEra() {
+		Assert.assertEquals(IsoEra.BCE, TemporalAccessorConverter.INSTANCE.convert(0, Era.class));
+		Assert.assertEquals(IsoEra.CE, TemporalAccessorConverter.INSTANCE.convert(1, Era.class));
+		// 越界的纪元数值按转换失败处理
+		Assert.assertNull(TemporalAccessorConverter.INSTANCE.convert(2, Era.class));
+	}
+
+	@Test
+	public void testConvertStringToEra() {
+		Assert.assertEquals(IsoEra.CE, TemporalAccessorConverter.INSTANCE.convert("CE", Era.class));
+		Assert.assertEquals(IsoEra.BCE, TemporalAccessorConverter.INSTANCE.convert("BCE", Era.class));
+		Assert.assertNull(TemporalAccessorConverter.INSTANCE.convert("not-an-era", Era.class));
+	}
+
+	@Test
+	public void testConvertTemporalAccessorToEra() {
+		Assert.assertEquals(IsoEra.CE, TemporalAccessorConverter.INSTANCE.convert(LocalDate.of(2026, 9, 14), Era.class));
+		Assert.assertEquals(IsoEra.BCE, TemporalAccessorConverter.INSTANCE.convert(LocalDate.of(-1, 1, 1), Era.class));
+		// LocalTime 不包含纪元字段，返回 null 而不是抛出异常
+		Assert.assertNull(TemporalAccessorConverter.INSTANCE.convert(LocalTime.NOON, Era.class));
+	}
+
+	@Test
+	public void testConvertDateToEra() {
+		Assert.assertEquals(IsoEra.CE, TemporalAccessorConverter.INSTANCE.convert(new Date(0L), Era.class));
+	}
+
+	@Test
+	public void testConvertToEraViaConvertUtil() {
+		// Era 已注册为默认转换器，可通过 ConvertUtil 直接使用
+		Assert.assertEquals(IsoEra.CE, ConvertUtil.convert("CE", Era.class));
+		Assert.assertNull(ConvertUtil.convert("not-an-era", Era.class));
+		// 无法转换时返回默认值
+		Assert.assertEquals(IsoEra.CE, ConvertUtil.convert(99, Era.class, IsoEra.CE));
+		Assert.assertEquals(IsoEra.CE, ConvertUtil.convert(LocalDate.of(2026, 9, 14), Era.class, IsoEra.BCE));
 	}
 }

@@ -361,7 +361,7 @@ public class BeanMapper {
         for (Method method : srcClass.getMethods()) {
             Class<?> returnType = method.getReturnType();
 
-            if (!ConvertUtil.isStandardType(returnType)) {
+            if (!ConvertUtil.isSimpleType(returnType)) {
                 continue;
             }
 

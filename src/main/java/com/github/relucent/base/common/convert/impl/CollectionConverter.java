@@ -30,7 +30,15 @@ public class CollectionConverter implements Converter<Collection<?>> {
 
         final Type elementType = TypeUtil.getTypeArgument(toType);
 
-        Collection<?> target = newCollection(TypeUtil.getClass(toType), TypeUtil.getClass(elementType));
+        // 解析元素类型。对于没有泛型参数的类型（如原始 EnumSet.class）无法确定元素类型，此时保持 null
+        Class<?> elementClass = null;
+        try {
+            elementClass = TypeUtil.getClass(elementType);
+        } catch (Exception ignore) {
+            // 泛型参数无法确定为具体类型，忽略
+        }
+
+        Collection<?> target = newCollection(TypeUtil.getClass(toType), elementClass);
 
         if (target == null || source == null) {
             return null;
@@ -83,12 +91,16 @@ public class CollectionConverter implements Converter<Collection<?>> {
 
         // EnumSet
         if (collectionType.isAssignableFrom(EnumSet.class)) {
+            // 无法确定枚举元素类型时无法创建 EnumSet
+            if (elementType == null) {
+                return null;
+            }
             return (Collection<T>) EnumSet.noneOf((Class<Enum>) elementType);
         }
 
         // 直接实例化
         try {
-            return (Collection<T>) collectionType.newInstance();
+            return (Collection<T>) collectionType.getDeclaredConstructor().newInstance();
         } catch (Exception ignore) {
             // ignore
         }

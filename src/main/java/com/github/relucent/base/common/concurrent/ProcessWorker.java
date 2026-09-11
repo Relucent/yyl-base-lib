@@ -17,118 +17,126 @@ import com.github.relucent.base.common.logging.Logger;
  */
 public class ProcessWorker<T> implements Runnable {
 
-    // ==============================Fields===========================================
-    private static final int EMPTY_QUEUE_MAX_AWAIT_SECONDS = 31;
-    private final Logger logger = Logger.getLogger(getClass());
-    private final AtomicReference<WorkerState> stateReference = new AtomicReference<>(WorkerState.NEW);
-    private final String name;
-    private final Supplier<T> supplier;
-    private final Consumer<T> consumer;
+	// ==============================Fields===========================================
+	private static final int EMPTY_QUEUE_MAX_AWAIT_SECONDS = 31;
+	private final Logger logger = Logger.getLogger(getClass());
+	private final AtomicReference<WorkerState> stateReference = new AtomicReference<>(WorkerState.NEW);
+	private final String name;
+	private final Supplier<T> supplier;
+	private final Consumer<T> consumer;
+	/** worker 运行的线程引用，用于 shutdown() 时精准中断 */
+	private final AtomicReference<Thread> workerThread = new AtomicReference<>();
 
-    // ==============================Constructors=====================================
-    public ProcessWorker(String name, Supplier<T> supplier, Consumer<T> consumer) {
-        this.name = name;
-        this.supplier = supplier;
-        this.consumer = consumer;
-    }
+	// ==============================Constructors=====================================
+	public ProcessWorker(String name, Supplier<T> supplier, Consumer<T> consumer) {
+		this.name = name;
+		this.supplier = supplier;
+		this.consumer = consumer;
+	}
 
-    // ==============================Methods==========================================
-    @Override
-    public void run() {
+	// ==============================Methods==========================================
+	@Override
+	public void run() {
 
-        // 检验线程可运行状态
-        if (!stateReference.compareAndSet(WorkerState.NEW, WorkerState.RUNNING)) {
-            throw new IllegalStateException("Worker already started or terminated.");
-        }
+		// 检验线程可运行状态
+		if (!stateReference.compareAndSet(WorkerState.NEW, WorkerState.RUNNING)) {
+			throw new IllegalStateException("Worker already started or terminated.");
+		}
 
-        logger.info("Worker {} Thread Started!", name);
-        try {
-            // 延迟执行(让几个线程首次执行时间错开)
-            try {
-                TimeUnit.SECONDS.sleep(5L + (long) (Math.random() * 10));
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                return;
-            }
-            // 开始处理队列
-            while (!Thread.currentThread().isInterrupted() && WorkerState.RUNNING.equals(stateReference.get())) {
-                T request = null;
-                try {
-                    request = supplier.get();
-                } catch (Exception e) {
-                    if (e instanceof InterruptedException) {
-                        return;
-                    }
-                    logger.error("poll()", e);
-                }
+		// 记录运行线程，供 shutdown() 精准中断
+		workerThread.set(Thread.currentThread());
 
-                if (request == null) {
-                    // wait until new request added
-                    waitNewRequest();
-                } else {
-                    try {
-                        process(request);
-                    } catch (Exception e) {
-                        if (e instanceof InterruptedException) {
-                            Thread.currentThread().interrupt();
-                            return;
-                        }
-                        logger.error("process request " + request + " error", e);
-                    }
-                }
-            }
-        } finally {
-            stateReference.set(WorkerState.TERMINATED);
-            logger.info("Worker {} Thread Terminated!", name);
-        }
-    }
+		logger.info("Worker {} Thread Started!", name);
+		try {
+			// 延迟执行(让几个线程首次执行时间错开)
+			try {
+				TimeUnit.SECONDS.sleep(5L + (long) (Math.random() * 10));
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+				return;
+			}
+			// 开始处理队列
+			while (!Thread.currentThread().isInterrupted() && WorkerState.RUNNING.equals(stateReference.get())) {
+				T request = null;
+				try {
+					request = supplier.get();
+				} catch (Exception e) {
+					if (e instanceof InterruptedException) {
+						return;
+					}
+					logger.error("poll()", e);
+				}
 
-    /**
-     * 停止运行
-     */
-    public void shutdown() {
-        // 设置状态
-        stateReference.set(WorkerState.INTERRUPTED);
-        // 响应阻塞或 sleep 中断
-        Thread.currentThread().interrupt();
-    }
+				if (request == null) {
+					// wait until new request added
+					waitNewRequest();
+				} else {
+					try {
+						process(request);
+					} catch (Exception e) {
+						if (e instanceof InterruptedException) {
+							Thread.currentThread().interrupt();
+							return;
+						}
+						logger.error("process request " + request + " error", e);
+					}
+				}
+			}
+		} finally {
+			stateReference.set(WorkerState.TERMINATED);
+			logger.info("Worker {} Thread Terminated!", name);
+		}
+	}
 
-    /**
-     * 处理队列
-     * @param element 队列元素
-     */
-    private void process(T element) {
-        try {
-            consumer.accept(element);
-        } catch (Exception e) {
-            logger.error("Worker Process Error", e);
-        }
-    }
+	/**
+	 * 停止运行
+	 */
+	public void shutdown() {
+		// 设置状态
+		stateReference.set(WorkerState.INTERRUPTED);
+		// 精准中断 worker 线程，使其从 startup delay / waitNewRequest / 阻塞型 supplier 中退出
+		Thread wt = workerThread.get();
+		if (wt != null) {
+			wt.interrupt();
+		}
+	}
 
-    /**
-     * 等待新的请求<br>
-     * 使当前线程在接到信号、休眠期满或者被中断之前一直处于等待状态
-     */
-    private void waitNewRequest() {
-        int awaitSeconds = 1 + (int) (Math.random() * EMPTY_QUEUE_MAX_AWAIT_SECONDS); // 1~31
-        try {
-            logger.debug("Worker {} waitNewRequest({})", name, awaitSeconds);
-            TimeUnit.SECONDS.sleep(awaitSeconds);
-        } catch (InterruptedException e) {
-            logger.warn("Worker " + name + " waitNewRequest - interrupted Error ", e);
-            Thread.currentThread().interrupt();
-        }
-    }
+	/**
+	 * 处理队列
+	 * @param element 队列元素
+	 */
+	private void process(T element) {
+		try {
+			consumer.accept(element);
+		} catch (Exception e) {
+			logger.error("Worker Process Error", e);
+		}
+	}
 
-    /** 工作者状态 */
-    public enum WorkerState {
-        /** 初始 */
-        NEW,
-        /** 运行中 */
-        RUNNING,
-        /** 中断 */
-        INTERRUPTED,
-        /** 终止 */
-        TERMINATED;
-    }
+	/**
+	 * 等待新的请求<br>
+	 * 使当前线程在接到信号、休眠期满或者被中断之前一直处于等待状态
+	 */
+	private void waitNewRequest() {
+		int awaitSeconds = 1 + (int) (Math.random() * EMPTY_QUEUE_MAX_AWAIT_SECONDS); // 1~31
+		try {
+			logger.debug("Worker {} waitNewRequest({})", name, awaitSeconds);
+			TimeUnit.SECONDS.sleep(awaitSeconds);
+		} catch (InterruptedException e) {
+			logger.warn("Worker " + name + " waitNewRequest - interrupted Error ", e);
+			Thread.currentThread().interrupt();
+		}
+	}
+
+	/** 工作者状态 */
+	public enum WorkerState {
+		/** 初始 */
+		NEW,
+		/** 运行中 */
+		RUNNING,
+		/** 中断 */
+		INTERRUPTED,
+		/** 终止 */
+		TERMINATED;
+	}
 }

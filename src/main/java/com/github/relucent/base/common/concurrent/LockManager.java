@@ -1,8 +1,10 @@
 package com.github.relucent.base.common.concurrent;
 
 import java.time.Duration;
+import java.util.Collections;
+import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -10,14 +12,21 @@ import java.util.concurrent.locks.ReentrantLock;
 import com.github.relucent.base.common.exception.ExceptionUtil;
 
 /**
- * LockHelper 提供基于字符串 name 的锁管理与 TryLockGuard 工具方法。<br>
- * 1. 使用 ConcurrentHashMap 管理不同 name 的锁，实现全局可重用的命名锁。<br>
+ * LockManager 提供基于字符串 name 的锁管理与 TryLockGuard 工具方法。<br>
+ * 1. 使用弱引用映射管理不同 name 的锁，实现全局可重用的命名锁。<br>
  * 2. getLock(name) 可以获取相同 name 的同一把锁。<br>
  * 3. tryLock(name) 返回 TryLockGuard，用于安全执行 tryLock 并自动释放。<br>
+ * 4. removeLock(name) 用于显式释放不再使用的命名锁，避免动态 name 造成的内存占用。<br>
+ * 
+ * <p>
+ * 注意：内部采用弱引用映射（key 为锁名称）。对于以字面量声明的固定 name（存在于字符串常量池），
+ * 不会被回收；对于动态拼接的 name，当外部不再持有其强引用且对应锁空闲时，会被 GC 自动回收。
+ * 对于长期存在、明确不再使用的动态 name，建议显式调用 removeLock 主动清理。
+ * </p>
  * 
  * <pre>
  * 使用示例：
- * try (TryLockGuard guard = LockHelper.tryLock("task-1")) {
+ * try (TryLockGuard guard = LockManager.tryLock("task-1")) {
  *     if (!guard.isLocked()) {
  *         // 没抢到锁，直接返回
  *         return;
@@ -30,8 +39,8 @@ import com.github.relucent.base.common.exception.ExceptionUtil;
 public class LockManager {
 
     // ==============================Fields===========================================
-    /** 全局锁容器，线程安全 */
-    private final ConcurrentHashMap<String, Lock> locks = new ConcurrentHashMap<>();
+    /** 全局锁容器（弱引用映射，空闲的动态 name 可被 GC 回收），线程安全 */
+    private final Map<String, Lock> locks = Collections.synchronizedMap(new WeakHashMap<String, Lock>());
 
     /** 当前锁生成器 */
     private final LockProvider lockProvider;
@@ -45,7 +54,7 @@ public class LockManager {
     }
 
     /**
-     * 构造函数使用
+     * 构造函数使用指定的锁生成器
      * @param lockProvider 锁生成器
      */
     public LockManager(LockProvider lockProvider) {
@@ -63,7 +72,17 @@ public class LockManager {
     }
 
     /**
-     * 阻塞锁，保证加锁成功
+     * 移除指定 name 对应的命名锁。<br>
+     * 适用于动态生成的锁名称（如 per-user / per-order），在确认不再需要时使用，
+     * 以主动释放该 name 对应的锁占用，避免长期运行下的累积。
+     * @param name 锁名称
+     */
+    public void removeLock(String name) {
+        locks.remove(name);
+    }
+
+    /**
+     * 阻塞式加锁，保证一定加锁成功
      * @param name 锁名称
      * @return LockGuard
      */
@@ -76,7 +95,7 @@ public class LockManager {
      * 
      * <pre>
      * 用法：
-     * try (TryLockGuard guard = LockHelper.tryLock("sync-job")) {
+     * try (TryLockGuard guard = LockManager.tryLock("sync-job")) {
      *     if(!guard.isLocked()) {
      *         return;
      *     }
@@ -96,7 +115,7 @@ public class LockManager {
      * 
      * <pre>
      * 用法：
-     * try (TryLockGuard guard = LockHelper.tryLock("sync-job", 3, TimeUnit.SECONDS)) {
+     * try (TryLockGuard guard = LockManager.tryLock("sync-job", 3, TimeUnit.SECONDS)) {
      *     if(!guard.isLocked()) {
      *         return;
      *     }
@@ -233,7 +252,7 @@ public class LockManager {
         private final Lock lock;
 
         /**
-         * 阻塞 lock
+         * 阻塞获取锁
          * @param lock 锁
          */
         public LockGuard(Lock lock) {
@@ -251,7 +270,7 @@ public class LockManager {
     }
 
     /**
-     * TryLockGuard 尝试加锁，可能失败。 支持非阻塞 tryLock 和带超时 tryLock。 自动释放锁。
+     * TryLockGuard 尝试加锁，可能失败。支持非阻塞 tryLock 和带超时 tryLock，作用域结束自动释放锁。
      */
     public static class TryLockGuard implements AutoCloseable {
 

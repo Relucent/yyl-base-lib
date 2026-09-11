@@ -14,7 +14,7 @@ public class EnumConverter implements BasicConverter<Enum> {
     public static final EnumConverter INSTANCE = new EnumConverter();
 
     // 枚举成员数不能超过65536，所以枚举的编号不会超过5位（当然正常情况不会创建那么多成员的枚举）
-    private static int ORDINAL_STRING_LENGTH = 5;
+    private static final int ORDINAL_STRING_LENGTH = 5;
 
     @SuppressWarnings("unchecked")
     @Override

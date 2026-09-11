@@ -7,6 +7,7 @@ import javax.script.ScriptEngine;
 /**
  * 全功能引擎接类，支持 ScriptEngine, Compilable 和 Invocable.
  * @author YYL
+ * @deprecated
  */
 public interface ScriptEnginex extends ScriptEngine, Compilable, Invocable {
 }

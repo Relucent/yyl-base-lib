@@ -350,23 +350,26 @@ public class ConvertUtil {
 
         // Bean
         if (BeanUtil.isWritableBean(rowType)) {
-            return (T) BeanConverter.INSTANCE.convert(source, toType);
+            return (T) BeanConverter.INSTANCE.convert(source, toType, defaultValue);
         }
 
         // Class
         if ("java.lang.Class".equals(rowType.getName())) {
-            return (T) ClassConverter.INSTANCE.convert(source, toType);
+            return (T) ClassConverter.INSTANCE.convert(source, toType, (Class<?>) defaultValue);
         }
 
         return defaultValue;
     }
 
     /**
-     * 判断类型是否是准类型
+     * 判断类型是否是简单类型<br>
+     * 简单类型指可直接作为值处理的类型，包括：基本类型、{@link String}、{@link Boolean}、{@link Character}、
+     * {@link Number} 及其子类（如各包装类、AtomicInteger/AtomicLong/BigDecimal/BigInteger 等）、
+     * {@link Date} 及其子类、枚举类型
      * @param clazz 对象类型
-     * @return 如果参数是标准类型返回TRUE，否则返回FLASE
+     * @return 如果参数是简单类型返回 {@code true}，否则返回 {@code false}
      */
-    public static boolean isStandardType(Class<?> clazz) {
+    public static boolean isSimpleType(Class<?> clazz) {
         // Primitive
         if (clazz.isPrimitive()) {
             return true;
@@ -397,5 +400,16 @@ public class ConvertUtil {
             return true;
         }
         return false;
+    }
+
+    /**
+     * 判断类型是否是标准类型
+     * @param clazz 对象类型
+     * @return 如果参数是标准类型返回TRUE，否则返回FALSE
+     * @deprecated 方法命名存在歧义，使用 {@link #isSimpleType(Class)} 替代
+     */
+    @Deprecated
+    public static boolean isStandardType(Class<?> clazz) {
+        return isSimpleType(clazz);
     }
 }

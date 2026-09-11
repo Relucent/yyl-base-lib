@@ -58,7 +58,7 @@ public class BeanMapPopulater {
                     Method method = descriptor.getReadMethod();
                     Object property = properties.get(field);
                     // 基本的对象类型
-                    if (ConvertUtil.isStandardType(toType)) {
+                    if (ConvertUtil.isSimpleType(toType)) {
                         property = ConvertUtil.convert(property, toType, null);
                         if (property == null) {
                             property = config.getFieldDefaultValue(clazz, field);
@@ -95,7 +95,7 @@ public class BeanMapPopulater {
             if (beanClass.isInterface()) {
                 bean = InterfaceProxyFactory.create(beanClass);
             } else {
-                bean = beanClass.newInstance();
+                bean = beanClass.getDeclaredConstructor().newInstance();
             }
             populate(bean, beanClass, properties);
             return bean;

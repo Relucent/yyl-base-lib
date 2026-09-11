@@ -30,8 +30,7 @@ public class BooleanConverter implements BasicConverter<Boolean> {
             return ((Number) source).longValue() != 0L;
         }
 
-        // 转换成字符串在进行比较
-        String value = String.valueOf(source).toUpperCase();
-        return BooleanUtil.toBoolean(value);
+        // 转换成字符串再进行比较（BooleanUtil 内部已做 trim/大写处理）
+        return BooleanUtil.toBoolean(String.valueOf(source));
     }
 }

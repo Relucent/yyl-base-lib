@@ -31,7 +31,7 @@ public class ParallelWorker {
      */
     public void add(Runnable task) {
         if (!State.NEW.equals(state.get())) {
-            throw new IllegalStateException("Current status is " + state.get().name() + ",status, cannot add task!");
+            throw new IllegalStateException("Current status is " + state.get().name() + ", cannot add task!");
         }
         queue.offer(task);
     }
@@ -53,7 +53,7 @@ public class ParallelWorker {
      * @throws InterruptedRuntimeException 如果当前线程被中断
      */
     public synchronized void run(Duration timeout) {
-        run(Integer.MAX_VALUE, null);
+        run(Integer.MAX_VALUE, timeout);
     }
 
     /**

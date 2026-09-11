@@ -3,7 +3,6 @@ package com.github.relucent.base.common.concurrent;
 import java.util.Queue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 异步信号量（AsyncSemaphore） <br>
@@ -31,16 +30,17 @@ import java.util.concurrent.atomic.AtomicInteger;
  * int available = semaphore.getCounter();
  * }</pre>
  * 
- * 注意事项： <br>
- * - acquire() 返回的 CompletableFuture 只有在许可可用时才完成。 <br>
- * - release() 必须在任务完成后调用，否则队列中的任务不会继续执行。 <br>
- * - 异步信号量不同于传统阻塞 Semaphore，它不会阻塞线程。 <br>
+     * 注意事项：<br>
+     * - acquire() 返回的 CompletableFuture 只有在许可可用时才完成。<br>
+     * - release() 必须在任务完成后调用，否则队列中的任务不会继续执行。<br>
+     * - 异步信号量不同于传统阻塞 Semaphore，它不会阻塞线程。<br>
  * - 许可长期不足的情况下队列会无限增长，需要考虑资源情况。<br>
+ * - 所有对内部状态（许可计数与等待队列）的访问均串行化，避免并发分配错误。
  */
 public class AsyncSemaphore {
 
     /** 当前可用许可数 */
-    private final AtomicInteger counter;
+    private int counter;
 
     /** 等待许可的任务队列，每个 CompletableFuture 表示一个等待任务 */
     private final Queue<CompletableFuture<Void>> listeners = new ConcurrentLinkedQueue<>();
@@ -50,7 +50,7 @@ public class AsyncSemaphore {
      * @param permits 初始许可数量
      */
     public AsyncSemaphore(int permits) {
-        counter = new AtomicInteger(permits);
+        this.counter = permits;
     }
 
     /**
@@ -63,10 +63,16 @@ public class AsyncSemaphore {
 
     /**
      * 清空等待队列<br>
-     * 注意：清空后，队列中未完成的任务将不会获得许可。
+     * 清空时会取消队列中正在等待的任务（对应 CompletableFuture 被标记为取消），
+     * 使其不再永久挂起，调用方可通过 whenComplete / exceptionally 感知取消。
      */
     public void removeQueue() {
-        listeners.clear();
+        synchronized (this) {
+            CompletableFuture<Void> future;
+            while ((future = listeners.poll()) != null) {
+                future.cancel(false);
+            }
+        }
     }
 
     /**
@@ -75,39 +81,32 @@ public class AsyncSemaphore {
      */
     public CompletableFuture<Void> acquire() {
         CompletableFuture<Void> future = new CompletableFuture<>();
-        listeners.add(future);
-        tryRun();
+        synchronized (this) {
+            listeners.add(future);
+            tryRun();
+        }
         return future;
     }
 
     /**
-     * 尝试分配许可给队列中的任务<br>
+     * 尝试分配许可给队列中的任务（调用方需已持有本对象的监视器锁）。<br>
      * 核心逻辑：<br>
-     * 1. 尝试获取许可（counter 减一）。<br>
-     * 2. 如果有任务等待，完成队列头部的 CompletableFuture。<br>
-     * 3. 如果队列为空或许可不足，恢复 counter 并退出。<br>
-     * 4. 循环处理连续可分配的许可。<br>
+     * 1. 只要还有可用许可（counter &gt; 0）就持续尝试分配。<br>
+     * 2. 从队列头部取出一个等待任务，完成其 CompletableFuture 并消耗一个许可。<br>
+     * 3. 若该 future 已被取消或提前完成（complete 返回 false），则丢弃并继续处理下一个，不消耗许可。<br>
+     * 4. 队列为空或许可不足时退出。<br>
      */
     private void tryRun() {
-        while (true) {
-            // 尝试获取许可
-            if (counter.decrementAndGet() >= 0) {
-                // 取队列头部任务
-                CompletableFuture<Void> future = listeners.poll();
-
-                // 没有任务，恢复许可
-                if (future == null) {
-                    counter.incrementAndGet();
-                    return;
-                }
-                // 完成任务，通知调用方
-                if (future.complete(null)) {
-                    return;
-                }
-            }
-            // 没有许可可分配
-            if (counter.incrementAndGet() <= 0) {
+        while (counter > 0) {
+            CompletableFuture<Void> future = listeners.peek();
+            if (future == null) {
                 return;
+            }
+            // 取出队头（无论是否成功分配都移除，避免重复处理）
+            listeners.poll();
+            // 分配许可：成功完成则消耗一个许可；已取消/完成的 future 直接丢弃，继续下一个
+            if (future.complete(null)) {
+                counter--;
             }
         }
     }
@@ -117,7 +116,9 @@ public class AsyncSemaphore {
      * @return 可用许可数量
      */
     public int getCounter() {
-        return counter.get();
+        synchronized (this) {
+            return counter;
+        }
     }
 
     /**
@@ -125,8 +126,10 @@ public class AsyncSemaphore {
      * 释放后会尝试分配许可给队列中等待的任务
      */
     public void release() {
-        counter.incrementAndGet();
-        tryRun();
+        synchronized (this) {
+            counter++;
+            tryRun();
+        }
     }
 
     @Override

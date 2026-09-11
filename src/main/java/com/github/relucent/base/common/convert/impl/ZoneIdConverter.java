@@ -20,6 +20,11 @@ public class ZoneIdConverter implements BasicConverter<ZoneId> {
         if (source instanceof TimeZone) {
             return ((TimeZone) source).toZoneId();
         }
-        return ZoneId.of(StringUtil.string(source));
+        try {
+            return ZoneId.of(StringUtil.string(source));
+        } catch (Exception ignore) {
+            // 无效的时区 ID，按转换失败处理
+            return null;
+        }
     }
 }

@@ -31,7 +31,7 @@ public class BeanMapDescriber {
     private Object describeEntry(Object value, int depth) {
         if (value == null) {
             return null;
-        } else if (ConvertUtil.isStandardType(value.getClass())) {
+        } else if (ConvertUtil.isSimpleType(value.getClass())) {
             return value;
         } else if (value instanceof Map) {
             return describeMap((Map) value, increDepth(depth));
@@ -91,7 +91,7 @@ public class BeanMapDescriber {
                 if (descriptor.getReadMethod() != null) {
                     Class<?> type = descriptor.getPropertyType();
                     // 是否深度解析Bean(如果否，则排除非基本的对象类型)
-                    if (!resolveBean(depth) && !ConvertUtil.isStandardType(type)) {
+                    if (!resolveBean(depth) && !ConvertUtil.isSimpleType(type)) {
                         continue;
                     }
 

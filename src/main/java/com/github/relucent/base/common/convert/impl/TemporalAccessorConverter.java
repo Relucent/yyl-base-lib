@@ -21,6 +21,7 @@ import com.github.relucent.base.common.convert.BasicConverter;
 import com.github.relucent.base.common.lang.ObjectUtil;
 import com.github.relucent.base.common.lang.StringUtil;
 import com.github.relucent.base.common.time.DateUtil;
+import com.github.relucent.base.common.time.EraUtil;
 import com.github.relucent.base.common.time.TemporalAccessorUtil;
 import com.github.relucent.base.common.time.ZoneUtil;
 
@@ -33,220 +34,243 @@ import com.github.relucent.base.common.time.ZoneUtil;
  * @see java.time.ZonedDateTime
  * @see java.time.OffsetDateTime
  * @see java.time.OffsetTime
+ * @see java.time.chrono.Era
  */
 public class TemporalAccessorConverter implements BasicConverter<TemporalAccessor> {
 
-    public static final TemporalAccessorConverter INSTANCE = new TemporalAccessorConverter();
+	public static final TemporalAccessorConverter INSTANCE = new TemporalAccessorConverter();
 
-    public TemporalAccessor convertInternal(Object source, Class<? extends TemporalAccessor> toType) {
-        if (source == null) {
-            return null;
-        }
+	public TemporalAccessor convertInternal(Object source, Class<? extends TemporalAccessor> toType) {
+		try {
+			return doConvert(source, toType);
+		} catch (Exception ignore) {
+			// 非法文本、字段越界或字段缺失等无法转换的情况，统一按转换失败处理
+			return null;
+		}
+	}
 
-        if (source.getClass() == toType) {
-            return (TemporalAccessor) source;
-        }
+	/**
+	 * 执行实际的时间对象转换逻辑
+	 * @param source 源对象
+	 * @param toType 目标类型
+	 * @return 转换后的{@code TemporalAccessor}对象，无法转换时返回{@code null}
+	 */
+	private TemporalAccessor doConvert(Object source, Class<? extends TemporalAccessor> toType) {
+		if (source == null) {
+			return null;
+		}
 
-        if (source instanceof Number) {
-            return parseFromLong(((Number) source).longValue(), toType);
-        }
-        if (source instanceof Instant) {
-            return parseFromInstant((Instant) source, ZoneUtil.getDefaultZoneId(), toType);
-        }
+		if (source.getClass() == toType) {
+			return (TemporalAccessor) source;
+		}
 
-        if (source instanceof TemporalAccessor) {
-            return parseFromTemporalAccessor((TemporalAccessor) source, toType);
-        }
+		if (source instanceof Number) {
+			return parseFromLong(((Number) source).longValue(), toType);
+		}
+		if (source instanceof Instant) {
+			return parseFromInstant((Instant) source, ZoneUtil.getDefaultZoneId(), toType);
+		}
 
-        if (source instanceof Date) {
-            return parseFromInstant(((Date) source).toInstant(), ZoneUtil.getDefaultZoneId(), toType);
-        }
+		if (source instanceof TemporalAccessor) {
+			return parseFromTemporalAccessor((TemporalAccessor) source, toType);
+		}
 
-        if (source instanceof Calendar) {
-            Calendar calendar = (Calendar) source;
-            return parseFromInstant(calendar.toInstant(), calendar.getTimeZone().toZoneId(), toType);
-        }
+		if (source instanceof Date) {
+			return parseFromInstant(((Date) source).toInstant(), ZoneUtil.getDefaultZoneId(), toType);
+		}
 
-        return parseFromText(StringUtil.string(source), toType);
-    }
+		if (source instanceof Calendar) {
+			Calendar calendar = (Calendar) source;
+			return parseFromInstant(calendar.toInstant(), calendar.getTimeZone().toZoneId(), toType);
+		}
 
-    /**
-     * 将时间戳转换时间对象
-     * @param source 时间戳
-     * @param toType 目标类型
-     * @return {@code TemporalAccessor}时间对象
-     */
-    private TemporalAccessor parseFromLong(final Long source, final Class<?> toType) {
-        if (Month.class.equals(toType)) {
-            return Month.of(Math.toIntExact(source));
-        }
-        if (DayOfWeek.class.equals(toType)) {
-            return DayOfWeek.of(Math.toIntExact(source));
-        }
-        if (Era.class.equals(toType)) {
-            return IsoEra.of(Math.toIntExact(source));
-        }
-        Instant instant = Instant.ofEpochMilli(source);
+		return parseFromText(StringUtil.string(source), toType);
+	}
 
-        return parseFromInstant(instant, (ZoneId) null, toType);
-    }
+	/**
+	 * 将时间戳转换时间对象
+	 * @param source 时间戳
+	 * @param toType 目标类型
+	 * @return {@code TemporalAccessor}时间对象
+	 */
+	private TemporalAccessor parseFromLong(final Long source, final Class<?> toType) {
+		if (Month.class.equals(toType)) {
+			return Month.of(Math.toIntExact(source));
+		}
+		if (DayOfWeek.class.equals(toType)) {
+			return DayOfWeek.of(Math.toIntExact(source));
+		}
+		if (Era.class.equals(toType)) {
+			return IsoEra.of(Math.toIntExact(source));
+		}
+		Instant instant = Instant.ofEpochMilli(source);
+		return parseFromInstant(instant, (ZoneId) null, toType);
+	}
 
-    /**
-     * 将TemporalAccessor型时间戳转换为java.time中的对象
-     * @param instant {@link Instant}对象
-     * @param zoneId 时区ID，null表示当前系统默认的时区
-     * @param toType 目标类型
-     * @return {@code TemporalAccessor}时间对象
-     */
-    private TemporalAccessor parseFromInstant(Instant instant, ZoneId zoneId, Class<?> toType) {
-        if (Instant.class.equals(toType)) {
-            return instant;
-        }
-        zoneId = ObjectUtil.defaultIfNullGet(zoneId, ZoneUtil::getDefaultZoneId);
-        if (LocalDateTime.class.equals(toType)) {
-            return LocalDateTime.ofInstant(instant, zoneId);
-        }
-        if (LocalDate.class.equals(toType)) {
-            return instant.atZone(zoneId).toLocalDate();
-        }
-        if (LocalTime.class.equals(toType)) {
-            return instant.atZone(zoneId).toLocalTime();
-        }
-        if (ZonedDateTime.class.equals(toType)) {
-            return instant.atZone(zoneId);
-        }
-        if (OffsetDateTime.class.equals(toType)) {
-            return OffsetDateTime.ofInstant(instant, zoneId);
-        }
-        if (OffsetTime.class.equals(toType)) {
-            return OffsetTime.ofInstant(instant, zoneId);
-        }
-        if (TemporalAccessor.class.equals(toType)) {
-            return instant.atZone(zoneId);
-        }
-        return null;
-    }
+	/**
+	 * 将TemporalAccessor型时间戳转换为java.time中的对象
+	 * @param instant {@link Instant}对象
+	 * @param zoneId  时区ID，null表示当前系统默认的时区
+	 * @param toType  目标类型
+	 * @return {@code TemporalAccessor}时间对象
+	 */
+	private TemporalAccessor parseFromInstant(Instant instant, ZoneId zoneId, Class<?> toType) {
+		if (Instant.class.equals(toType)) {
+			return instant;
+		}
+		zoneId = ObjectUtil.defaultIfNullGet(zoneId, ZoneUtil::getDefaultZoneId);
+		if (Era.class.equals(toType)) {
+			// 时间戳本身不含纪元信息，先按目标时区还原为日期时间再提取
+			return EraUtil.from(instant.atZone(zoneId));
+		}
+		if (LocalDateTime.class.equals(toType)) {
+			return LocalDateTime.ofInstant(instant, zoneId);
+		}
+		if (LocalDate.class.equals(toType)) {
+			return instant.atZone(zoneId).toLocalDate();
+		}
+		if (LocalTime.class.equals(toType)) {
+			return instant.atZone(zoneId).toLocalTime();
+		}
+		if (ZonedDateTime.class.equals(toType)) {
+			return instant.atZone(zoneId);
+		}
+		if (OffsetDateTime.class.equals(toType)) {
+			return OffsetDateTime.ofInstant(instant, zoneId);
+		}
+		if (OffsetTime.class.equals(toType)) {
+			return OffsetTime.ofInstant(instant, zoneId);
+		}
+		if (TemporalAccessor.class.equals(toType)) {
+			return instant.atZone(zoneId);
+		}
+		return null;
+	}
 
-    /**
-     * 将TemporalAccessor型时间戳转换为java.time中的对象
-     * @param temporalAccessor 需要转换的{@code TemporalAccessor}对象
-     * @param toType 目标类型
-     * @return 转换后的{@code TemporalAccessor}对象
-     */
-    private TemporalAccessor parseFromTemporalAccessor(TemporalAccessor temporalAccessor, Class<?> toType) {
-        if (TemporalAccessor.class.equals(toType)) {
-            return (TemporalAccessor) temporalAccessor;
-        }
-        if (DayOfWeek.class.equals(toType)) {
-            return DayOfWeek.from(temporalAccessor);
-        }
-        if (Month.class.equals(toType)) {
-            return Month.from(temporalAccessor);
-        }
-        if (MonthDay.class.equals(toType)) {
-            return MonthDay.from(temporalAccessor);
-        }
-        if (temporalAccessor instanceof LocalDateTime) {
-            return parseFromLocalDateTime((LocalDateTime) temporalAccessor, toType);
-        }
-        if (temporalAccessor instanceof ZonedDateTime) {
-            return parseFromZonedDateTime((ZonedDateTime) temporalAccessor, toType);
-        }
-        return parseFromInstant(TemporalAccessorUtil.toInstant(temporalAccessor), ZoneUtil.getDefaultZoneId(), toType);
-    }
+	/**
+	 * 将TemporalAccessor型时间戳转换为java.time中的对象
+	 * @param temporalAccessor 需要转换的{@code TemporalAccessor}对象
+	 * @param toType           目标类型
+	 * @return 转换后的{@code TemporalAccessor}对象
+	 */
+	private TemporalAccessor parseFromTemporalAccessor(TemporalAccessor temporalAccessor, Class<?> toType) {
+		if (TemporalAccessor.class.equals(toType)) {
+			return (TemporalAccessor) temporalAccessor;
+		}
+		if (DayOfWeek.class.equals(toType)) {
+			return DayOfWeek.from(temporalAccessor);
+		}
+		if (Month.class.equals(toType)) {
+			return Month.from(temporalAccessor);
+		}
+		if (MonthDay.class.equals(toType)) {
+			return MonthDay.from(temporalAccessor);
+		}
+		if (Era.class.equals(toType)) {
+			// 不支持纪元字段的时间对象（如 LocalTime）会返回 null，而不是抛出异常
+			return EraUtil.from(temporalAccessor);
+		}
+		if (temporalAccessor instanceof LocalDateTime) {
+			return parseFromLocalDateTime((LocalDateTime) temporalAccessor, toType);
+		}
+		if (temporalAccessor instanceof ZonedDateTime) {
+			return parseFromZonedDateTime((ZonedDateTime) temporalAccessor, toType);
+		}
+		return parseFromInstant(TemporalAccessorUtil.toInstant(temporalAccessor), ZoneUtil.getDefaultZoneId(), toType);
+	}
 
-    /**
-     * 将{@code LocalDateTime}转换为目标类型的{@code TemporalAccessor}对象
-     * @param localDateTime 需要转换的{@code LocalDateTime}对象
-     * @param toType 目标类型
-     * @return 转换后的{@code TemporalAccessor}对象
-     */
-    private TemporalAccessor parseFromLocalDateTime(LocalDateTime localDateTime, Class<?> toType) {
-        if (TemporalAccessor.class.equals(toType) || LocalDateTime.class.equals(toType)) {
-            return localDateTime;
-        }
-        if (Instant.class.equals(toType)) {
-            return TemporalAccessorUtil.toInstant(localDateTime);
-        }
-        if (LocalDate.class.equals(toType)) {
-            return localDateTime.toLocalDate();
-        }
-        if (LocalTime.class.equals(toType)) {
-            return localDateTime.toLocalTime();
-        }
-        if (ZonedDateTime.class.equals(toType)) {
-            return localDateTime.atZone(ZoneUtil.getDefaultZoneId());
-        }
-        if (OffsetDateTime.class.equals(toType)) {
-            return localDateTime.atZone(ZoneUtil.getDefaultZoneId()).toOffsetDateTime();
-        }
-        if (OffsetTime.class.equals(toType)) {
-            return localDateTime.atZone(ZoneUtil.getDefaultZoneId()).toOffsetDateTime().toOffsetTime();
-        }
-        return null;
-    }
+	/**
+	 * 将{@code LocalDateTime}转换为目标类型的{@code TemporalAccessor}对象
+	 * @param localDateTime 需要转换的{@code LocalDateTime}对象
+	 * @param toType        目标类型
+	 * @return 转换后的{@code TemporalAccessor}对象
+	 */
+	private TemporalAccessor parseFromLocalDateTime(LocalDateTime localDateTime, Class<?> toType) {
+		if (TemporalAccessor.class.equals(toType) || LocalDateTime.class.equals(toType)) {
+			return localDateTime;
+		}
+		if (Instant.class.equals(toType)) {
+			return TemporalAccessorUtil.toInstant(localDateTime);
+		}
+		if (LocalDate.class.equals(toType)) {
+			return localDateTime.toLocalDate();
+		}
+		if (LocalTime.class.equals(toType)) {
+			return localDateTime.toLocalTime();
+		}
+		if (ZonedDateTime.class.equals(toType)) {
+			return localDateTime.atZone(ZoneUtil.getDefaultZoneId());
+		}
+		if (OffsetDateTime.class.equals(toType)) {
+			return localDateTime.atZone(ZoneUtil.getDefaultZoneId()).toOffsetDateTime();
+		}
+		if (OffsetTime.class.equals(toType)) {
+			return localDateTime.atZone(ZoneUtil.getDefaultZoneId()).toOffsetDateTime().toOffsetTime();
+		}
+		return null;
+	}
 
-    /**
-     * 将{@code ZonedDateTime}转换为目标类型的{@code TemporalAccessor}对象
-     * @param zonedDateTime 需要转换的{@code ZonedDateTime}对象
-     * @param toType 目标类型
-     * @return 转换后的{@code TemporalAccessor}对象
-     */
-    private TemporalAccessor parseFromZonedDateTime(ZonedDateTime zonedDateTime, Class<?> toType) {
-        if (TemporalAccessor.class.equals(toType) || ZonedDateTime.class.equals(toType)) {
-            return zonedDateTime;
-        }
-        if (Instant.class.equals(toType)) {
-            return TemporalAccessorUtil.toInstant(zonedDateTime);
-        }
-        if (LocalDateTime.class.equals(toType)) {
-            return zonedDateTime.toLocalDateTime();
-        }
-        if (LocalDate.class.equals(toType)) {
-            return zonedDateTime.toLocalDate();
-        }
-        if (LocalTime.class.equals(toType)) {
-            return zonedDateTime.toLocalTime();
-        }
-        if (OffsetDateTime.class.equals(toType)) {
-            return zonedDateTime.toOffsetDateTime();
-        }
-        if (OffsetTime.class.equals(toType)) {
-            return zonedDateTime.toOffsetDateTime().toOffsetTime();
-        }
-        return null;
-    }
+	/**
+	 * 将{@code ZonedDateTime}转换为目标类型的{@code TemporalAccessor}对象
+	 * @param zonedDateTime 需要转换的{@code ZonedDateTime}对象
+	 * @param toType        目标类型
+	 * @return 转换后的{@code TemporalAccessor}对象
+	 */
+	private TemporalAccessor parseFromZonedDateTime(ZonedDateTime zonedDateTime, Class<?> toType) {
+		if (TemporalAccessor.class.equals(toType) || ZonedDateTime.class.equals(toType)) {
+			return zonedDateTime;
+		}
+		if (Instant.class.equals(toType)) {
+			return TemporalAccessorUtil.toInstant(zonedDateTime);
+		}
+		if (LocalDateTime.class.equals(toType)) {
+			return zonedDateTime.toLocalDateTime();
+		}
+		if (LocalDate.class.equals(toType)) {
+			return zonedDateTime.toLocalDate();
+		}
+		if (LocalTime.class.equals(toType)) {
+			return zonedDateTime.toLocalTime();
+		}
+		if (OffsetDateTime.class.equals(toType)) {
+			return zonedDateTime.toOffsetDateTime();
+		}
+		if (OffsetTime.class.equals(toType)) {
+			return zonedDateTime.toOffsetDateTime().toOffsetTime();
+		}
+		return null;
+	}
 
-    /**
-     * 将字符串转换为目标类型的{@code TemporalAccessor}对象
-     * @param text 需要转换的字符串
-     * @param toType 目标类型
-     * @return 转换后的{@code TemporalAccessor}对象
-     */
-    private TemporalAccessor parseFromText(String text, Class<?> toType) {
+	/**
+	 * 将字符串转换为目标类型的{@code TemporalAccessor}对象
+	 * @param text   需要转换的字符串
+	 * @param toType 目标类型
+	 * @return 转换后的{@code TemporalAccessor}对象
+	 */
+	private TemporalAccessor parseFromText(String text, Class<?> toType) {
 
-        if (DayOfWeek.class.equals(toType)) {
-            return DayOfWeek.valueOf(text);
-        }
-        if (Month.class.equals(toType)) {
-            return Month.valueOf(text);
-        }
-        if (Era.class.equals(toType)) {
-            return IsoEra.valueOf(text);
-        }
-        if (MonthDay.class.equals(toType)) {
-            return MonthDay.parse(text);
-        }
+		if (DayOfWeek.class.equals(toType)) {
+			return DayOfWeek.valueOf(text);
+		}
+		if (Month.class.equals(toType)) {
+			return Month.valueOf(text);
+		}
+		if (Era.class.equals(toType)) {
+			return IsoEra.valueOf(text);
+		}
+		if (MonthDay.class.equals(toType)) {
+			return MonthDay.parse(text);
+		}
 
-        TemporalAccessor temporalAccessor = TemporalAccessorUtil.parse(text);
-        if (temporalAccessor != null) {
-            return parseFromTemporalAccessor(temporalAccessor, toType);
-        }
+		TemporalAccessor temporalAccessor = TemporalAccessorUtil.parse(text);
+		if (temporalAccessor != null) {
+			return parseFromTemporalAccessor(temporalAccessor, toType);
+		}
 
-        Date date = DateUtil.parseDate(text);
-        if (date != null) {
-            return parseFromInstant(((Date) date).toInstant(), ZoneUtil.getDefaultZoneId(), toType);
-        }
-        return null;
-    }
+		Date date = DateUtil.parseDate(text);
+		if (date != null) {
+			return parseFromInstant(((Date) date).toInstant(), ZoneUtil.getDefaultZoneId(), toType);
+		}
+		return null;
+	}
 }

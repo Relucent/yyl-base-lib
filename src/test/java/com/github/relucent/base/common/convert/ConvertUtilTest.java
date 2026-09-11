@@ -1,5 +1,6 @@
 package com.github.relucent.base.common.convert;
 
+import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -179,5 +180,40 @@ public class ConvertUtilTest {
         origin.remove(null);
         sample.remove(null);
         Assert.assertArrayEquals(origin.keySet().toArray(), sample.keySet().toArray());
+    }
+
+    @Test
+    public void testConvertToBean() {
+        Map<String, Object> origin = new HashMap<>();
+        origin.put("name", "hello");
+        SampleBean sample = ConvertUtil.convert(origin, SampleBean.class);
+        Assert.assertNotNull(sample);
+        Assert.assertEquals("hello", sample.getName());
+    }
+
+    @Test
+    public void testConvertToBeanWithDefaultValue() {
+        // 无法转换时返回默认值（修复前 Bean 分支会丢弃默认值返回 null）
+        SampleBean defaultValue = new SampleBean();
+        Assert.assertSame(defaultValue, ConvertUtil.convert("not-a-bean", SampleBean.class, defaultValue));
+    }
+
+    @Test
+    public void testConvertToClassWithDefaultValue() {
+        // 非法类名时返回默认值（修复前 Class 分支会丢弃默认值并抛出异常）
+        Object result = ConvertUtil.convert("no.such.Clazz", (Type) Class.class, (Object) String.class);
+        Assert.assertEquals(String.class, result);
+    }
+
+    public static class SampleBean {
+        private String name;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
     }
 }

@@ -106,4 +106,10 @@ public class CollectionConverterTest {
         Assert.assertTrue(result instanceof List);
         Assert.assertEquals(3, result.size());
     }
+
+    @Test
+    public void testConvertToRawEnumSet() {
+        // 原始 EnumSet.class 无法确定元素类型，按转换失败处理返回 null（修复前会抛出 ClassCastException）
+        Assert.assertNull(CollectionConverter.INSTANCE.convert(Arrays.asList("A", "B"), java.util.EnumSet.class));
+    }
 }

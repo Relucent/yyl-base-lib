@@ -25,6 +25,10 @@ public class BeanConverter implements Converter<Object> {
         final Class<?> beanType = TypeUtil.getClass(toType);
         if (source instanceof Map || BeanUtil.isWritableBean(source.getClass())) {
             Object target = newBean(beanType);
+            if (target == null) {
+                // 无法实例化目标类型，按转换失败处理
+                return null;
+            }
             new BeanCopier(source, target, toType).copy();
             return target;
         }
@@ -39,7 +43,7 @@ public class BeanConverter implements Converter<Object> {
     private static Object newBean(final Class<?> beanType) {
         // 直接实例化
         try {
-            return beanType.newInstance();
+            return beanType.getDeclaredConstructor().newInstance();
         } catch (Exception ignore) {
             // ignore
         }

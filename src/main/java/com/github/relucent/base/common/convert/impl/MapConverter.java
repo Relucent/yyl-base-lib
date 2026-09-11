@@ -42,7 +42,7 @@ public class MapConverter implements Converter<Map<?, ?>> {
 
         // 直接实例化
         try {
-            return (Map<?, ?>) mapType.newInstance();
+            return (Map<?, ?>) mapType.getDeclaredConstructor().newInstance();
         } catch (Exception ignore) {
             // ignore
         }

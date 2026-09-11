@@ -14,10 +14,28 @@ import com.github.relucent.base.common.reflect.TypeReference;
 
 public class DefaultJsonHandler implements JsonHandler {
 
+	// =================================Fields=================================================
 	public static final DefaultJsonHandler INSTANCE = new DefaultJsonHandler();
-	private final JsonConfig config = new JsonConfig.Builder().build();
+	private final JsonConfig config;
 	private final Logger logger = Logger.getLogger(getClass());
 
+	// =================================Constructors===========================================
+	/**
+	 * 构造函数(使用默认配置)
+	 */
+	public DefaultJsonHandler() {
+		this(new JsonConfig.Builder().build());
+	}
+
+	/**
+	 * 构造函数(使用指定配置)
+	 * @param config JSON配置
+	 */
+	public DefaultJsonHandler(JsonConfig config) {
+		this.config = config;
+	}
+
+	// =================================Methods================================================
 	/**
 	 * 将Java对象转化为JSON字符串
 	 * @param object java对象
@@ -77,7 +95,7 @@ public class DefaultJsonHandler implements JsonHandler {
 		try {
 			return (T) new JsonTokener(new StringReader(json)).nextValue();
 		} catch (Exception e) {
-			logger.warn("#", e);
+			logger.warn("JSON decode failed", e);
 			return null;
 		}
 	}
@@ -91,7 +109,7 @@ public class DefaultJsonHandler implements JsonHandler {
 		try {
 			return (Mapx) decode(json);
 		} catch (Exception e) {
-			logger.warn("#", e);
+			logger.warn("JSON decode failed", e);
 			return null;
 		}
 	}
@@ -105,7 +123,7 @@ public class DefaultJsonHandler implements JsonHandler {
 		try {
 			return (Listx) decode(json);
 		} catch (Exception e) {
-			logger.warn("#", e);
+			logger.warn("JSON decode failed", e);
 			return null;
 		}
 	}

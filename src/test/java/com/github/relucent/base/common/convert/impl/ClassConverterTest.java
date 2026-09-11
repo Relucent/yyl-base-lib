@@ -39,4 +39,16 @@ public class ClassConverterTest {
         // BasicConverter 对 null 直接返回 null
         Assert.assertNull(ClassConverter.INSTANCE.convert(null, Class.class));
     }
+
+    @Test
+    public void testConvertUnknownClassName() {
+        // 不存在的类，按转换失败处理返回 null（修复前会抛出异常）
+        Assert.assertNull(ClassConverter.INSTANCE.convert("no.such.Clazz", Class.class));
+    }
+
+    @Test
+    public void testConvertWithDefaultValue() {
+        // 转换失败时返回默认值
+        Assert.assertEquals(String.class, ClassConverter.INSTANCE.convert("no.such.Clazz", Class.class, String.class));
+    }
 }

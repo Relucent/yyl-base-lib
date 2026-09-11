@@ -105,6 +105,9 @@ public class JsonUtil {
 	 * @param handler JSON处理类
 	 */
 	public static void setHandler(JsonHandler handler) {
+		if (handler == null) {
+			throw new IllegalArgumentException("handler must not be null");
+		}
 		HANDLER.set(handler);
 	}
 

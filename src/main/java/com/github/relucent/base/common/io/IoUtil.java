@@ -17,6 +17,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.URLConnection;
+import java.nio.Buffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -340,7 +341,10 @@ public class IoUtil {
 			final BufferedReader reader = buffer(input);
 			final CharBuffer buffer = CharBuffer.allocate(IoConstant.DEFAULT_BUFFER_SIZE);
 			while (-1 != reader.read(buffer)) {
-				builder.append(buffer.flip());
+				// 显式以 Buffer 类型调用 flip：JDK 9+ 中子类 flip 的返回类型协变为具体类型，
+				// 直接链式调用会在 JDK 8 上触发 NoSuchMethodError
+				((Buffer) buffer).flip();
+				builder.append(buffer);
 			}
 		} catch (IOException e) {
 			throw IoRuntimeException.wrap(e);

@@ -14,15 +14,20 @@ public class DurationConverter implements BasicConverter<Duration> {
     public static final DurationConverter INSTANCE = new DurationConverter();
 
     public Duration convertInternal(Object source, Class<? extends Duration> toType) {
-        if (source instanceof Duration) {
-            return (Duration) source;
+        try {
+            if (source instanceof Duration) {
+                return (Duration) source;
+            }
+            if (source instanceof Number) {
+                return Duration.ofMillis(((Number) source).longValue());
+            }
+            if (source instanceof TemporalAmount) {
+                return Duration.from((TemporalAmount) source);
+            }
+            return Duration.parse(StringUtil.string(source));
+        } catch (Exception ignore) {
+            // 无法解析的文本或时间量，按转换失败处理
+            return null;
         }
-        if (source instanceof Number) {
-            return Duration.ofMillis(((Number) source).longValue());
-        }
-        if (source instanceof TemporalAmount) {
-            return Duration.from((TemporalAmount) source);
-        }
-        return Duration.parse(StringUtil.string(source));
     }
 }

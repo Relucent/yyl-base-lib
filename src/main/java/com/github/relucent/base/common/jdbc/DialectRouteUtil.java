@@ -88,8 +88,8 @@ public class DialectRouteUtil {
             throw new SQLException("Can't find jdbc-dialect of " + jdbcUrl);
         }
         try {
-            return dialectClass.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
+            return dialectClass.getDeclaredConstructor().newInstance();
+        } catch (ReflectiveOperationException e) {
             throw new SQLException(e);
         }
     }

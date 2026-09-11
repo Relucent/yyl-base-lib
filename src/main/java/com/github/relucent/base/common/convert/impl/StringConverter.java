@@ -9,12 +9,12 @@ import java.util.Date;
 import java.util.TimeZone;
 
 import com.github.relucent.base.common.convert.BasicConverter;
-import com.github.relucent.base.common.exception.ExceptionUtil;
 import com.github.relucent.base.common.io.IoUtil;
 import com.github.relucent.base.common.time.DateUtil;
 
 /**
- * 字符串类型转换器
+ * 字符串类型转换器<br>
+ * 宽容语义：无法转换时返回 {@code null}（含 Clob、Blob 读取失败的情况），不抛出异常
  * @author YYL
  */
 public class StringConverter implements BasicConverter<String> {
@@ -50,30 +50,28 @@ public class StringConverter implements BasicConverter<String> {
     /**
      * Clob字段值转字符串
      * @param clob {@link Clob}
-     * @return 字符串
+     * @return 字符串，读取失败时返回 {@code null}
      */
     private static String clobToString(Clob clob) {
-        try {
-            try (Reader reader = clob.getCharacterStream()) {
-                return IoUtil.toString(reader);
-            }
-        } catch (Exception e) {
-            throw ExceptionUtil.propagate(e);
+        try (Reader reader = clob.getCharacterStream()) {
+            return IoUtil.toString(reader);
+        } catch (Exception ignore) {
+            // 读取失败按转换失败处理，不抛出异常
+            return null;
         }
     }
 
     /**
      * Blob字段值转字符串
      * @param blob {@link Blob}
-     * @return 字符串
+     * @return 字符串，读取失败时返回 {@code null}
      */
     private static String blobToString(Blob blob) {
-        try {
-            try (InputStream input = blob.getBinaryStream()) {
-                return IoUtil.toString(input);
-            }
-        } catch (Exception e) {
-            throw ExceptionUtil.propagate(e);
+        try (InputStream input = blob.getBinaryStream()) {
+            return IoUtil.toString(input);
+        } catch (Exception ignore) {
+            // 读取失败按转换失败处理，不抛出异常
+            return null;
         }
     }
 }
