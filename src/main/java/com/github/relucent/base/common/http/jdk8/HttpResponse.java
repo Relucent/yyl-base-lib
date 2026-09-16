@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import com.github.relucent.base.common.http.jdk8.internal.HttpResponseHandlers;
+import com.github.relucent.base.common.http.jdk8.internal.HttpResponseImpl;
 
 /**
  * HTTP 响应类
@@ -16,6 +17,18 @@ public interface HttpResponse<T> {
     HttpHeaders headers();
 
     T body();
+
+    /**
+     * 构造一个 HTTP 响应实例。
+     * @param statusCode 响应状态码
+     * @param headers    响应头
+     * @param body       响应体
+     * @param <T>        响应体类型
+     * @return HttpResponse 实例
+     */
+    static <T> HttpResponse<T> of(int statusCode, HttpHeaders headers, T body) {
+        return new HttpResponseImpl<>(statusCode, headers, body);
+    }
 
     interface ResponseInfo {
 
@@ -48,8 +61,16 @@ public interface HttpResponse<T> {
             return new HttpResponseHandlers.StringBodyHandler();
         }
 
+        public static BodyHandler<String> ofString(long maxBytes) {
+            return new HttpResponseHandlers.StringBodyHandler(maxBytes);
+        }
+
         public static BodyHandler<byte[]> ofByteArray() {
             return new HttpResponseHandlers.ByteArrayBodyHandler();
+        }
+
+        public static BodyHandler<byte[]> ofByteArray(long maxBytes) {
+            return new HttpResponseHandlers.ByteArrayBodyHandler(maxBytes);
         }
     }
 }

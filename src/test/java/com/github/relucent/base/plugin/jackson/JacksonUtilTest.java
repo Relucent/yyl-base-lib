@@ -53,22 +53,17 @@ public class JacksonUtilTest {
 			Assert.assertEquals(sample.string, decoded.string);
 			Assert.assertEquals(sample.date, decoded.date);
 		}
-		System.out.println(json);
+//		System.out.println(json);
 		Mapx[] mapxs = JacksonUtil.decode(json, Mapx[].class);
 		for (int i = 0; i < samples.length; i++) {
 			Sample sample = samples[i];
 			Mapx map = mapxs[i];
-//			Assert.assertEquals(sample.number, map.getLong("number"));
-//			Assert.assertEquals(sample.string, map.getString("string"));
-			System.out.println("---------------------");
-			System.out.println("1>" + DateUtil.format(sample.date));
-			System.out.println("2>" + DateUtil.format(map.getDate("date")));
-
-			System.out.println("1~" + sample.date.getTime());
-			System.out.println("2~" + map.getDate("date").getTime());
-
-			System.out.println("---------------------\n");
-
+//			System.out.println("---------------------");
+//			System.out.println("1>" + DateUtil.format(sample.date));
+//			System.out.println("2>" + DateUtil.format(map.getDate("date")));
+//			System.out.println("1~" + sample.date.getTime());
+//			System.out.println("2~" + map.getDate("date").getTime());
+//			System.out.println("---------------------\n");
 			Assert.assertEquals(sample.date, map.getDate("date"));
 		}
 

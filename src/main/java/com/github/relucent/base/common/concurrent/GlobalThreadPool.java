@@ -37,6 +37,15 @@ public class GlobalThreadPool {
 		return Holder.INSTANCE;
 	}
 
+	/**
+	 * 获取底层 {@link ExecutorService} 实例。<br>
+	 * 供需要复用有界全局线程池的组件（如 HTTP 客户端）使用，避免各自创建无界线程池。
+	 * @return 全局线程池的 {@link ExecutorService}
+	 */
+	public ExecutorService getThreadPool() {
+		return threadPool;
+	}
+
 	/** 单例模式用于延迟初始化 */
 	private static class Holder {
 		static final GlobalThreadPool INSTANCE = new GlobalThreadPool();

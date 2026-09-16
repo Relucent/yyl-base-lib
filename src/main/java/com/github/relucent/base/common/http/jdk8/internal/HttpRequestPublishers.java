@@ -23,249 +23,286 @@ import com.github.relucent.base.common.http.jdk8.HttpRequest.BodyPublisher;
 
 public class HttpRequestPublishers {
 
-    HttpRequestPublishers() {
-    }
+	HttpRequestPublishers() {
+	}
 
-    /**
-     * 不需要发布数据
-     */
-    public static class EmptyPublisher implements BodyPublisher {
+	/**
+	 * 不需要发布数据
+	 */
+	public static class EmptyPublisher implements BodyPublisher {
 
-        @Override
-        public long contentLength() {
-            return 0;
-        }
+		@Override
+		public long contentLength() {
+			return 0;
+		}
 
-        @Override
-        public String contentType() {
-            return null;
-        }
+		@Override
+		public String contentType() {
+			return null;
+		}
 
-        @Override
-        public void writeTo(OutputStream out) {
-        }
-    }
+		@Override
+		public void writeTo(OutputStream out) {
+		}
+	}
 
-    /**
-     * 发布 String 数据（如 JSON）
-     */
-    public static class StringBodyPublisher implements BodyPublisher {
+	/**
+	 * 发布 String 数据（如 JSON）
+	 */
+	public static class StringBodyPublisher implements BodyPublisher {
 
-        private final byte[] body;
-        private final String contentType;
+		private final byte[] body;
+		private final String contentType;
 
-        public StringBodyPublisher(String content, String contentType) {
-            Charset charset = HttpUtil.parseCharset(contentType);
-            this.body = content.getBytes(charset);
-            this.contentType = contentType;
-        }
+		public StringBodyPublisher(String content, String contentType) {
+			Charset charset = HttpUtil.parseCharset(contentType);
+			this.body = content.getBytes(charset);
+			this.contentType = contentType;
+		}
 
-        @Override
-        public long contentLength() {
-            return body.length;
-        }
+		@Override
+		public long contentLength() {
+			return body.length;
+		}
 
-        @Override
-        public String contentType() {
-            return contentType;
-        }
+		@Override
+		public String contentType() {
+			return contentType;
+		}
 
-        @Override
-        public void writeTo(OutputStream out) throws IOException {
-            out.write(body);
-        }
-    }
+		@Override
+		public void writeTo(OutputStream out) throws IOException {
+			out.write(body);
+		}
+	}
 
-    /**
-     * 发布 application/x-www-form-urlencoded 表单
-     */
-    public static class FormBodyPublisher implements BodyPublisher {
+	/**
+	 * 发布 application/x-www-form-urlencoded 表单
+	 */
+	public static class FormBodyPublisher implements BodyPublisher {
 
-        private final byte[] body;
+		private final byte[] body;
 
-        public FormBodyPublisher(Map<String, String> formData) {
-            StringBuilder sb = new StringBuilder();
-            for (Map.Entry<String, String> entry : formData.entrySet()) {
-                if (sb.length() > 0) {
-                    sb.append("&");
-                }
-                sb.append(CodecUtil.encodeUri(entry.getKey()));
-                sb.append("=");
-                sb.append(CodecUtil.encodeUri(entry.getValue()));
-            }
-            this.body = sb.toString().getBytes(StandardCharsets.UTF_8);
-        }
+		public FormBodyPublisher(Map<String, String> formData) {
+			StringBuilder sb = new StringBuilder();
+			for (Map.Entry<String, String> entry : formData.entrySet()) {
+				if (sb.length() > 0) {
+					sb.append("&");
+				}
+				sb.append(CodecUtil.encodeUri(entry.getKey()));
+				sb.append("=");
+				sb.append(CodecUtil.encodeUri(entry.getValue()));
+			}
+			this.body = sb.toString().getBytes(StandardCharsets.UTF_8);
+		}
 
-        @Override
-        public long contentLength() {
-            return body.length;
-        }
+		@Override
+		public long contentLength() {
+			return body.length;
+		}
 
-        @Override
-        public String contentType() {
-            return "application/x-www-form-urlencoded; charset=UTF-8";
-        }
+		@Override
+		public String contentType() {
+			return "application/x-www-form-urlencoded; charset=UTF-8";
+		}
 
-        @Override
-        public void writeTo(OutputStream out) throws IOException {
-            out.write(body);
-        }
-    }
+		@Override
+		public void writeTo(OutputStream out) throws IOException {
+			out.write(body);
+		}
+	}
 
-    /**
-     * 发布原始 byte[] 数据，如二进制、图片
-     */
-    public static class ByteArrayBodyPublisher implements BodyPublisher {
+	/**
+	 * 发布原始 byte[] 数据，如二进制、图片
+	 */
+	public static class ByteArrayBodyPublisher implements BodyPublisher {
 
-        private final byte[] body;
-        private final String contentType;
+		private final byte[] body;
+		private final String contentType;
 
-        public ByteArrayBodyPublisher(byte[] body, String contentType) {
-            if (body == null) {
-                throw new IllegalArgumentException("body cannot be null");
-            }
-            if (contentType == null || contentType.isEmpty()) {
-                contentType = "application/octet-stream";
-            }
-            this.body = body;
-            this.contentType = contentType;
-        }
+		public ByteArrayBodyPublisher(byte[] body, String contentType) {
+			if (body == null) {
+				throw new IllegalArgumentException("body cannot be null");
+			}
+			if (contentType == null || contentType.isEmpty()) {
+				contentType = "application/octet-stream";
+			}
+			this.body = body;
+			this.contentType = contentType;
+		}
 
-        @Override
-        public long contentLength() {
-            return body.length;
-        }
+		@Override
+		public long contentLength() {
+			return body.length;
+		}
 
-        @Override
-        public String contentType() {
-            return contentType;
-        }
+		@Override
+		public String contentType() {
+			return contentType;
+		}
 
-        @Override
-        public void writeTo(OutputStream out) throws IOException {
-            out.write(body);
-        }
-    }
+		@Override
+		public void writeTo(OutputStream out) throws IOException {
+			out.write(body);
+		}
+	}
 
-    public static class MultipartBodyPublisher implements BodyPublisher {
+	public static class MultipartBodyPublisher implements BodyPublisher {
 
-        public static class Part {
-            private final String name;
-            private final String filename;
-            private final String contentType;
-            private final Supplier<InputStream> contentSupplier;
+		public static class Part {
+			private final String name;
+			private final String filename;
+			private final String contentType;
+			private final Supplier<InputStream> contentSupplier;
 
-            public Part(String name, String filename, String contentType, Supplier<InputStream> contentSupplier) {
-                this.name = name;
-                this.filename = filename;
-                this.contentType = contentType;
-                this.contentSupplier = contentSupplier;
-            }
+			public Part(String name, String filename, String contentType, Supplier<InputStream> contentSupplier) {
+				this.name = name;
+				this.filename = filename;
+				this.contentType = contentType;
+				this.contentSupplier = contentSupplier;
+			}
 
-            public String getName() {
-                return name;
-            }
+			public String getName() {
+				return name;
+			}
 
-            public String getFilename() {
-                return filename;
-            }
+			public String getFilename() {
+				return filename;
+			}
 
-            public String getContentType() {
-                return contentType;
-            }
+			public String getContentType() {
+				return contentType;
+			}
 
-            public Supplier<InputStream> getContentSupplier() {
-                return contentSupplier;
-            }
-        }
+			public Supplier<InputStream> getContentSupplier() {
+				return contentSupplier;
+			}
+		}
 
-        private final String boundary;
-        private final List<Part> parts = new ArrayList<>();
-        private final Map<String, String> formFields = new LinkedHashMap<>();
+		private final String boundary;
+		private final List<Part> parts = new ArrayList<>();
+		private final Map<String, String> formFields = new LinkedHashMap<>();
 
-        public MultipartBodyPublisher() {
-            this.boundary = "----MultipartBoundary" + UUID.randomUUID().toString().replace("-", "");
-        }
+		public MultipartBodyPublisher() {
+			this.boundary = "----MultipartBoundary" + UUID.randomUUID().toString().replace("-", "");
+		}
 
-        public MultipartBodyPublisher addFormField(String name, String value) {
-            formFields.put(name, value);
-            return this;
-        }
+		public MultipartBodyPublisher addFormField(String name, String value) {
+			formFields.put(name, value);
+			return this;
+		}
 
-        public MultipartBodyPublisher addFile(String fieldName, File file, String contentType) {
-            return addPart(fieldName, file.getName(), contentType, () -> {
-                try {
-                    return new FileInputStream(file);
-                } catch (FileNotFoundException e) {
-                    throw new UncheckedIOException(e);
-                }
-            });
-        }
+		public MultipartBodyPublisher addFile(String fieldName, File file, String contentType) {
+			return addPart(fieldName, file.getName(), contentType, () -> {
+				try {
+					return new FileInputStream(file);
+				} catch (FileNotFoundException e) {
+					throw new UncheckedIOException(e);
+				}
+			});
+		}
 
-        public MultipartBodyPublisher addBytes(String fieldName, String filename, byte[] data, String contentType) {
-            return addPart(fieldName, filename, contentType, () -> new ByteArrayInputStream(data));
-        }
+		public MultipartBodyPublisher addBytes(String fieldName, String filename, byte[] data, String contentType) {
+			return addPart(fieldName, filename, contentType, () -> new ByteArrayInputStream(data));
+		}
 
-        public MultipartBodyPublisher addStream(String fieldName, String filename, InputStream stream,
-                String contentType) {
-            return addPart(fieldName, filename, contentType, () -> stream);
-        }
+		public MultipartBodyPublisher addStream(String fieldName, String filename, InputStream stream,
+				String contentType) {
+			return addPart(fieldName, filename, contentType, () -> stream);
+		}
 
-        public MultipartBodyPublisher addPart(String name, String filename, String contentType,
-                Supplier<InputStream> contentSupplier) {
-            parts.add(new Part(name, filename, contentType, contentSupplier));
-            return this;
-        }
+		public MultipartBodyPublisher addPart(String name, String filename, String contentType,
+				Supplier<InputStream> contentSupplier) {
+			parts.add(new Part(name, filename, contentType, contentSupplier));
+			return this;
+		}
 
-        @Override
-        public long contentLength() {
-            return -1;
-        }
+		@Override
+		public long contentLength() {
+			return -1;
+		}
 
-        @Override
-        public String contentType() {
-            return "multipart/form-data; boundary=" + boundary;
-        }
+		@Override
+		public String contentType() {
+			return "multipart/form-data; boundary=" + boundary;
+		}
 
-        @Override
-        public void writeTo(OutputStream out) throws IOException {
-            final byte[] LINE_FEED = "\r\n".getBytes(StandardCharsets.UTF_8);
+		@Override
+		public void writeTo(OutputStream out) throws IOException {
+			final byte[] LINE_FEED = "\r\n".getBytes(StandardCharsets.UTF_8);
 
-            // Write form fields
-            for (Map.Entry<String, String> entry : formFields.entrySet()) {
-                out.write(("--" + boundary).getBytes(StandardCharsets.UTF_8));
-                out.write(LINE_FEED);
-                out.write(("Content-Disposition: form-data; name=\"" + entry.getKey() + "\"")
-                        .getBytes(StandardCharsets.UTF_8));
-                out.write(LINE_FEED);
-                out.write(LINE_FEED);
-                out.write(entry.getValue().getBytes(StandardCharsets.UTF_8));
-                out.write(LINE_FEED);
-            }
+			// Write form fields
+			for (Map.Entry<String, String> entry : formFields.entrySet()) {
+				out.write(("--" + boundary).getBytes(StandardCharsets.UTF_8));
+				out.write(LINE_FEED);
+				out.write(("Content-Disposition: form-data; name=\"" + sanitize(entry.getKey()) + "\"")
+						.getBytes(StandardCharsets.UTF_8));
+				out.write(LINE_FEED);
+				out.write(LINE_FEED);
+				out.write(entry.getValue().getBytes(StandardCharsets.UTF_8));
+				out.write(LINE_FEED);
+			}
 
-            // Write file parts
-            for (Part part : parts) {
-                out.write(("--" + boundary).getBytes(StandardCharsets.UTF_8));
-                out.write(LINE_FEED);
-                out.write(("Content-Disposition: form-data; name=\"" + part.getName() + "\"; filename=\""
-                        + part.getFilename() + "\"").getBytes(StandardCharsets.UTF_8));
-                out.write(LINE_FEED);
-                out.write(("Content-Type: " + part.getContentType()).getBytes(StandardCharsets.UTF_8));
-                out.write(LINE_FEED);
-                out.write(LINE_FEED);
-                try (InputStream inputStream = part.getContentSupplier().get()) {
-                    byte[] buffer = new byte[8192];
-                    int len;
-                    while ((len = inputStream.read(buffer)) != -1) {
-                        out.write(buffer, 0, len);
-                    }
-                }
-                out.write(LINE_FEED);
-            }
+			// Write file parts
+			for (Part part : parts) {
+				out.write(("--" + boundary).getBytes(StandardCharsets.UTF_8));
+				out.write(LINE_FEED);
+				out.write(("Content-Disposition: form-data; name=\"" + sanitize(part.getName()) + "\"; filename=\""
+						+ sanitize(part.getFilename()) + "\"").getBytes(StandardCharsets.UTF_8));
+				out.write(LINE_FEED);
+				out.write(("Content-Type: " + sanitizeContentType(part.getContentType()))
+						.getBytes(StandardCharsets.UTF_8));
+				out.write(LINE_FEED);
+				out.write(LINE_FEED);
+				try (InputStream inputStream = part.getContentSupplier().get()) {
+					byte[] buffer = new byte[8192];
+					int len;
+					while ((len = inputStream.read(buffer)) != -1) {
+						out.write(buffer, 0, len);
+					}
+				}
+				out.write(LINE_FEED);
+			}
 
-            // End boundary
-            out.write(("--" + boundary + "--").getBytes(StandardCharsets.UTF_8));
-            out.write(LINE_FEED);
-        }
-    }
+			// End boundary
+			out.write(("--" + boundary + "--").getBytes(StandardCharsets.UTF_8));
+			out.write(LINE_FEED);
+		}
+	}
+
+	/**
+	 * 清理 multipart 头字段中可能破坏边界的字符（双引号、分号、回车、换行）。<br>
+	 * 这些字符若出现在 name/filename 中会导致 Content-Disposition 解析错乱，直接剔除以避免结构损坏。
+	 */
+	private static String sanitize(String token) {
+		if (token == null || token.isEmpty()) {
+			return "";
+		}
+		StringBuilder result = new StringBuilder(token.length());
+		for (char c : token.toCharArray()) {
+			if (Character.isISOControl(c) || c == '"' || c == ';') {
+				continue;
+			}
+			result.append(c);
+		}
+		return result.toString();
+	}
+
+	/**
+	 * 清理 multipart 的 Content-Type 值，剔除可用于头注入的回车/换行与控制字符，并去首尾空白与引号。<br>
+	 * 注意：这里保留 {@code ;}（如 {@code text/plain; charset=utf-8} 的合法分隔），只剥离换行类字符， 避免破坏正常的媒体类型声明。
+	 */
+	private static String sanitizeContentType(String contentType) {
+		if (contentType == null || contentType.isEmpty()) {
+			return "";
+		}
+		StringBuilder result = new StringBuilder(contentType.length());
+		for (char c : contentType.toCharArray()) {
+			if (Character.isISOControl(c) || c == '"') {
+				continue;
+			}
+			result.append(c);
+		}
+		return result.toString().trim();
+	}
 }

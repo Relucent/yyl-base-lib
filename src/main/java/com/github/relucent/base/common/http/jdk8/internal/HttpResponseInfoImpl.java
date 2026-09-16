@@ -1,6 +1,5 @@
 package com.github.relucent.base.common.http.jdk8.internal;
 
-import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -14,8 +13,8 @@ public class HttpResponseInfoImpl implements ResponseInfo {
     private final int statusCode;
     private final HttpHeaders headers;
 
-    public HttpResponseInfoImpl(HttpURLConnection conn) throws IOException {
-        this.statusCode = conn.getResponseCode();
+    public HttpResponseInfoImpl(int statusCode, HttpURLConnection conn) {
+        this.statusCode = statusCode;
         // HttpURLConnection.getHeaderFields() 返回 Map<String, List<String>>，但 key 可能为 null（表示状态行）
         Map<String, List<String>> headersMap = new LinkedHashMap<>();
         Map<String, List<String>> rawHeaders = conn.getHeaderFields();

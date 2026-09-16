@@ -5,6 +5,7 @@ package com.github.relucent.base.common.time;
  */
 public class CalendarTextUtil {
 
+	// =================================Fields=================================================
 	private static final String YEAR_CN_TEXTS = "年";
 
 	private static final String[] HALFY_EAR_CN_TEXTS = { "上半年", "下半年"//
@@ -21,12 +22,14 @@ public class CalendarTextUtil {
 			"21日", "22日", "23日", "24日", "25日", "26日", "27日", "28日", "29日", "30日", //
 			"31日" };//
 
+	// =================================Constructors===========================================
 	/**
 	 * 工具类方法，实例不应在标准编程中构造。
 	 */
 	protected CalendarTextUtil() {
 	}
 
+	// =================================Methods===============================================
 	/**
 	 * 显示日期的文本字符串<br>
 	 * 取值约定与{@link CalendarUtil#getFieldValue(java.util.Calendar, DateUnit)}保持一致：
