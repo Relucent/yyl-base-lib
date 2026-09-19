@@ -36,7 +36,7 @@ Introduce the Maven dependency to your project.
 <dependency>
     <groupId>com.github.relucent</groupId>
     <artifactId>yyl-base-lib</artifactId>
-    <version>0.4.4</version>
+    <version>0.4.5</version>
 </dependency>
 ```
 
@@ -97,33 +97,33 @@ String mac  = MacUtil.hmacHex("data", "secret", HmacAlgorithm.HmacSHA256);
 
 ## Modules / 模块速查
 
-| 用途 | 模块包 | 入口类 |
-| --- | --- | --- |
-| 判 null / 对象默认值 | `lang` | `ObjectUtil` |
-| 字符串空白、拼接、截取、去除前缀后缀 | `lang` | `StringUtil` |
-| 数字 / 字符 / 枚举 / 布尔工具 | `lang` | `NumberUtil` `CharUtil` `EnumUtil` `BooleanUtil` |
-| 数组、集合判空、过滤 | `lang` / `collection` | `ArrayUtil` `CollectionUtil` |
-| 类型转换（任意 ↔ 任意） | `convert` | `ConvertUtil` `ConverterManager` `CastUtil` |
-| Bean ↔ Map 互转、属性拷贝 | `bean` | `BeanUtil`（`describe`/`populate`/`newBean`） `BeanCopier` |
-| 日期 / 时间 / 计时器 | `time` | `DateUtil` `LocalDateTimeUtil` `CalendarUtil` `StopWatch` |
-| Cron 表达式解析 | `cron` | `CronExpression` |
-| Hex / Base64 / URL / UTF-8 编解码 | `codec` | `Base64` `Hex` `CodecUtil` `Utf8` |
-| 摘要（MD5/SHA/SM3） | `crypto.digest` | `DigestUtil` |
-| HMAC 鉴权 | `crypto.mac` | `MacUtil` |
-| 对称加密（AES/SM4/DESede）、AES-GCM 流式 | `crypto.symmetric` | `CipherUtil` `Sm4` `AesGcm` |
-| 非对称加密（RSA/SM2）、密钥工具 | `crypto.asymmetric` | `Rsa` `Sm2` `KeyUtil` `SmUtil` `EcKeyUtil` `PemUtil` |
-| 文件 / 路径 / 序列化 / Gzip | `io` | `IoUtil` `FileUtil` `FilenameUtil` `PathUtil` `SerializeUtil` `GzipIoUtil` |
-| 反射（方法、字段、构造器、泛型） | `reflect` | `MethodUtil` `FieldUtil` `ConstructorUtil` `TypeUtil` `TypeReference` |
-| 唯一 ID（UUID32/NanoId/ULID/雪花） | `identifier` | `IdUtil` `UUID32` `NanoId` `Ulid` `SnowflakeIdWorker` |
-| 网络工具 / URL 解析 / SSL 跳过 | `net` | `NetworkUtil` `UrlUtil` `SslUtil` |
-| 内存队列（去重 / 持久化抽象） | `queue` | `QueueStore` `QueueStoreBuilder` |
-| JSON 序列化 | `json` | `JsonUtil` |
-| 缓存抽象 | `cache` | `CacheManager` |
-| 异常封装 | `exception` | `exception/*` |
-| 正则 / 匹配 | `regex` / `matcher` | （按需选用） |
-| 动态编译 Java 源码 | `compiler` | `JavaCompilerEngine` |
-| AWT/Swing 桌面工具 | `awt` | `ScreenUtil` `RobotUtil` `LookAndFeelUtil` |
-| 国际化与字符集常量 | `constant` | `CharsetConstant` `DatePatternConstant` `ZoneIdConstant` |
+| 用途 | 模块包 | 入口类 |  
+| --- | --- | --- |  
+| 判 null / 对象默认值 | `lang` | `ObjectUtil` |  
+| 字符串空白、拼接、截取、去除前缀后缀 | `lang` | `StringUtil` |  
+| 数字 / 字符 / 枚举 / 布尔工具 | `lang` | `NumberUtil` `CharUtil` `EnumUtil` `BooleanUtil` |  
+| 数组、集合判空、过滤 | `lang` / `collection` | `ArrayUtil` `CollectionUtil` |  
+| 类型转换（任意 ↔ 任意） | `convert` | `ConvertUtil` `ConverterManager` `CastUtil` |  
+| Bean ↔ Map 互转、属性拷贝 | `bean` | `BeanUtil`（`describe`/`populate`/`newBean`） `BeanCopier` |  
+| 日期 / 时间 / 计时器 | `time` | `DateUtil` `LocalDateTimeUtil` `CalendarUtil` `StopWatch` |  
+| Cron 表达式解析 | `cron` | `CronExpression` |  
+| Hex / Base64 / URL / UTF-8 编解码 | `codec` | `Base64` `Hex` `CodecUtil` `Utf8` |  
+| 摘要（MD5/SHA/SM3） | `crypto.digest` | `DigestUtil` |  
+| HMAC 鉴权 | `crypto.mac` | `MacUtil` |  
+| 对称加密（AES/SM4/DESede）、AES-GCM 流式 | `crypto.symmetric` | `CipherUtil` `Sm4` `AesGcm` |  
+| 非对称加密（RSA/SM2）、密钥工具 | `crypto.asymmetric` | `Rsa` `Sm2` `KeyUtil` `SmUtil` `EcKeyUtil` `PemUtil` |  
+| 文件 / 路径 / 序列化 / Gzip | `io` | `IoUtil` `FileUtil` `FilenameUtil` `PathUtil` `SerializeUtil` `GzipIoUtil` |  
+| 反射（方法、字段、构造器、泛型） | `reflect` | `MethodUtil` `FieldUtil` `ConstructorUtil` `TypeUtil` `TypeReference` |  
+| 唯一 ID（UUID32/NanoId/ULID/雪花） | `identifier` | `IdUtil` `UUID32` `NanoId` `Ulid` `SnowflakeIdWorker` |  
+| 网络工具 / URL 解析 / SSL 跳过 | `net` | `NetworkUtil` `UrlUtil` `SslUtil` |  
+| 内存队列（去重 / 持久化抽象） | `queue` | `QueueStore` `QueueStoreBuilder` |  
+| JSON 序列化 | `json` | `JsonUtil` |  
+| 缓存抽象 | `cache` | `CacheManager` |  
+| 异常封装 | `exception` | `exception/*` |  
+| 正则 / 匹配 | `regex` / `matcher` | （按需选用） |  
+| 动态编译 Java 源码 | `compiler` | `JavaCompilerEngine` |  
+| AWT/Swing 桌面工具 | `awt` | `ScreenUtil` `RobotUtil` `LookAndFeelUtil` |  
+| 国际化与字符集常量 | `constant` | `CharsetConstant` `DatePatternConstant` `ZoneIdConstant` |  
 
 > 注：本表仅列常用入口。完整索引建议用 IDE 的全局搜索（包前缀 `com.github.relucent.base.common.*`）。
 
@@ -235,3 +235,80 @@ Digester digester = new Digester(DigestAlgorithm.SHA_256);
 // digester.setDigestCount(2);
 String hex = digester.digestHex("payload");
 ```
+
+### 树结构构建（Tree-Builder）
+
+`TreeUtil` 是树结构处理的统一入口，提供以下能力：
+
+- **`buildTree`** —— 把扁平的 `(id, parentId)` 列表构建成嵌套树（`List<N>` 根节点列表）。
+- **`rebuildIdPath`** —— 基于 `parentId` 为扁平节点集合重算 `ID_PATH`（绝对路径，首尾含 `/`）。
+- **`walkTree`** —— 深度优先前序遍历已有的树节点，对每个节点执行 `Consumer` 操作。
+
+#### buildTree —— 由扁平数据构建嵌套树
+
+用法：先通过 `TreeBuildRule` 定义构建规则（ID / 父 ID 访问器、节点适配器、子节点设置器，以及可选的排序 / 过滤 / 环策略），再调用 `TreeUtil.buildTree(data, parentId, rule)`。
+
+> `TreeBuildRule` 不保存具体业务数据与根节点 ID，是**不可变配置**，可跨多次构建安全复用。
+
+```java
+// 原始数据（扁平表）与树节点
+class Dept { Long id; Long parentId; String name; }
+class DeptNode { Long id; String name; List<DeptNode> children; }
+
+// 1) 定义规则：必填 id / parentId / adapter / children；可选 comparator / nodeFilter / cyclePolicy
+TreeBuildRule<Dept, DeptNode, Long> rule = TreeBuildRule.<Dept, DeptNode, Long>builder()
+        .id(Dept::getId)
+        .parentId(Dept::getParentId)
+        .adapter(d -> {                                  // 原始数据 → 树节点
+            DeptNode n = new DeptNode();
+            n.id = d.id;
+            n.name = d.name;
+            return n;
+        })
+        .children((node, children) -> node.children = children)
+        .comparator(Comparator.comparing(DeptNode::getName))  // 可选：同层排序
+        .cyclePolicy(CyclePolicy.SKIP)                        // 可选：默认 SKIP（遇环跳过）
+        .build();
+
+// 2) 构建：rootParentId = 0 表示顶层节点
+List<DeptNode> tree = TreeUtil.buildTree(depts, 0L, rule);
+```
+
+- `rootParentId` 允许为 `null` ，顶层节点 `parentId` 可以为 `null`。
+- `nodeFilter((model, depth, isLeaf) -> ...)`：返回 `false` 的节点不进入结果。`depth` 为该节点所在层（根的直接子节点为 `0`），`isLeaf` 表示其是否有可见子节点。
+- 环处理：`CyclePolicy.SKIP`（默认，环点作叶子、子树截断）或 `CyclePolicy.ERROR`（检测到环抛 `IllegalStateException`）。
+
+#### rebuildIdPath —— 重算 ID_PATH
+
+```java
+TreeUtil.rebuildIdPath(
+        depts,                                // 扁平节点集合
+        Dept::getId,                          // 节点 ID 访问器
+        Dept::getParentId,                    // 父 ID 访问器
+        (node, path) -> node.idPath = path,   // ID_PATH 设置器
+        0L,                                   // 从 parentId = 0 向下展开
+        null                                  // 路径前缀：null 视为 '/'
+);
+// 结果示例：dept.idPath = "/1/2/3/"
+```
+
+要点：
+
+- 基于 `parentId` 建索引后做显式栈深度优先遍历，时间复杂度 **O(n)**，无递归。
+- `parentIdPath` 会被规范化为**首尾均含 `/` 的绝对路径前缀**（`null` 视为 `/`，缺失分隔符自动补全），输出形如 `/1/2/3/`。
+- 含环时环点子树被截断（防无限）；重复 ID 仅首个生效；从 `parentId` 无法遍历到的孤立节点不会被处理。
+
+#### walkTree —— 深度优先前序遍历
+
+```java
+TreeUtil.walkTree(
+        tree,                                  // 起始节点集合（可传多个根，也可传子树）
+        DeptNode::getChildren,                 // 子节点访问器（返回 null 表示无子节点）
+        node -> System.out.println(node.name)  // 每访问一个节点执行的操作
+);
+```
+
+- 前序（先访问自身，再子节点）逐级展开；子节点逆序入栈，保证弹出顺序与原始顺序一致。
+- 节点或子节点为 `null` 时安全跳过；`childrenGetter` 返回 `null` 视为无子节点；`action` 不可为 `null`（否则 NPE）。
+- 注意：传入的应是**无环树**；若含环会无限循环。
+

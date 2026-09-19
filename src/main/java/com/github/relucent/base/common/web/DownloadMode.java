@@ -27,6 +27,6 @@ public enum DownloadMode {
      * @return 完整的 content-disposition 值
      */
     public String getContentDisposition(String filename) {
-        return value + ";filename=" + filename;
+        return value + ";filename=\"" + filename + "\"";
     }
 }

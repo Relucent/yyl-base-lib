@@ -8,7 +8,7 @@ import java.util.Objects;
  */
 public enum ContentTypeEnum {
 
-    WILD_CARD("application/octet-streabmpm", ""), //
+    WILD_CARD("application/octet-stream", ""), //
     _123("application/vnd.lotus-1-2-3", "123"), //
     _3DS("image/x-3ds", "3ds"), //
     _3G2("video/3gpp", "3g2"), //

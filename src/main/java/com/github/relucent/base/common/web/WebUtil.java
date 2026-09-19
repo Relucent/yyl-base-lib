@@ -19,230 +19,240 @@ import com.github.relucent.base.common.io.FilenameUtil;
 import com.github.relucent.base.common.lang.StringUtil;
 
 /**
- * WEB工具类
+ * WEB 工具类。<br>
+ * 本类强耦合 {@code javax.servlet}（Servlet 3.x/4.x）API，<br>
+ * 与 Jakarta EE 9+ 命名空间（{@code jakarta.servlet}，对应 Tomcat 10 / Spring Boot 3 / Jetty 11）<br>
+ * 不兼容，在运行于 Jakarta 栈的 JDK 17+ Web 环境中会抛出 {@link NoClassDefFoundError}。<br>
+ * 运行于 Jakarta 栈（Spring Boot 3+）时，请使用框架自带能力<br>
+ * （如 Spring MVC 的 {@code RequestContextUtils}、{@code ContentDisposition}、{@code ResponseEntity} 等）；<br>
+ * 运行于 {@code javax.servlet} 栈（如 Spring Boot 2.x，JDK 8~21 均可）时本类仍可用， 但同样建议优先使用框架提供的能力。<br>
+ * 本类将在未来版本中移除，移除前保持二进制与源码兼容。<br>
  * @author YYL
+ * @deprecated 强耦合 {@code javax.servlet}，与 Jakarta EE 9+（Tomcat 10 / Spring Boot 3）不兼容； 请改用框架自带的 Web 工具或 Jakarta
+ *             命名空间下的等价实现。
  */
+@Deprecated
 public class WebUtil {
 
-    /**
-     * 工具类方法，实例不应在标准编程中构造。
-     */
-    protected WebUtil() {
-    }
+	/**
+	 * 工具类方法，实例不应在标准编程中构造。
+	 */
+	@Deprecated
+	protected WebUtil() {
+	}
 
-    /**
-     * 获得SessionId
-     * @param request HTTP请求
-     * @return SessionId
-     */
-    public static String getSessionId(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        return session == null ? null : session.getId();
-    }
+	/**
+	 * 获得SessionId
+	 * @param request HTTP请求
+	 * @return SessionId
+	 */
+	public static String getSessionId(HttpServletRequest request) {
+		HttpSession session = request.getSession(false);
+		return session == null ? null : session.getId();
+	}
 
-    /**
-     * 获得请求头
-     * @param request HTTP请求
-     * @return 请求头
-     */
-    public static CaseInsensitiveKeyMap<String> getHeaderMap(HttpServletRequest request) {
-        CaseInsensitiveKeyMap<String> headers = new CaseInsensitiveKeyMap<>();
-        for (Enumeration<String> en = request.getHeaderNames(); en.hasMoreElements();) {
-            String name = en.nextElement();
-            String value = request.getHeader(name);
-            headers.put(name, value);
-        }
-        return headers;
-    }
+	/**
+	 * 获得请求头
+	 * @param request HTTP请求
+	 * @return 请求头
+	 */
+	public static CaseInsensitiveKeyMap<String> getHeaderMap(HttpServletRequest request) {
+		CaseInsensitiveKeyMap<String> headers = new CaseInsensitiveKeyMap<>();
+		for (Enumeration<String> en = request.getHeaderNames(); en.hasMoreElements();) {
+			String name = en.nextElement();
+			String value = request.getHeader(name);
+			headers.put(name, value);
+		}
+		return headers;
+	}
 
-    /**
-     * 获得请求访问的URI
-     * @param request HTTP请求
-     * @return 请求的URI
-     */
-    public static String getPathWithinApplication(HttpServletRequest request) {
-        String contextPath = getContextPath(request);
-        String requestUri = getRequestUri(request);
-        if (contextPath == null || requestUri == null) {
-            return requestUri;
-        }
-        if (requestUri.toLowerCase().startsWith(contextPath.toLowerCase())) {
-            String path = requestUri.substring(contextPath.length());
-            return path.isEmpty() ? "/" : path;
-        }
-        return requestUri;
-    }
+	/**
+	 * 获得请求访问的URI
+	 * @param request HTTP请求
+	 * @return 请求的URI
+	 */
+	public static String getPathWithinApplication(HttpServletRequest request) {
+		String contextPath = getContextPath(request);
+		String requestUri = getRequestUri(request);
+		if (contextPath == null || requestUri == null) {
+			return requestUri;
+		}
+		if (requestUri.toLowerCase().startsWith(contextPath.toLowerCase())) {
+			String path = requestUri.substring(contextPath.length());
+			return path.isEmpty() ? "/" : path;
+		}
+		return requestUri;
+	}
 
-    /**
-     * 获得请求的URI(统一资源标识符)
-     * @param request HTTP请求
-     * @return 请求的URI
-     */
-    public static String getRequestUri(HttpServletRequest request) {
-        String uri = (String) request.getAttribute("javax.servlet.include.request_uri");
-        if (uri == null) {
-            uri = request.getRequestURI();
-        }
-        return CanonicalUtil.normalize(decodeAndCleanUriString(request, uri));
-    }
+	/**
+	 * 获得请求的URI(统一资源标识符)
+	 * @param request HTTP请求
+	 * @return 请求的URI
+	 */
+	public static String getRequestUri(HttpServletRequest request) {
+		String uri = (String) request.getAttribute("javax.servlet.include.request_uri");
+		if (uri == null) {
+			uri = request.getRequestURI();
+		}
+		return CanonicalUtil.normalize(decodeAndCleanUriString(request, uri));
+	}
 
-    /**
-     * 获得请求的上下文路径
-     * @param request HTTP请求
-     * @return 请求的上下文路径
-     */
-    public static String getContextPath(HttpServletRequest request) {
-        String contextPath = (String) request.getAttribute("javax.servlet.include.context_path");
-        if (contextPath == null) {
-            contextPath = request.getContextPath();
-        }
-        if ("/".equals(contextPath)) {
-            contextPath = "";
-        }
-        return decodeRequestString(request, contextPath);
-    }
+	/**
+	 * 获得请求的上下文路径
+	 * @param request HTTP请求
+	 * @return 请求的上下文路径
+	 */
+	public static String getContextPath(HttpServletRequest request) {
+		String contextPath = (String) request.getAttribute("javax.servlet.include.context_path");
+		if (contextPath == null) {
+			contextPath = request.getContextPath();
+		}
+		if ("/".equals(contextPath)) {
+			contextPath = "";
+		}
+		return decodeRequestString(request, contextPath);
+	}
 
-    @SuppressWarnings("deprecation")
-    public static String decodeRequestString(HttpServletRequest request, String source) {
-        String enc = determineEncoding(request);
-        try {
-            return URLDecoder.decode(source, enc);
-        } catch (UnsupportedEncodingException ex) {
-            return URLDecoder.decode(source);
-        }
-    }
+	public static String decodeRequestString(HttpServletRequest request, String source) {
+		String enc = determineEncoding(request);
+		try {
+			return URLDecoder.decode(source, enc);
+		} catch (UnsupportedEncodingException ex) {
+			return URLDecoder.decode(source);
+		}
+	}
 
-    /**
-     * 获取具有给定名称的第一个 Cookie <br>
-     * 备注：同名的Cookie是可以有多个的，但是路径或域不同。<br>
-     * @param request 当前请求
-     * @param name    Cookie 名称
-     * @return 返回具有给定名称的第一个cookie，如果未找到则返回{@code null}
-     */
-    public static Cookie getCookie(HttpServletRequest request, String name) {
-        if (request != null && StringUtil.isNotBlank(name)) {
-            Cookie[] cookies = request.getCookies();
-            if (cookies != null) {
-                for (Cookie cookie : cookies) {
-                    if (name.equals(cookie.getName())) {
-                        return cookie;
-                    }
-                }
-            }
-        }
-        return null;
-    }
+	/**
+	 * 获取具有给定名称的第一个 Cookie <br>
+	 * 备注：同名的Cookie是可以有多个的，但是路径或域不同。<br>
+	 * @param request 当前请求
+	 * @param name    Cookie 名称
+	 * @return 返回具有给定名称的第一个cookie，如果未找到则返回{@code null}
+	 */
+	public static Cookie getCookie(HttpServletRequest request, String name) {
+		if (request != null && StringUtil.isNotBlank(name)) {
+			Cookie[] cookies = request.getCookies();
+			if (cookies != null) {
+				for (Cookie cookie : cookies) {
+					if (name.equals(cookie.getName())) {
+						return cookie;
+					}
+				}
+			}
+		}
+		return null;
+	}
 
-    /**
-     * 获得内容描述
-     * @param path    文件名(或者文件路径)
-     * @param request HTTP请求
-     * @return 内容描述
-     */
-    public static String getContentDispositionFilename(String path, HttpServletRequest request) {
-        String userAgent = request.getHeader("USER-AGENT").toLowerCase();
-        String filename = FilenameUtil.getName(path);
-        try {
-            // firefox | chrome
-            if (userAgent.indexOf("firefox") >= 0 || userAgent.indexOf("chrome") >= 0) {
-                filename = Base64.encode(filename.getBytes(StandardCharsets.UTF_8));
-                filename = "=?UTF-8?B?" + filename + "?=";
-            }
-            // msie | safari
-            else {
-                filename = URLEncoder.encode(filename, "UTF-8");
-                filename = filename.replace("+", "%20");
-            }
-        } catch (UnsupportedEncodingException e) {
-        }
-        return filename;
-    }
+	/**
+	 * 获得内容描述
+	 * @param path    文件名(或者文件路径)
+	 * @param request HTTP请求
+	 * @return 内容描述
+	 */
+	public static String getContentDispositionFilename(String path, HttpServletRequest request) {
+		String userAgent = request.getHeader("USER-AGENT").toLowerCase();
+		String filename = FilenameUtil.getName(path);
+		try {
+			// firefox | chrome
+			if (userAgent.indexOf("firefox") >= 0 || userAgent.indexOf("chrome") >= 0) {
+				filename = Base64.encode(filename.getBytes(StandardCharsets.UTF_8));
+				filename = "=?UTF-8?B?" + filename + "?=";
+			}
+			// msie | safari
+			else {
+				filename = URLEncoder.encode(filename, "UTF-8");
+				filename = filename.replace("+", "%20");
+			}
+		} catch (UnsupportedEncodingException e) {
+		}
+		return filename;
+	}
 
-    /**
-     * 判断是否AJAX请求
-     * @param request HTTP请求
-     * @return 如果是AJAX请求返回true,如果不是则返回false.
-     */
-    public static boolean isAjax(HttpServletRequest request) {
-        return "XMLHttpRequest".equals(request.getHeader("X-Requested-with"));
-    }
+	/**
+	 * 判断是否AJAX请求
+	 * @param request HTTP请求
+	 * @return 如果是AJAX请求返回true,如果不是则返回false.
+	 */
+	public static boolean isAjax(HttpServletRequest request) {
+		return "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
+	}
 
-    /**
-     * 判断是否请求内容是否JSON格式
-     * @param request HTTP请求
-     * @return 如果请求内容是JSON格式求返回true,否则则返回false.
-     */
-    public static boolean isJsonType(HttpServletRequest request) {
-        return HttpMethod.POST.matches(request.getMethod())
-                && (StringUtil.defaultString(request.getContentType()).indexOf("application/json") != -1);
-    }
+	/**
+	 * 判断是否请求内容是否JSON格式
+	 * @param request HTTP请求
+	 * @return 如果请求内容是JSON格式求返回true,否则则返回false.
+	 */
+	public static boolean isJsonType(HttpServletRequest request) {
+		return HttpMethod.POST.matches(request.getMethod())
+				&& (StringUtil.defaultString(request.getContentType()).indexOf("application/json") != -1);
+	}
 
-    /**
-     * 向页面返回 JSON 格式数据
-     * @param json     JSON字符串
-     * @param request  HTTP请求
-     * @param response HTTP响应
-     * @throws IOException IO异常
-     */
-    public static void writeJson(String json, HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
-        response.setCharacterEncoding("UTF-8");
-        setNoCacheHeader(response);
-        response.setContentType("application/json; charset=UTF-8");
-        response.getWriter().print(json);
-    }
+	/**
+	 * 向页面返回 JSON 格式数据
+	 * @param json     JSON字符串
+	 * @param request  HTTP请求
+	 * @param response HTTP响应
+	 * @throws IOException IO异常
+	 */
+	public static void writeJson(String json, HttpServletRequest request, HttpServletResponse response)
+			throws IOException {
+		response.setCharacterEncoding("UTF-8");
+		setNoCacheHeader(response);
+		response.setContentType("application/json; charset=UTF-8");
+		response.getWriter().print(json);
+	}
 
-    /**
-     * 设置不缓存
-     * @param response HTTP响应
-     */
-    public static void setNoCacheHeader(HttpServletResponse response) {
-        response.setHeader("Pragma", "no-cache");
-        response.setHeader("Cache-Control", "no-cache");
-        response.setDateHeader("Expires", 0);
-    }
+	/**
+	 * 设置不缓存
+	 * @param response HTTP响应
+	 */
+	public static void setNoCacheHeader(HttpServletResponse response) {
+		response.setHeader("Pragma", "no-cache");
+		response.setHeader("Cache-Control", "no-cache");
+		response.setDateHeader("Expires", 0);
+	}
 
-    /**
-     * 文件下载
-     * @param file     下载的文件
-     * @param request  HTTP请求
-     * @param response HTTP响应
-     * @param mode     下载模式
-     * @throws IOException IO异常
-     */
-    public static void download(DownloadFile file, HttpServletRequest request, HttpServletResponse response,
-            DownloadMode mode) throws IOException {
-        String name = file.getName();
-        String contentType = file.getContentType();
-        String filename = WebUtil.getContentDispositionFilename(name, request);
-        String contentDisposition = mode.getContentDisposition(filename);
-        response.setContentType(contentType);
-        response.setHeader("content-disposition", contentDisposition);
-        file.writeTo(response.getOutputStream());
-    }
+	/**
+	 * 文件下载
+	 * @param file     下载的文件
+	 * @param request  HTTP请求
+	 * @param response HTTP响应
+	 * @param mode     下载模式
+	 * @throws IOException IO异常
+	 */
+	public static void download(DownloadFile file, HttpServletRequest request, HttpServletResponse response,
+			DownloadMode mode) throws IOException {
+		String name = file.getName();
+		String contentType = file.getContentType();
+		String filename = WebUtil.getContentDispositionFilename(name, request);
+		String contentDisposition = mode.getContentDisposition(filename);
+		response.setContentType(contentType);
+		response.setHeader("content-disposition", contentDisposition);
+		file.writeTo(response.getOutputStream());
+	}
 
-    /**
-     * 获得HTTP请求的编码格式
-     * @param request HTTP请求
-     * @return 请求的编码格式
-     */
-    private static String determineEncoding(HttpServletRequest request) {
-        String enc = request.getCharacterEncoding();
-        if (enc == null) {
-            enc = "ISO-8859-1";
-        }
-        return enc;
-    }
+	/**
+	 * 获得HTTP请求的编码格式
+	 * @param request HTTP请求
+	 * @return 请求的编码格式
+	 */
+	private static String determineEncoding(HttpServletRequest request) {
+		String enc = request.getCharacterEncoding();
+		if (enc == null) {
+			enc = "ISO-8859-1";
+		}
+		return enc;
+	}
 
-    /**
-     * 解码和清理URI字符串
-     * @param request HTTP请求
-     * @param uri     URI字符串
-     * @return 处理后的URI字符串
-     */
-    private static String decodeAndCleanUriString(HttpServletRequest request, String uri) {
-        uri = decodeRequestString(request, uri);
-        int semicolonIndex = uri.indexOf(';');
-        return ((semicolonIndex != -1) ? uri.substring(0, semicolonIndex) : uri);
-    }
+	/**
+	 * 解码和清理URI字符串
+	 * @param request HTTP请求
+	 * @param uri     URI字符串
+	 * @return 处理后的URI字符串
+	 */
+	private static String decodeAndCleanUriString(HttpServletRequest request, String uri) {
+		uri = decodeRequestString(request, uri);
+		int semicolonIndex = uri.indexOf(';');
+		return ((semicolonIndex != -1) ? uri.substring(0, semicolonIndex) : uri);
+	}
 }

@@ -254,6 +254,7 @@ public class HttpClient implements AutoCloseable {
 		 * 配置是否自动跟随 3xx 重定向。默认 true（与 HttpURLConnection 原有行为一致）。<br>
 		 * 注意：跟随重定向时，HTTP 规范会把 POST 的 302 静默转成 GET；若需严格保留方法，请设为 false。
 		 * @param follow true 表示自动跟随，false 表示不跟随
+		 * @return 当前建造者
 		 */
 		public Builder followRedirects(boolean follow) {
 			this.followRedirects = follow;
@@ -263,6 +264,7 @@ public class HttpClient implements AutoCloseable {
 		/**
 		 * 设置请求的 User-Agent
 		 * @param userAgent 用户代理字符串
+		 * @return 当前建造者
 		 */
 		public Builder userAgent(String userAgent) {
 			this.userAgent = userAgent;
