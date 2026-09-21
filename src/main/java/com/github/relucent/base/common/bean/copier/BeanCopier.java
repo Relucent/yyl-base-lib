@@ -33,7 +33,7 @@ public class BeanCopier {
      * @param target 目标对象
      */
     public BeanCopier(Object source, Object target) {
-        this(source, target, target.getClass());
+        this(source, target, target == null ? null : target.getClass());
     }
 
     /**
@@ -45,7 +45,7 @@ public class BeanCopier {
     public BeanCopier(Object source, Object target, Type targetType) {
         this.source = source;
         this.target = target;
-        this.sourceType = source.getClass();
+        this.sourceType = source == null ? null : source.getClass();
         this.targetType = targetType;
     }
 
@@ -63,6 +63,11 @@ public class BeanCopier {
      */
     @SuppressWarnings("unchecked")
     public void copy(final CopyOptions options) {
+
+        // 容忍 null：源或目标为 null 时不做任何拷贝，避免 NPE
+        if (source == null || target == null) {
+            return;
+        }
 
         if (source instanceof Map) {
 

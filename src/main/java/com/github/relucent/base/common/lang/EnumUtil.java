@@ -33,18 +33,24 @@ public class EnumUtil {
      * @param index 枚举索引
      * @return 枚举值，null表示无此对应枚举
      */
-    public static <E extends Enum<E>> E getEnumAt(Class<E> enumClass, int index) {
-        final E[] enumConstants = enumClass.getEnumConstants();
-        return index >= 0 && index < enumConstants.length ? enumConstants[index] : null;
-    }
+	public static <E extends Enum<E>> E getEnumAt(Class<E> enumClass, int index) {
+		if (!isEnum(enumClass)) {
+			return null;
+		}
+		final E[] enumConstants = enumClass.getEnumConstants();
+		return index >= 0 && index < enumConstants.length ? enumConstants[index] : null;
+	}
 
     /**
      * 枚举类中所有枚举对象的name列表
      * @param clazz 枚举类
      * @return name列表
      */
-    public static String[] getNames(Class<? extends Enum<?>> clazz) {
-        final Enum<?>[] enums = clazz.getEnumConstants();
+	public static String[] getNames(Class<? extends Enum<?>> clazz) {
+		if (!isEnum(clazz)) {
+			return null;
+		}
+		final Enum<?>[] enums = clazz.getEnumConstants();
         if (enums == null) {
             return null;
         }
@@ -62,7 +68,10 @@ public class EnumUtil {
      * @param <E> 枚举类型
      * @return 对应枚举 ，获取不到时为 {@code null}
      */
-    public static <E extends Enum<E>> E findFirst(Class<E> enumClass, Predicate<? super E> predicate) {
-        return Arrays.stream(enumClass.getEnumConstants()).filter(predicate).findFirst().orElse(null);
-    }
+	public static <E extends Enum<E>> E findFirst(Class<E> enumClass, Predicate<? super E> predicate) {
+		if (!isEnum(enumClass) || predicate == null) {
+			return null;
+		}
+		return Arrays.stream(enumClass.getEnumConstants()).filter(predicate).findFirst().orElse(null);
+	}
 }

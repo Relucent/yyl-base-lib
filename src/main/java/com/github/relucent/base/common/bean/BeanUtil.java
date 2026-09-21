@@ -151,6 +151,9 @@ public class BeanUtil {
     }
 
     public static Map<String, Object> describe(Object bean, MapConfig config) {
+        if (bean == null) {
+            return null;
+        }
         return new BeanMapDescriber(config).describe(bean);
     }
 
@@ -159,6 +162,9 @@ public class BeanUtil {
     }
 
     public static void populate(Object bean, Map<String, Object> map, MapConfig config) {
+        if (bean == null || map == null) {
+            return;
+        }
         new BeanMapPopulater(config).populate(bean, bean.getClass(), map);
     }
 

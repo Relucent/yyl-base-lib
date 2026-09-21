@@ -11,6 +11,13 @@ public class MySqlDialect extends AbstractDialect implements Dialect {
 
     @Override
     public String getLimitSql(String sql, long start, long limit) {
+        // 分页参数校验：offset 负数归零，limit 非正抛异常
+        if (start < 0) {
+            start = 0;
+        }
+        if (limit <= 0) {
+            throw new IllegalArgumentException("The limit must be greater than 0");
+        }
         return sql + " limit " + start + "," + limit;
     }
 

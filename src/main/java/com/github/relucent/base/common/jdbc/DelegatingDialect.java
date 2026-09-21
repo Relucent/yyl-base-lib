@@ -33,16 +33,28 @@ public class DelegatingDialect implements Dialect {
 
     @Override
     public String getLimitSql(String sql, long start, long limit) {
-        return dialectHolder.get().getLimitSql(sql, start, limit);
+        return requireDialect().getLimitSql(sql, start, limit);
     }
 
     @Override
     public String getCountSql(String sql) {
-        return dialectHolder.get().getCountSql(sql);
+        return requireDialect().getCountSql(sql);
     }
 
     @Override
     public String testQuery() {
-        return dialectHolder.get().testQuery();
+        return requireDialect().testQuery();
+    }
+
+    /**
+     * 获取当前线程已路由的方言，未初始化时抛出明确异常而非 NPE
+     * @return 方言实例
+     */
+    private Dialect requireDialect() {
+        Dialect dialect = dialectHolder.get();
+        if (dialect == null) {
+            throw new IllegalStateException("Dialect not initialized, please call route(...)");
+        }
+        return dialect;
     }
 }

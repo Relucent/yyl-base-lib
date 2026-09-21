@@ -23,23 +23,24 @@ public class BeanMapPopulater {
 
     @SuppressWarnings("unchecked")
     public void populate(Object bean, Class<?> clazz, Map<String, Object> properties) {
+        Set<String> exfields = config.findExcludeFields(clazz);
+        Set<String> infields = config.findIncludeFields(clazz);
+        Collection<String> defaultExcludes = MapConfig.DEFAULT_EXCLUDES;
+        boolean isAdmitMode = infields.size() > 0;
+        if (clazz == null) {
+            throw new IllegalArgumentException("No bean class specified");
+        }
+
+        PropertyDescriptor[] descriptors = null;
         try {
-            Set<String> exfields = config.findExcludeFields(clazz);
-            Set<String> infields = config.findIncludeFields(clazz);
-            Collection<String> defaultExcludes = MapConfig.DEFAULT_EXCLUDES;
-            boolean isAdmitMode = infields.size() > 0;
-            if (clazz == null) {
-                throw new IllegalArgumentException("No bean class specified");
-            }
+            descriptors = Introspector.getBeanInfo(clazz).getPropertyDescriptors();
+        } catch (IntrospectionException e) {
+            descriptors = new PropertyDescriptor[0];
+        }
 
-            PropertyDescriptor[] descriptors = null;
+        for (PropertyDescriptor descriptor : descriptors) {
+            // 逐字段单独 try：单个字段的 setter 异常不应中断其余字段的填充
             try {
-                descriptors = Introspector.getBeanInfo(clazz).getPropertyDescriptors();
-            } catch (IntrospectionException e) {
-                descriptors = new PropertyDescriptor[0];
-            }
-
-            for (PropertyDescriptor descriptor : descriptors) {
                 String field = descriptor.getName();
                 // 排除的字段
                 if (defaultExcludes.contains(field)) {
@@ -55,7 +56,7 @@ public class BeanMapPopulater {
                 }
                 if (descriptor.getWriteMethod() != null) {
                     Class<?> toType = descriptor.getPropertyType();
-                    Method method = descriptor.getReadMethod();
+                    Method method = descriptor.getWriteMethod();
                     Object property = properties.get(field);
                     // 基本的对象类型
                     if (ConvertUtil.isSimpleType(toType)) {
@@ -74,18 +75,14 @@ public class BeanMapPopulater {
                     // 非基本类型
                     else {
                         if (property instanceof Map) {
-                            try {
-                                property = newBean(toType, (Map<String, Object>) property);
-                                method.invoke(bean, property);
-                            } catch (Exception e) {
-                                // Ignore.
-                            }
+                            property = newBean(toType, (Map<String, Object>) property);
+                            method.invoke(bean, property);
                         }
                     }
                 }
+            } catch (Exception e) {
+                LOGGER.warn("!", e);
             }
-        } catch (Exception e) {
-            LOGGER.warn("!", e);
         }
     }
 

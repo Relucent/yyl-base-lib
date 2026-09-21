@@ -49,6 +49,9 @@ public class SafeExecutor<T> {
 	public T runIgnoreException() {
 		try {
 			return action.call();
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			return null;
 		} catch (Exception e) {
 			LOGGER.warn("SafeExecutor IGNORE: {}", e.getMessage());
 			return null;

@@ -39,8 +39,8 @@ public class KeyUtil {
         private static final String SM2 = "SM2";
     }
 
-    /** 默认密钥字节数 */
-    private static final int DEFAULT_KEY_SIZE = 1024;
+    /** 默认密钥字节数（RSA 等算法默认 2048 位，符合 NIST SP 800-131A 最低建议） */
+    private static final int DEFAULT_KEY_SIZE = 2048;
 
     /** SM2默认曲线 */
     private static final String SM2_DEFAULT_CURVE = "sm2p256v1";

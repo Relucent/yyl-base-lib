@@ -4,6 +4,8 @@ import java.text.DecimalFormat;
 import java.util.BitSet;
 import java.util.HashMap;
 
+import com.github.relucent.base.common.lang.StringUtil;
+
 /**
  * 地理位置HAHS工具类<br>
  * Geohash 基本原理是将地球理解为一个二维平面，将平面递归分解成更小的子块，每个子块在一定经纬度范围内拥有相同的编码。这种方式，可以满足对小规模的数据进行经纬度的检索<br>
@@ -95,8 +97,8 @@ public class GeoHashUtil {
 
     /**
      * 根据二进制编码串和指定的数值变化范围，计算得到经/纬值
-     * @param bs 经/纬二进制编码串
-     * @param floor 下限
+     * @param bs      经/纬二进制编码串
+     * @param floor   下限
      * @param ceiling 上限
      * @return 经/纬值
      */
@@ -126,7 +128,11 @@ public class GeoHashUtil {
             buffer.append((lonbits.get(i)) ? '1' : '0');
             buffer.append((latbits.get(i)) ? '1' : '0');
         }
-        return base32(Long.parseLong(buffer.toString(), 2));
+        String geoHash = base32(Long.parseLong(buffer.toString(), 2));
+        // 高位补零，保证固定长度（NUMBITS*2/5 = 12 位），否则前导 0 丢失会导致 decode 无法往返
+        final int targetLength = NUMBITS * 2 / 5;
+        geoHash = StringUtil.leftPad(geoHash, targetLength, '0');
+        return geoHash;
     }
 
     /**
@@ -153,8 +159,8 @@ public class GeoHashUtil {
 
     /**
      * 得到经/纬度对应的二进制编码
-     * @param latlng 经/纬度
-     * @param floor 下限
+     * @param latlng  经/纬度
+     * @param floor   下限
      * @param ceiling 上限
      * @return 二进制编码串
      */

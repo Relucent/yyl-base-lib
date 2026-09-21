@@ -138,17 +138,12 @@ public class NetworkUtil {
             if (i != 0) {
                 builder.append("-");
             }
-            String hex = Integer.toHexString(mac[i]);
-            switch (hex.length()) {
-            case 0:
-                builder.append("00");// 00
-                break;
-            case 1:
-                builder.append("0");// 0+
-                break;
-            default:
-                builder.append(hex.substring(Math.max(hex.length() - 2, 0)));// ++
+            // 以无符号值格式化每个字节为两位十六进制
+            int value = mac[i] & 0xFF;
+            if (value < 0x10) {
+                builder.append('0');
             }
+            builder.append(Integer.toHexString(value));
         }
         return builder.toString().toUpperCase();
     }
@@ -209,6 +204,9 @@ public class NetworkUtil {
      * @return 如果是一个有效的IPv6地址，返回true
      */
     public static boolean isValidIPv6(final String inet6Address) {
+        if (inet6Address == null) {
+            return false;
+        }
         final boolean containsCompressedZeroes = inet6Address.contains("::");
         if (containsCompressedZeroes && (inet6Address.indexOf("::") != inet6Address.lastIndexOf("::"))) {
             return false;
@@ -293,6 +291,9 @@ public class NetworkUtil {
      * @return 是否有效主机名
      */
     public static boolean isValidHostName(final String name) {
+        if (name == null) {
+            return false;
+        }
         return isValidIPv6(name) || isRFC3986HostName(name);
     }
 }

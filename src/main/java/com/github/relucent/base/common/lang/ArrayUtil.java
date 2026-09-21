@@ -197,8 +197,11 @@ public class ArrayUtil {
      * @param index 下标
      * @return 值
      */
-    public static <T> T get(T[] array, int index) {
-        int length = array.length;
+	public static <T> T get(T[] array, int index) {
+		if (array == null) {
+			return null;
+		}
+		int length = array.length;
         if (index < 0) {
             index += length;
         }
@@ -1972,6 +1975,9 @@ public class ArrayUtil {
      * @return 转换后的数组
      */
     public static <T, R> R[] map(T[] array, Class<R> componentType, Function<? super T, ? extends R> mapper) {
+        if (array == null) {
+            return null;
+        }
         final R[] result = newArray(componentType, array.length);
         for (int i = 0; i < array.length; i++) {
             result[i] = mapper.apply(array[i]);

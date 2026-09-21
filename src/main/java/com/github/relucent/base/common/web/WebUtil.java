@@ -150,7 +150,9 @@ public class WebUtil {
 	 * @return 内容描述
 	 */
 	public static String getContentDispositionFilename(String path, HttpServletRequest request) {
-		String userAgent = request.getHeader("USER-AGENT").toLowerCase();
+		String userAgent = request.getHeader("USER-AGENT");
+		// USER-AGENT 头可能不存在（为 null），先守卫避免 NPE，null 时走默认（非 firefox/chrome）分支
+		userAgent = (userAgent == null) ? "" : userAgent.toLowerCase();
 		String filename = FilenameUtil.getName(path);
 		try {
 			// firefox | chrome

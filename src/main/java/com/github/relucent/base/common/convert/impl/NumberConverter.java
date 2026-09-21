@@ -262,7 +262,12 @@ public class NumberConverter implements BasicConverter<Number> {
             return BigInteger.valueOf(((Calendar) source).getTimeInMillis());
         }
         if (source instanceof TemporalAccessor) {
-            return BigInteger.valueOf(TemporalAccessorUtil.toInstant((TemporalAccessor) source).toEpochMilli());
+            try {
+                return BigInteger.valueOf(TemporalAccessorUtil.toInstant((TemporalAccessor) source).toEpochMilli());
+            } catch (Exception ignore) {
+                // Month/DayOfWeek 等无“瞬时”语义的类型无法转时间戳，按脏数据返回 null
+                return null;
+            }
         }
         try {
             return NumberUtil.toBigInteger(sourceToString(source));
@@ -290,7 +295,12 @@ public class NumberConverter implements BasicConverter<Number> {
             return BigDecimal.valueOf(((Calendar) source).getTimeInMillis());
         }
         if (source instanceof TemporalAccessor) {
-            return BigDecimal.valueOf(TemporalAccessorUtil.toInstant((TemporalAccessor) source).toEpochMilli());
+            try {
+                return BigDecimal.valueOf(TemporalAccessorUtil.toInstant((TemporalAccessor) source).toEpochMilli());
+            } catch (Exception ignore) {
+                // Month/DayOfWeek 等无“瞬时”语义的类型无法转时间戳，按脏数据返回 null
+                return null;
+            }
         }
         try {
             return NumberUtil.toBigDecimal(sourceToString(source));

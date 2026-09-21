@@ -315,7 +315,8 @@ public class DateUtil {
 			pos.setIndex(0);
 			Date date = parser.parse(source, pos);
 			if (date != null && pos.getIndex() == source.length()) {
-				return new Date(date.getTime() + zone.getRawOffset());
+				// 使用 getOffset(instant) 取该时刻实际偏移（含夏令时），避免 DST 部署下静默偏差 1 小时
+				return new Date(date.getTime() + zone.getOffset(date.getTime()));
 			}
 		}
 

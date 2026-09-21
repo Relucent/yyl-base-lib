@@ -4,6 +4,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.Provider;
+import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 
@@ -221,9 +222,11 @@ public class SecretKeyUtil {
         if (length < 1) {
             length = 1;
         }
+        // 使用密码学安全随机源生成口令，避免可预测的 LCG（Math.random）导致密钥可枚举
+        final SecureRandom random = new SecureRandom();
         StringBuilder builder = new StringBuilder(length);
         for (int i = 0; i < length; i++) {
-            builder.append(RANDOM_CHARS[(int) (Math.random() * RANDOM_CHARS.length)]);
+            builder.append(RANDOM_CHARS[random.nextInt(RANDOM_CHARS.length)]);
         }
         return builder.toString();
     }

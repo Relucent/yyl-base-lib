@@ -20,9 +20,12 @@ public class MapConverter implements Converter<Map<?, ?>> {
 
     @Override
     public Map<?, ?> convert(Object source, Type toType) {
+        if (source == null) {
+            return null;
+        }
         final Class<?> mapType = TypeUtil.getClass(toType);
         Map<?, ?> target = newMap(mapType);
-        if (source != null && target != null) {
+        if (target != null) {
             new BeanCopier(source, target).copy();
         }
         return target;

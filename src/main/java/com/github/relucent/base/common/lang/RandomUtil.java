@@ -48,10 +48,15 @@ public class RandomUtil {
     /**
      * 获得指定范围内的随机数
      * @param origin 最小值（包含）
-     * @param bound 上限值（不包含）
+     * @param bound  上限值（不包含）
      * @return 随机数
      */
     public static int nextInt(int origin, int bound) {
+        if (origin > bound) {
+            final int temp = origin;
+            origin = bound;
+            bound = temp;
+        }
         return currentRandom().nextInt(origin, bound);
     }
 
@@ -82,7 +87,7 @@ public class RandomUtil {
     /**
      * 获得指定范围内的随机数
      * @param origin 最小值（包含）
-     * @param bound 上限值（不包含）
+     * @param bound  上限值（不包含）
      * @return 随机数
      */
     public static long nextLong(long origin, long bound) {
@@ -100,7 +105,7 @@ public class RandomUtil {
     /**
      * 获得指定范围内的随机数
      * @param origin 最小值（包含）
-     * @param bound 上限值（不包含）
+     * @param bound  上限值（不包含）
      * @return 随机数
      */
     public static double nextDouble(double origin, double bound) {
@@ -146,7 +151,7 @@ public class RandomUtil {
     /**
      * 获得一个随机的字符串
      * @param alphabet 自定义字母表
-     * @param length 字符串长度
+     * @param length   字符串长度
      * @return 随机字符串
      */
     public static String nextString(char[] alphabet, int length) {

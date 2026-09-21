@@ -91,6 +91,11 @@ public class UUID32 implements Serializable, Comparable<UUID32> {
      * @throws IllegalArgumentException 如果 name 与 {@link #toString} 中描述的字符串表示形式不符抛出此异常
      */
     public static UUID32 fromString(String name) {
+        // 兼容无分隔符的 32 位字符串（与 toString() 输出形式一致）：按 8-4-4-4-12 规范化补入分隔符
+        if (name.indexOf('-') < 0 && name.length() == 32) {
+            name = name.substring(0, 8) + "-" + name.substring(8, 12) + "-" //
+                    + name.substring(12, 16) + "-" + name.substring(16, 20) + "-" + name.substring(20);
+        }
         String[] components = name.split("-");
         if (components.length != 5) {
             throw new IllegalArgumentException("Invalid UUID string: " + name);

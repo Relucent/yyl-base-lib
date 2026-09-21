@@ -300,6 +300,9 @@ public class CharSequenceUtil {
 	 * @return 指定字符最后一次出现时的索引, 如果没找到则返回 -1
 	 */
 	static int lastIndexOf(final CharSequence cs, final int search, int start) {
+		if (cs == null) {
+			return NOT_FOUND;
+		}
 		if (cs instanceof String) {
 			return ((String) cs).lastIndexOf(search, start);
 		}
@@ -345,6 +348,9 @@ public class CharSequenceUtil {
 	 * @return 指定字符最后一次出现时的索引, 如果没找到则返回 -1
 	 */
 	static int lastIndexOf(final CharSequence cs, final CharSequence search, int start) {
+		if (cs == null || search == null) {
+			return NOT_FOUND;
+		}
 		if (search instanceof String) {
 			if (cs instanceof String) {
 				return ((String) cs).lastIndexOf((String) search, start);

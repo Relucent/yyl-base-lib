@@ -83,16 +83,25 @@ public class ConcurrentHashSet<E> extends AbstractSet<E> implements Serializable
 
     @Override
     public boolean contains(Object o) {
+        if (o == null) {
+            return false;
+        }
         return map.containsKey(o);
     }
 
     @Override
     public boolean add(E e) {
+        if (e == null) {
+            return false;
+        }
         return map.put(e, PRESENT) == null;
     }
 
     @Override
     public boolean remove(Object o) {
+        if (o == null) {
+            return false;
+        }
         return map.remove(o) == PRESENT;
     }
 

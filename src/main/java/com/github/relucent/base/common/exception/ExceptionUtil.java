@@ -50,7 +50,7 @@ public class ExceptionUtil {
      * @return 提示异常
      */
     public static PromptException prompt(Integer code, String message) {
-        return new PromptException(message);
+        return new PromptException(code, message);
     }
 
     /**

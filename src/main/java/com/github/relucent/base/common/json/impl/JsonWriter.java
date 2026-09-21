@@ -6,10 +6,13 @@ import java.math.BigDecimal;
 import java.time.MonthDay;
 import java.time.temporal.TemporalAccessor;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 import com.github.relucent.base.common.bean.BeanUtil;
 import com.github.relucent.base.common.bean.introspector.PropDesc;
@@ -27,495 +30,514 @@ import com.github.relucent.base.common.time.TemporalAccessorUtil;
  */
 public class JsonWriter {
 
-	// ==============================Fields==============================================
-	/** 字符流 */
-	private final Writer writer;
-	/** 本级别缩进量 */
-	private final Indenter indenter;
-	/** 配置信息 */
-	private final JsonConfig config;
+    // ==============================Fields==============================================
+    /** 字符流 */
+    private final Writer writer;
+    /** 本级别缩进量 */
+    private final Indenter indenter;
+    /** 配置信息 */
+    private final JsonConfig config;
 
-	// =================================Methods================================================
-	/**
-	 * 创建JSONWriter
-	 * @param writer {@link Writer}
-	 * @param config 配置项
-	 * @return JSONWriter
-	 */
-	public static JsonWriter of(Writer writer, JsonConfig config) {
-		return new JsonWriter(writer, config);
-	}
+    // =================================Methods================================================
+    /**
+     * 创建JSONWriter
+     * @param writer {@link Writer}
+     * @param config 配置项
+     * @return JSONWriter
+     */
+    public static JsonWriter of(Writer writer, JsonConfig config) {
+        return new JsonWriter(writer, config);
+    }
 
-	// ==============================Constructors========================================
-	/**
-	 * 构造
-	 * @param writer {@link Writer}
-	 * @param config 配置项
-	 */
-	public JsonWriter(Writer writer, JsonConfig config) {
-		this.writer = writer;
-		this.indenter = new Indenter(config.getIndentFactor());
-		this.config = config;
-	}
+    // ==============================Constructors========================================
+    /**
+     * 构造
+     * @param writer {@link Writer}
+     * @param config 配置项
+     */
+    public JsonWriter(Writer writer, JsonConfig config) {
+        this.writer = writer;
+        this.indenter = new Indenter(config.getIndentFactor());
+        this.config = config;
+    }
 
-	// ==============================Methods=============================================
-	public void flush() {
-		try {
-			this.writer.flush();
-		} catch (IOException e) {
-			throw IoRuntimeException.wrap(e);
-		}
-	}
+    // ==============================Methods=============================================
+    public void flush() {
+        try {
+            this.writer.flush();
+        } catch (IOException e) {
+            throw IoRuntimeException.wrap(e);
+        }
+    }
 
-	public void close() {
-		try {
-			this.writer.close();
-		} catch (IOException e) {
-			throw IoRuntimeException.wrap(e);
-		}
-	}
+    public void close() {
+        try {
+            this.writer.close();
+        } catch (IOException e) {
+            throw IoRuntimeException.wrap(e);
+        }
+    }
 
-	// ==============================WriteMethods========================================
-	/**
-	 * 写入JSON的值，根据值类型不同，输出不同内容
-	 * @param value 值
-	 */
-	@SuppressWarnings("rawtypes")
-	public void writeObject(Object value) {
+    // ==============================WriteMethods========================================
+    /**
+     * 写入JSON的值，根据值类型不同，输出不同内容
+     * @param value 值
+     */
+    public void writeObject(Object value) {
+        // 使用基于对象标识的 visited 集合检测循环引用，避免自引用对象图导致无限递归 StackOverflowError
+        Set<Object> visited = Collections.newSetFromMap(new IdentityHashMap<Object, Boolean>());
+        writeObject(value, visited);
+    }
 
-		if (JsonNull.isNull(value)) {
-			writeNull();
-			return;
-		}
-		if (value instanceof CharSequence) {
-			writeString((CharSequence) value);
-			return;
-		}
-		if (value instanceof Boolean) {
-			writeBoolean((Boolean) value);
-			return;
-		}
-		if (value instanceof Number) {
-			writeNumber((Number) value);
-			return;
-		}
-		if (value instanceof Enum) {
-			writeEnum((Enum) value);
-			return;
-		}
-		if (value instanceof Object[]) {
-			writeArray((Object[]) value);
-			return;
-		}
+    /**
+     * 写入JSON的值（带循环引用检测）
+     * @param value   值
+     * @param visited 已访问对象集合（按对象标识去重）
+     */
+    @SuppressWarnings("rawtypes")
+    private void writeObject(Object value, Set<Object> visited) {
 
-		if (value instanceof Map) {
-			writeMap((Map) value);
-			return;
-		}
-		if (value instanceof Iterable) {
-			writeIterable((Iterable) value);
-			return;
-		}
-		if (value instanceof Iterator) {
-			writeIterator((Iterator<?>) value);
-			return;
-		}
+        if (JsonNull.isNull(value)) {
+            writeNull();
+            return;
+        }
+        if (visited.contains(value)) {
+            // 检测到循环引用，无法序列化 JSON 对象图
+            throw new IllegalStateException("Circular reference detected, unable to serialize JSON object graph");
+        }
+        visited.add(value);
+        try {
+            if (value instanceof CharSequence) {
+                writeString((CharSequence) value);
+                return;
+            }
+            if (value instanceof Boolean) {
+                writeBoolean((Boolean) value);
+                return;
+            }
+            if (value instanceof Number) {
+                writeNumber((Number) value);
+                return;
+            }
+            if (value instanceof Enum) {
+                writeEnum((Enum) value);
+                return;
+            }
+            if (value instanceof Object[]) {
+                writeArray((Object[]) value, visited);
+                return;
+            }
 
-		if (value instanceof Date) {
-			writeDate((Date) value);
-			return;
-		}
-		if (value instanceof Calendar) {
-			writeCalendar((Calendar) value);
-			return;
-		}
-		if (value instanceof TemporalAccessor) {
-			writeTemporalAccessor((TemporalAccessor) value);
-			return;
-		}
+            if (value instanceof Map) {
+                writeMap((Map) value, visited);
+                return;
+            }
+            if (value instanceof Iterable) {
+                writeIterable((Iterable) value, visited);
+                return;
+            }
+            if (value instanceof Iterator) {
+                writeIterator((Iterator<?>) value, visited);
+                return;
+            }
 
-		Class<?> clazz = value.getClass();
-		if (clazz.isInterface()) {
-			writeEmpty();
-			return;
-		}
+            if (value instanceof Date) {
+                writeDate((Date) value);
+                return;
+            }
+            if (value instanceof Calendar) {
+                writeCalendar((Calendar) value);
+                return;
+            }
+            if (value instanceof TemporalAccessor) {
+                writeTemporalAccessor((TemporalAccessor) value);
+                return;
+            }
 
-		writeBean(value);
-	}
+            Class<?> clazz = value.getClass();
+            if (clazz.isInterface()) {
+                writeEmpty();
+                return;
+            }
 
-	/**
-	 * 写入NULL
-	 */
-	public void writeNull() {
-		writeRaw(StringConstant.NULL);
-	}
+            writeBean(value, visited);
+        } finally {
+            visited.remove(value);
+        }
+    }
 
-	/**
-	 * 写入字符串值，并包装引号并转义字符<br>
-	 * @param value 字符串对象
-	 */
-	private void writeString(CharSequence value) {
-		try {
-			if (StringUtil.isEmpty(value)) {
-				writer.write("\"\"");
-				return;
-			}
-			String string = value.toString();
-			writer.write('"');
-			for (int i = 0, length = string.length(); i < length; i++) {
-				char ch = string.charAt(i);
-				switch (ch) {
-				case '"':
-				case '\\':
-					writer.append('\\');
-					writer.append(ch);
-					break;
-				case '\b':
-					writer.append('\\');
-					writer.append('b');
-					break;
-				case '\n':
-					writer.append('\\');
-					writer.append('n');
-					break;
-				case '\t':
-					writer.append('\\');
-					writer.append('t');
-					break;
-				case '\f':
-					writer.append('\\');
-					writer.append('f');
-					break;
-				case '\r':
-					writer.append('\\');
-					writer.append('r');
-					break;
-				default:
-					if (ch < '\u0020' || //
-							(ch >= '\u0080' && ch <= '\u00a0') || //
-							(ch >= '\u2000' && ch <= '\u2010') || //
-							(ch >= '\u2028' && ch <= '\u202F') || //
-							(ch >= '\u2066' && ch <= '\u206F')//
-					) {
-						writer.append(Hex.toUnicodeHex(ch));
-					} else {
-						writer.append(Character.toString(ch));
-					}
-				}
-			}
-			writer.write('"');
-		} catch (IOException e) {
-			throw IoRuntimeException.wrap(e);
-		}
-	}
+    /**
+     * 写入NULL
+     */
+    public void writeNull() {
+        writeRaw(StringConstant.NULL);
+    }
 
-	/**
-	 * 写入布尔值
-	 * @param bool 布尔值
-	 */
-	private void writeBoolean(Boolean bool) {
-		writeRaw(bool.toString());
-	}
+    /**
+     * 写入字符串值，并包装引号并转义字符<br>
+     * @param value 字符串对象
+     */
+    private void writeString(CharSequence value) {
+        try {
+            if (StringUtil.isEmpty(value)) {
+                writer.write("\"\"");
+                return;
+            }
+            String string = value.toString();
+            writer.write('"');
+            for (int i = 0, length = string.length(); i < length; i++) {
+                char ch = string.charAt(i);
+                switch (ch) {
+                case '"':
+                case '\\':
+                    writer.append('\\');
+                    writer.append(ch);
+                    break;
+                case '\b':
+                    writer.append('\\');
+                    writer.append('b');
+                    break;
+                case '\n':
+                    writer.append('\\');
+                    writer.append('n');
+                    break;
+                case '\t':
+                    writer.append('\\');
+                    writer.append('t');
+                    break;
+                case '\f':
+                    writer.append('\\');
+                    writer.append('f');
+                    break;
+                case '\r':
+                    writer.append('\\');
+                    writer.append('r');
+                    break;
+                default:
+                    if (ch < '\u0020' || //
+                            (ch >= '\u0080' && ch <= '\u00a0') || //
+                            (ch >= '\u2000' && ch <= '\u2010') || //
+                            (ch >= '\u2028' && ch <= '\u202F') || //
+                            (ch >= '\u2066' && ch <= '\u206F')//
+                    ) {
+                        writer.append(Hex.toUnicodeHex(ch));
+                    } else {
+                        writer.append(Character.toString(ch));
+                    }
+                }
+            }
+            writer.write('"');
+        } catch (IOException e) {
+            throw IoRuntimeException.wrap(e);
+        }
+    }
 
-	/**
-	 * 写入数值<br>
-	 * 注意：{@code Double}/{@code Float} 的 NaN 与 Infinity 不是合法的 JSON 数值，
-	 * 这里会输出为 {@code null}，避免跨系统解析失败。
-	 * @param number 数值
-	 */
-	private void writeNumber(Number number) {
+    /**
+     * 写入布尔值
+     * @param bool 布尔值
+     */
+    private void writeBoolean(Boolean bool) {
+        writeRaw(bool.toString());
+    }
 
-		// NaN 与 Infinity 不是合法的 JSON 数值，输出为 null
-		if (number instanceof Double) {
-			double value = (Double) number;
-			if (Double.isNaN(value) || Double.isInfinite(value)) {
-				writeNull();
-				return;
-			}
-		} else if (number instanceof Float) {
-			float value = (Float) number;
-			if (Float.isNaN(value) || Float.isInfinite(value)) {
-				writeNull();
-				return;
-			}
-		}
+    /**
+     * 写入数值<br>
+     * 注意：{@code Double}/{@code Float} 的 NaN 与 Infinity 不是合法的 JSON 数值， 这里会输出为 {@code null}，避免跨系统解析失败。
+     * @param number 数值
+     */
+    private void writeNumber(Number number) {
 
-		boolean isStripTrailingZeros = config.isStripTrailingZeros();
+        // NaN 与 Infinity 不是合法的 JSON 数值，输出为 null
+        if (number instanceof Double) {
+            double value = (Double) number;
+            if (Double.isNaN(value) || Double.isInfinite(value)) {
+                writeNull();
+                return;
+            }
+        } else if (number instanceof Float) {
+            float value = (Float) number;
+            if (Float.isNaN(value) || Float.isInfinite(value)) {
+                writeNull();
+                return;
+            }
+        }
 
-		// BigDecimal单独处理，使用非科学计数法
-		if (number instanceof BigDecimal) {
-			BigDecimal decimal = (BigDecimal) number;
-			if (isStripTrailingZeros) {
-				decimal = decimal.stripTrailingZeros();
-			}
-			writeRaw(decimal.toPlainString());
-			return;
-		}
+        boolean isStripTrailingZeros = config.isStripTrailingZeros();
 
-		String csq = number.toString();
-		if (isStripTrailingZeros) {
-			if (csq.indexOf('.') > 0 && csq.indexOf('e') < 0 && csq.indexOf('E') < 0) {
-				while (csq.endsWith("0")) {
-					csq = csq.substring(0, csq.length() - 1);
-				}
-				if (csq.endsWith(".")) {
-					csq = csq.substring(0, csq.length() - 1);
-				}
-			}
-		}
-		writeRaw(csq);
-	}
+        // BigDecimal单独处理，使用非科学计数法
+        if (number instanceof BigDecimal) {
+            BigDecimal decimal = (BigDecimal) number;
+            if (isStripTrailingZeros) {
+                decimal = decimal.stripTrailingZeros();
+            }
+            writeRaw(decimal.toPlainString());
+            return;
+        }
 
-	/**
-	 * 写入枚举对象
-	 * @param enumValue 枚举对象
-	 */
-	private void writeEnum(Enum<?> enumValue) {
-		writeString(enumValue.name());
-	}
+        String csq = number.toString();
+        if (isStripTrailingZeros) {
+            if (csq.indexOf('.') > 0 && csq.indexOf('e') < 0 && csq.indexOf('E') < 0) {
+                while (csq.endsWith("0")) {
+                    csq = csq.substring(0, csq.length() - 1);
+                }
+                if (csq.endsWith(".")) {
+                    csq = csq.substring(0, csq.length() - 1);
+                }
+            }
+        }
+        writeRaw(csq);
+    }
 
-	/**
-	 * 写入Map对象
-	 * @param map Map对象
-	 */
-	private void writeMap(Map<?, ?> map) {
-		final boolean isIgnoreNullValue = config.isIgnoreNullValue();
-		try {
-			writeRaw(CharConstant.DELIM_START);
-			indenter.increment();
-			int index = 0;
-			for (java.util.Iterator<?> it = map.entrySet().iterator(); it.hasNext();) {
-				Map.Entry<?, ?> entry = (Map.Entry<?, ?>) it.next();
-				Object key = entry.getKey();
-				Object value = entry.getValue();
-				if (JsonNull.isNull(value) && isIgnoreNullValue) {
-					continue;
-				}
-				if (index != 0) {
-					writeRaw(CharConstant.COMMA);
-				}
-				writePretty();
-				writeString(String.valueOf(key));
-				writeRaw(CharConstant.COLON);
-				writePrettySpace();
-				writeObject(value);
-				index++;
-			}
-			writePretty();
-			writeRaw(CharConstant.DELIM_END);
-			flush();
-		} catch (Exception e) {
-			throw IoRuntimeException.wrap(e);
-		} finally {
-			indenter.decrement();
-		}
-	}
+    /**
+     * 写入枚举对象
+     * @param enumValue 枚举对象
+     */
+    private void writeEnum(Enum<?> enumValue) {
+        writeString(enumValue.name());
+    }
 
-	/**
-	 * 写数组
-	 * @param array 数组
-	 */
-	private void writeArray(Object[] array) {
-		writeRaw(CharConstant.BRACKET_START);
-		indenter.increment();
-		try {
-			for (int i = 0; i < array.length; i++) {
-				if (i != 0) {
-					writeRaw(CharConstant.COMMA);
-				}
-				// 换行缩进
-				writePretty();
-				writeObject(array[i]);
-			}
-			writePretty();
-			writeRaw(CharConstant.BRACKET_END);
-			flush();
-		} finally {
-			indenter.decrement();
-		}
-	}
+    /**
+     * 写入Map对象
+     * @param map Map对象
+     */
+    private void writeMap(Map<?, ?> map, Set<Object> visited) {
+        final boolean isIgnoreNullValue = config.isIgnoreNullValue();
+        try {
+            writeRaw(CharConstant.DELIM_START);
+            indenter.increment();
+            int index = 0;
+            for (java.util.Iterator<?> it = map.entrySet().iterator(); it.hasNext();) {
+                Map.Entry<?, ?> entry = (Map.Entry<?, ?>) it.next();
+                Object key = entry.getKey();
+                Object value = entry.getValue();
+                if (JsonNull.isNull(value) && isIgnoreNullValue) {
+                    continue;
+                }
+                if (index != 0) {
+                    writeRaw(CharConstant.COMMA);
+                }
+                writePretty();
+                writeString(String.valueOf(key));
+                writeRaw(CharConstant.COLON);
+                writePrettySpace();
+                writeObject(value, visited);
+                index++;
+            }
+            writePretty();
+            writeRaw(CharConstant.DELIM_END);
+            flush();
+        } catch (Exception e) {
+            throw IoRuntimeException.wrap(e);
+        } finally {
+            indenter.decrement();
+        }
+    }
 
-	/**
-	 * 写可迭代的对象
-	 * @param iterable 可迭代的对象
-	 */
-	private void writeIterable(Iterable<?> iterable) {
-		writeRaw(CharConstant.BRACKET_START);
-		indenter.increment();
-		try {
-			int i = 0;
-			for (Object element : iterable) {
-				if ((i++) != 0) {
-					writeRaw(CharConstant.COMMA);
-				}
-				writePretty();
-				writeObject(element);
-			}
-			writePretty();
-			writeRaw(CharConstant.BRACKET_END);
-			flush();
-		} finally {
-			indenter.decrement();
-		}
-	}
+    /**
+     * 写数组
+     * @param array 数组
+     */
+    private void writeArray(Object[] array, Set<Object> visited) {
+        writeRaw(CharConstant.BRACKET_START);
+        indenter.increment();
+        try {
+            for (int i = 0; i < array.length; i++) {
+                if (i != 0) {
+                    writeRaw(CharConstant.COMMA);
+                }
+                // 换行缩进
+                writePretty();
+                writeObject(array[i], visited);
+            }
+            writePretty();
+            writeRaw(CharConstant.BRACKET_END);
+            flush();
+        } finally {
+            indenter.decrement();
+        }
+    }
 
-	/**
-	 * 写迭代器
-	 * @param iterator 迭代器
-	 */
-	private void writeIterator(Iterator<?> iterator) {
-		writeRaw(CharConstant.BRACKET_START);
-		indenter.increment();
-		try {
-			int i = 0;
-			while (iterator.hasNext()) {
-				Object element = iterator.next();
-				if ((i++) != 0) {
-					writeRaw(CharConstant.COMMA);
-				}
-				// 换行缩进
-				writePretty();
-				writeObject(element);
-			}
-			writePretty();
-			writeRaw(CharConstant.BRACKET_END);
-			flush();
-		} finally {
-			indenter.decrement();
-		}
-	}
+    /**
+     * 写可迭代的对象
+     * @param iterable 可迭代的对象
+     */
+    private void writeIterable(Iterable<?> iterable, Set<Object> visited) {
+        writeRaw(CharConstant.BRACKET_START);
+        indenter.increment();
+        try {
+            int i = 0;
+            for (Object element : iterable) {
+                if ((i++) != 0) {
+                    writeRaw(CharConstant.COMMA);
+                }
+                writePretty();
+                writeObject(element, visited);
+            }
+            writePretty();
+            writeRaw(CharConstant.BRACKET_END);
+            flush();
+        } finally {
+            indenter.decrement();
+        }
+    }
 
-	/**
-	 * 写入日期
-	 * @param date 日期
-	 */
-	private void writeDate(Date date) {
-		if (config != null && config.isWriteDateAsTimestamps()) {
-			writeRaw(Long.toString(date.getTime()));
-			return;
-		}
-		writeString(DateUtil.formatDateTime(date));
-	}
+    /**
+     * 写迭代器
+     * @param iterator 迭代器
+     */
+    private void writeIterator(Iterator<?> iterator, Set<Object> visited) {
+        writeRaw(CharConstant.BRACKET_START);
+        indenter.increment();
+        try {
+            int i = 0;
+            while (iterator.hasNext()) {
+                Object element = iterator.next();
+                if ((i++) != 0) {
+                    writeRaw(CharConstant.COMMA);
+                }
+                // 换行缩进
+                writePretty();
+                writeObject(element, visited);
+            }
+            writePretty();
+            writeRaw(CharConstant.BRACKET_END);
+            flush();
+        } finally {
+            indenter.decrement();
+        }
+    }
 
-	/**
-	 * 写入时间（日历）对象
-	 * @param calendar 时间（日历）对象
-	 */
-	private void writeCalendar(Calendar calendar) {
-		if (config != null && config.isWriteDateAsTimestamps()) {
-			writeRaw(Long.toString(calendar.getTimeInMillis()));
-			return;
-		}
-		writeDate(calendar.getTime());
-	}
+    /**
+     * 写入日期
+     * @param date 日期
+     */
+    private void writeDate(Date date) {
+        if (config != null && config.isWriteDateAsTimestamps()) {
+            writeRaw(Long.toString(date.getTime()));
+            return;
+        }
+        writeString(DateUtil.formatDateTime(date));
+    }
 
-	/**
-	 * 写入时间对象
-	 * @param time 时间对象 {@link TemporalAccessor}
-	 */
-	private void writeTemporalAccessor(TemporalAccessor time) {
-		if (time instanceof MonthDay) {
-			writeString(time.toString());
-			return;
-		}
+    /**
+     * 写入时间（日历）对象
+     * @param calendar 时间（日历）对象
+     */
+    private void writeCalendar(Calendar calendar) {
+        if (config != null && config.isWriteDateAsTimestamps()) {
+            writeRaw(Long.toString(calendar.getTimeInMillis()));
+            return;
+        }
+        writeDate(calendar.getTime());
+    }
 
-		if (config != null && config.isWriteDateAsTimestamps()) {
-			long timeMillis = TemporalAccessorUtil.toEpochMilli(time);
-			writeRaw(Long.toString(timeMillis));
-			return;
-		}
-		writeString(TemporalAccessorUtil.format(time, null));
-	}
+    /**
+     * 写入时间对象
+     * @param time 时间对象 {@link TemporalAccessor}
+     */
+    private void writeTemporalAccessor(TemporalAccessor time) {
+        if (time instanceof MonthDay) {
+            writeString(time.toString());
+            return;
+        }
 
-	/**
-	 * 写入Bean对象
-	 * @param bean Bean对象
-	 */
-	private void writeBean(Object bean) {
-		// 使用 LinkedHashMap 保持属性定义顺序，输出稳定
-		Map<String, Object> proxy = new LinkedHashMap<>();
-		try {
-			Class<?> clazz = bean.getClass();
-			boolean isTransientSupport = config.isTransientSupport();
-			boolean ignoreNullValue = config.isIgnoreNullValue();
-			Map<String, PropDesc> pdMap = BeanUtil.getBeanDesc(clazz).getPropMap();
-			for (Map.Entry<String, PropDesc> pdEntry : pdMap.entrySet()) {
-				String name = pdEntry.getKey();
-				PropDesc pd = pdEntry.getValue();
+        if (config != null && config.isWriteDateAsTimestamps()) {
+            long timeMillis = TemporalAccessorUtil.toEpochMilli(time);
+            writeRaw(Long.toString(timeMillis));
+            return;
+        }
+        writeString(TemporalAccessorUtil.format(time, null));
+    }
 
-				if (!pd.isReadable(isTransientSupport)) {
-					continue;
-				}
+    /**
+     * 写入Bean对象
+     * @param bean Bean对象
+     */
+    private void writeBean(Object bean, Set<Object> visited) {
+        // 使用 LinkedHashMap 保持属性定义顺序，输出稳定
+        Map<String, Object> proxy = new LinkedHashMap<>();
+        try {
+            Class<?> clazz = bean.getClass();
+            boolean isTransientSupport = config.isTransientSupport();
+            boolean ignoreNullValue = config.isIgnoreNullValue();
+            Map<String, PropDesc> pdMap = BeanUtil.getBeanDesc(clazz).getPropMap();
+            for (Map.Entry<String, PropDesc> pdEntry : pdMap.entrySet()) {
+                String name = pdEntry.getKey();
+                PropDesc pd = pdEntry.getValue();
 
-				Object value = pd.getValue(bean);
+                if (!pd.isReadable(isTransientSupport)) {
+                    continue;
+                }
 
-				if (value == null && ignoreNullValue) {
-					continue;
-				}
-				proxy.put(name, value);
-			}
-		} catch (Exception e) {
-			writeEmpty();
-			return;
-		}
-		writeObject(proxy);
-	}
+                Object value = pd.getValue(bean);
 
-	/**
-	 * 写入一个对象
-	 */
-	private void writeEmpty() {
-		writeRaw("{}");
-	}
+                if (value == null && ignoreNullValue) {
+                    continue;
+                }
+                proxy.put(name, value);
+            }
+        } catch (Exception e) {
+            writeEmpty();
+            return;
+        }
+        writeObject(proxy, visited);
+    }
 
-	/**
-	 * 写入换行符和缩进
-	 * @return this
-	 */
-	private JsonWriter writePretty() {
-		if (indenter.isPretty()) {
-			writeRaw(CharConstant.LF);
-			for (int i = 0, indent = indenter.getIndent(); i < indent; i++) {
-				writeRaw(CharConstant.SPACE);
-			}
-		}
-		return this;
-	}
+    /**
+     * 写入一个对象
+     */
+    private void writeEmpty() {
+        writeRaw("{}");
+    }
 
-	/**
-	 * 写入空格
-	 */
-	private void writePrettySpace() {
-		if (indenter.isPretty()) {
-			writeRaw(CharConstant.SPACE);
-		}
-	}
+    /**
+     * 写入换行符和缩进
+     * @return this
+     */
+    private JsonWriter writePretty() {
+        if (indenter.isPretty()) {
+            writeRaw(CharConstant.LF);
+            for (int i = 0, indent = indenter.getIndent(); i < indent; i++) {
+                writeRaw(CharConstant.SPACE);
+            }
+        }
+        return this;
+    }
 
-	/**
-	 * 写入原始字符串值，不做任何处理
-	 * @param csq 字符串
-	 * @return this
-	 */
-	private JsonWriter writeRaw(String csq) {
-		try {
-			writer.append(csq);
-		} catch (IOException e) {
-			throw IoRuntimeException.wrap(e);
-		}
-		return this;
-	}
+    /**
+     * 写入空格
+     */
+    private void writePrettySpace() {
+        if (indenter.isPretty()) {
+            writeRaw(CharConstant.SPACE);
+        }
+    }
 
-	/**
-	 * 写入原始字符值，不做任何处理
-	 * @param c 字符串
-	 * @return this
-	 */
-	private JsonWriter writeRaw(char c) {
-		try {
-			writer.write(c);
-		} catch (IOException e) {
-			throw IoRuntimeException.wrap(e);
-		}
-		return this;
-	}
+    /**
+     * 写入原始字符串值，不做任何处理
+     * @param csq 字符串
+     * @return this
+     */
+    private JsonWriter writeRaw(String csq) {
+        try {
+            writer.append(csq);
+        } catch (IOException e) {
+            throw IoRuntimeException.wrap(e);
+        }
+        return this;
+    }
+
+    /**
+     * 写入原始字符值，不做任何处理
+     * @param c 字符串
+     * @return this
+     */
+    private JsonWriter writeRaw(char c) {
+        try {
+            writer.write(c);
+        } catch (IOException e) {
+            throw IoRuntimeException.wrap(e);
+        }
+        return this;
+    }
 }

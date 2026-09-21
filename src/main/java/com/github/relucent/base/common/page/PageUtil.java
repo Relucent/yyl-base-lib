@@ -20,6 +20,9 @@ public class PageUtil {
      * @return 当前页数
      */
     public static long getCurrent(long offset, long limit) {
+        if (limit < 1L) {
+            return -1L;
+        }
         return (offset / limit) + 1L;
     }
 
@@ -44,10 +47,15 @@ public class PageUtil {
      * @return 最大页数
      */
     public static long getPageTotal(long total, long limit) {
-        if ((total < 0L) || (limit < 1L)) {
+        if (limit < 1L) {
             return -1L;
-        } else {
-            return ((total - 1L) / limit) + 1L;
         }
+        if (total == 0L) {
+            return 0L;
+        }
+        if (total < 0L) {
+            return -1L;
+        }
+        return ((total - 1L) / limit) + 1L;
     }
 }

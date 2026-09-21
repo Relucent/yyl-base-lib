@@ -24,7 +24,10 @@ public class Listx extends ListWrapper<Object> {
 	// ==============================Methods=============================================
 	@Override
 	public Object clone() throws CloneNotSupportedException {
-		return (Listx) super.clone();
+		// 深拷贝底层集合，避免与原对象共享同一 raw（Object.clone() 仅浅拷贝引用）
+		final Listx clone = new Listx();
+		clone.addAll(this);
+		return clone;
 	}
 
 	// ==============================ChainMethods========================================

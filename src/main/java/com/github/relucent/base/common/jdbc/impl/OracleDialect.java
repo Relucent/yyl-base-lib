@@ -11,6 +11,13 @@ public class OracleDialect extends AbstractDialect implements Dialect {
 
     @Override
     public String getLimitSql(String sql, long offset, long limit) {
+        // 分页参数校验：offset 负数归零，limit 非正抛异常
+        if (offset < 0) {
+            offset = 0;
+        }
+        if (limit <= 0) {
+            throw new IllegalArgumentException("The limit must be greater than 0");
+        }
         return " " //
                 + "SELECT T__X.* FROM  ( " //
                 + " SELECT ROWNUM as ROWNO__L, T__Y.* FROM (" + sql + ") T__Y  WHERE ROWNUM <=" + (offset + limit) //

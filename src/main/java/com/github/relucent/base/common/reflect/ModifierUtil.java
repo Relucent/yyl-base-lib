@@ -131,7 +131,7 @@ public class ModifierUtil {
      * @return 是否包含{@code volatile}修饰符
      */
     public static boolean isVolatile(Field field) {
-        return field != null && Modifier.isFinal(field.getModifiers());
+        return field != null && Modifier.isVolatile(field.getModifiers());
     }
 
     /**

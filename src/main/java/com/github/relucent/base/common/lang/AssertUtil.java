@@ -76,13 +76,16 @@ public class AssertUtil {
         noNullElements(objects, "[Assertion failed] - this array must not contain any null objects");
     }
 
-    public static void noNullElements(Object[] objects, String message) {
-        for (Object obj : objects) {
-            if (obj == null) {
-                fail(message);
-            }
-        }
-    }
+	public static void noNullElements(Object[] objects, String message) {
+		if (objects == null) {
+			return;
+		}
+		for (Object obj : objects) {
+			if (obj == null) {
+				fail(message);
+			}
+		}
+	}
 
     public static void fail(String message) {
         throw new IllegalArgumentException(message);

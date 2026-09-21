@@ -67,36 +67,48 @@ public class StdoutLogger extends AbstractLogger {
     @Override
     public void trace(String message, Throwable throwable) {
         System.out.println(message);
-        throwable.printStackTrace(System.out);
+        if (throwable != null) {
+            throwable.printStackTrace(System.out);
+        }
     }
 
     @Override
     public void debug(String message, Throwable throwable) {
         System.out.println(message);
-        throwable.printStackTrace(System.out);
+        if (throwable != null) {
+            throwable.printStackTrace(System.out);
+        }
     }
 
     @Override
     public void info(String message, Throwable throwable) {
         System.out.println(message);
-        throwable.printStackTrace(System.out);
+        if (throwable != null) {
+            throwable.printStackTrace(System.out);
+        }
     }
 
     @Override
     public void warn(String message, Throwable throwable) {
         System.out.println(message);
-        throwable.printStackTrace(System.out);
+        if (throwable != null) {
+            throwable.printStackTrace(System.out);
+        }
     }
 
     @Override
     public void error(String message, Throwable throwable) {
         System.out.println(message);
-        throwable.printStackTrace(System.out);
+        if (throwable != null) {
+            throwable.printStackTrace(System.out);
+        }
     }
 
     @Override
     public void fatal(String message, Throwable throwable) {
         System.out.println(message);
-        throwable.printStackTrace(System.out);
+        if (throwable != null) {
+            throwable.printStackTrace(System.out);
+        }
     }
 }

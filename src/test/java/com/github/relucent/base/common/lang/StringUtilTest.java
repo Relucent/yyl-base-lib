@@ -125,12 +125,14 @@ public class StringUtilTest {
 		Assert.assertNull(StringUtil.splitPreserveAllTokens(null, "*", (int) (Math.random() * 100)));
 		Assert.assertEquals(StringUtil.splitPreserveAllTokens("", "*", (int) (Math.random() * 100)).length, 0);
 		Assert.assertArrayEquals(StringUtil.splitPreserveAllTokens("ab cd ef", null, 0), strings("ab", "cd", "ef"));
-		Assert.assertArrayEquals(StringUtil.splitPreserveAllTokens("ab  cd ef", null, 0), strings("ab", "", "cd", "ef"));
+		Assert.assertArrayEquals(StringUtil.splitPreserveAllTokens("ab  cd ef", null, 0),
+				strings("ab", "", "cd", "ef"));
 		Assert.assertArrayEquals(StringUtil.splitPreserveAllTokens("ab:cd:ef", ":", 0), strings("ab", "cd", "ef"));
 		Assert.assertArrayEquals(StringUtil.splitPreserveAllTokens("ab:cd:ef", ":", 2), strings("ab", "cd:ef"));
 		Assert.assertArrayEquals(StringUtil.splitPreserveAllTokens("ab cd ef", null, 2), strings("ab", "cd ef"));
 		Assert.assertArrayEquals(StringUtil.splitPreserveAllTokens("ab cd ef", null, 3), strings("ab", "cd", "ef"));
-		Assert.assertArrayEquals(StringUtil.splitPreserveAllTokens("ab  cd ef", null, 4), strings("ab", "", "cd", "ef"));
+		Assert.assertArrayEquals(StringUtil.splitPreserveAllTokens("ab  cd ef", null, 4),
+				strings("ab", "", "cd", "ef"));
 	}
 
 	@Test
@@ -180,6 +182,19 @@ public class StringUtilTest {
 		Assert.assertEquals(StringUtil.removeSuffix("ABCDEFG", "efg"), "ABCDEFG");
 		Assert.assertEquals(StringUtil.removeSuffix("ABCDEFG", "abc"), "ABCDEFG");
 		Assert.assertEquals(StringUtil.removeSuffixIgnoreCase("ABCDEFG", "efg"), "ABCD");
+	}
+
+	@Test
+	public void testRemoveAll() {
+		Assert.assertEquals("abc", StringUtil.removeAll("aXbXc", 'X'));
+		Assert.assertEquals("HelloWorld!", StringUtil.removeAll("Hello World!", ' '));
+		Assert.assertEquals("", StringUtil.removeAll("aaa", 'a'));
+	}
+
+	@Test
+	public void testRemoveAllLineBreak() {
+		Assert.assertEquals("ab", StringUtil.removeAllLineBreak("a\r\nb"));
+		Assert.assertEquals("ab", StringUtil.removeAllLineBreak("a\nb"));
 	}
 
 	private final String[] strings(final String... strings) {

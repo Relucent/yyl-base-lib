@@ -99,7 +99,7 @@ public class ClassUtil {
         DEFAULT_IMPLEMENTATIONS.put(SortedSet.class, TreeSet.class);
         DEFAULT_IMPLEMENTATIONS.put(NavigableSet.class, TreeSet.class);
 
-        DEFAULT_IMPLEMENTATIONS.put(Map.class, HashMap.class);
+        DEFAULT_IMPLEMENTATIONS.put(Map.class, LinkedHashMap.class);
         DEFAULT_IMPLEMENTATIONS.put(SortedMap.class, TreeMap.class);
         DEFAULT_IMPLEMENTATIONS.put(NavigableMap.class, TreeMap.class);
         DEFAULT_IMPLEMENTATIONS.put(ConcurrentMap.class, ConcurrentHashMap.class);
@@ -352,11 +352,11 @@ public class ClassUtil {
             return StringConstant.EMPTY;
         }
         // Strip array encoding
-        while (className.charAt(0) == '[') {
+        while (className.length() > 0 && className.charAt(0) == '[') {
             className = className.substring(1);
         }
         // Strip Object type encoding
-        if (className.charAt(0) == 'L' && className.charAt(className.length() - 1) == ';') {
+        if (className.length() > 0 && className.charAt(0) == 'L' && className.charAt(className.length() - 1) == ';') {
             className = className.substring(1);
         }
         final int i = className.lastIndexOf(PACKAGE_SEPARATOR_CHAR);

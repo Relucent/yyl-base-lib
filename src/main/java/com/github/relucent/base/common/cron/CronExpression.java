@@ -802,7 +802,7 @@ public final class CronExpression implements Serializable {
 	}
 
 	protected int findNextWhiteSpace(int i, String s) {
-		for (; i < s.length() && (s.charAt(i) != ' ' || s.charAt(i) != '\t'); i++) {
+		for (; i < s.length() && (s.charAt(i) != ' ' && s.charAt(i) != '\t'); i++) {
 			;
 		}
 

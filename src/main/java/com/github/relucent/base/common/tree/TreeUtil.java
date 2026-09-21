@@ -188,6 +188,9 @@ public class TreeUtil {
 		// 显式栈：用于替代递归
 		Deque<N> stack = new ArrayDeque<>();
 
+		// 已访问节点集合，防止图结构（含环）导致的无限递归
+		Set<N> visited = new HashSet<>();
+
 		// 逆序入栈，保证弹出顺序与 nodes 原始顺序一致（栈为 LIFO）
 		List<N> rootList = new ArrayList<>(nodes);
 		for (int i = rootList.size() - 1; i >= 0; i--) {
@@ -201,6 +204,11 @@ public class TreeUtil {
 			// 弹出栈顶节点，先访问自身（前序）
 			N node = stack.pop();
 
+			// 跳过已访问节点（环/重复引用保护）
+			if (!visited.add(node)) {
+				continue;
+			}
+
 			action.accept(node);
 
 			// 将其子节点逆序入栈，保证弹出时按原始顺序处理
@@ -209,7 +217,7 @@ public class TreeUtil {
 				List<N> childList = new ArrayList<>(children);
 				for (int i = childList.size() - 1; i >= 0; i--) {
 					N child = childList.get(i);
-					if (child != null) {
+					if (child != null && !visited.contains(child)) {
 						stack.push(child);
 					}
 				}

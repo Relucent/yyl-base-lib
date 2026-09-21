@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import java.io.IOException;
+
 import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
 import javax.tools.JavaCompiler;
@@ -60,63 +62,85 @@ public class JavaCompilerEngine {
         }
 
         StandardJavaFileManager standardJavaFileManager = javac.getStandardFileManager(null, null, null);
-        DiagnosticCollector<JavaFileObject> collector = new DiagnosticCollector<>();
         ForwardingStandardJavaFileManager fileManager = new ForwardingStandardJavaFileManager(standardJavaFileManager);
+        try {
+            DiagnosticCollector<JavaFileObject> collector = new DiagnosticCollector<>();
 
-        JavaCompiler.CompilationTask task = javac.getTask(null, fileManager, collector, options, null, compilationUnits);
+            JavaCompiler.CompilationTask task = javac.getTask(null, fileManager, collector, options, null,
+                    compilationUnits);
 
-        boolean result = task.call();
-        if (!result || collector.getDiagnostics().size() > 0) {
-            StringBuffer exceptionMsg = new StringBuffer();
-            exceptionMsg.append("Unable to compile the source");
-            boolean hasWarnings = false;
-            boolean hasErrors = false;
-            for (Diagnostic<? extends JavaFileObject> diagnostic : collector.getDiagnostics()) {
-                if (diagnostic.getKind() == Diagnostic.Kind.NOTE) {
-                    // NOTE 只是提示信息（例如 JDK9+ 关于注解处理已启用的提示、使用了过时 API 的提示），
-                    // 不应视为编译警告，否则在较高版本 JDK 上会导致编译始终失败
-                    continue;
+            boolean result = task.call();
+            if (!result || collector.getDiagnostics().size() > 0) {
+                StringBuffer exceptionMsg = new StringBuffer();
+                exceptionMsg.append("Unable to compile the source");
+                boolean hasWarnings = false;
+                boolean hasErrors = false;
+                for (Diagnostic<? extends JavaFileObject> diagnostic : collector.getDiagnostics()) {
+                    if (diagnostic.getKind() == Diagnostic.Kind.NOTE) {
+                        // NOTE 只是提示信息（例如 JDK9+ 关于注解处理已启用的提示、使用了过时 API 的提示），
+                        // 不应视为编译警告，否则在较高版本 JDK 上会导致编译始终失败
+                        continue;
+                    }
+                    switch (diagnostic.getKind()) {
+                    case MANDATORY_WARNING:
+                    case WARNING:
+                        hasWarnings = true;
+                        break;
+                    case OTHER:
+                    case ERROR:
+                    default:
+                        hasErrors = true;
+                        break;
+                    }
+                    JavaFileObject source = diagnostic.getSource();
+                    exceptionMsg.append("\n").append(source);
+                    exceptionMsg.append("\n").append("[kind=").append(diagnostic.getKind());
+                    exceptionMsg.append(", ").append("line=").append(diagnostic.getLineNumber());
+                    exceptionMsg.append(", ").append("message=").append(diagnostic.getMessage(Locale.US)).append("]");
                 }
-                switch (diagnostic.getKind()) {
-                case MANDATORY_WARNING:
-                case WARNING:
-                    hasWarnings = true;
-                    break;
-                case OTHER:
-                case ERROR:
-                default:
-                    hasErrors = true;
-                    break;
+                if ((hasWarnings && !ignoreWarnings) || hasErrors) {
+                    throw new CompilationException(exceptionMsg.toString());
                 }
-                JavaFileObject source = diagnostic.getSource();
-                exceptionMsg.append("\n").append(source);
-                exceptionMsg.append("\n").append("[kind=").append(diagnostic.getKind());
-                exceptionMsg.append(", ").append("line=").append(diagnostic.getLineNumber());
-                exceptionMsg.append(", ").append("message=").append(diagnostic.getMessage(Locale.US)).append("]");
             }
-            if ((hasWarnings && !ignoreWarnings) || hasErrors) {
-                throw new CompilationException(exceptionMsg.toString());
-            }
-        }
-        Map<String, Class<?>> classes = new HashMap<String, Class<?>>();
+            Map<String, Class<?>> classes = new HashMap<String, Class<?>>();
 
-        for (String className : fileManager.getCompiledClassNames()) {
-            JavaClassFileObject jcfo = fileManager.getJavaClassFileObject(className);
-            String name = jcfo.getName();
-            byte[] code = jcfo.getContentByteArray();
-            try {
-                Class<?> clazz = ClassLoaderHelper.defineClass(name, code);
-                classes.put(name, clazz);
-            } catch (Error e) {
-                throw new CompilationException("defineClass->" + name, e);
+            for (String className : fileManager.getCompiledClassNames()) {
+                JavaClassFileObject jcfo = fileManager.getJavaClassFileObject(className);
+                String name = jcfo.getName();
+                byte[] code = jcfo.getContentByteArray();
+                try {
+                    Class<?> clazz = ClassLoaderHelper.defineClass(name, code);
+                    classes.put(name, clazz);
+                } catch (Error e) {
+                    throw new CompilationException("defineClass->" + name, e);
+                }
             }
+            return classes;
+        } finally {
+            // 关闭文件管理器，避免高频编译时句柄泄漏；关闭异常不阻断编译结果返回
+            closeQuietly(fileManager);
+            closeQuietly(standardJavaFileManager);
         }
-        return classes;
+    }
+
+    /**
+     * 静默关闭文件管理器，忽略关闭过程中的 {@link IOException}
+     * @param fileManager 待关闭的文件管理器（可为 {@code null}）
+     */
+    private static void closeQuietly(javax.tools.JavaFileManager fileManager) {
+        if (fileManager == null) {
+            return;
+        }
+        try {
+            fileManager.close();
+        } catch (IOException e) {
+            // 忽略关闭异常
+        }
     }
 
     /**
      * 编译单个源文件
-     * @param name 类名
+     * @param name   类名
      * @param source 源码
      * @return 编译的类文件
      * @throws Exception 编译中发生异常
@@ -130,7 +154,7 @@ public class JavaCompilerEngine {
 
     /**
      * 创建JAVA源文件对象
-     * @param name 类名
+     * @param name   类名
      * @param source 类源码
      * @return JAVA源文件对象
      */

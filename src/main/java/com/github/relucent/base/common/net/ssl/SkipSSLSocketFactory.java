@@ -25,7 +25,7 @@ public class SkipSSLSocketFactory extends SSLSocketFactory {
 
     private SkipSSLSocketFactory() {
         try {
-            SSLContext sslContext = SSLContext.getInstance("TLS", "SunJSSE");
+            SSLContext sslContext = SSLContext.getInstance("TLS");
             sslContext.init(null, new TrustManager[] { SkipTrustManager.INSTANCE }, new SecureRandom());
             sslSocketFactory = sslContext.getSocketFactory();
         } catch (Exception e) {

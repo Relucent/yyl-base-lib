@@ -218,8 +218,8 @@ public class BeanDesc implements Serializable {
         // 忽略大小写重新匹配一次
         for (Method method : methods) {
             String methodName = method.getName();
-            // 名称匹配（忽略大小写）
-            if (isMatchSetter(methodName, fieldName, isBooleanField, false)) {
+            // 名称匹配（忽略大小写），与 Getter 的二次匹配保持对称
+            if (isMatchSetter(methodName, fieldName, isBooleanField, true)) {
                 // 参数类型和字段类型一致，或参数类型是字段类型的子类
                 if (fieldType.isAssignableFrom(method.getParameterTypes()[0])) {
                     return method;

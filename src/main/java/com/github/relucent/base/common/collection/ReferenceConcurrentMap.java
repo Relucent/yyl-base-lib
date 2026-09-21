@@ -71,6 +71,9 @@ public class ReferenceConcurrentMap<K, V> implements ConcurrentMap<K, V>, Iterab
     @SuppressWarnings("unchecked")
     @Override
     public V get(Object key) {
+        if (key == null) {
+            return null;
+        }
         this.purgeStaleKeys();
         return this.raw.get(ofKey((K) key, null));
     }
@@ -78,6 +81,9 @@ public class ReferenceConcurrentMap<K, V> implements ConcurrentMap<K, V>, Iterab
     @SuppressWarnings("unchecked")
     @Override
     public boolean containsKey(Object key) {
+        if (key == null) {
+            return false;
+        }
         this.purgeStaleKeys();
         return this.raw.containsKey(ofKey((K) key, null));
     }
@@ -90,12 +96,18 @@ public class ReferenceConcurrentMap<K, V> implements ConcurrentMap<K, V>, Iterab
 
     @Override
     public V put(K key, V value) {
+        if (key == null) {
+            return null;
+        }
         this.purgeStaleKeys();
         return this.raw.put(ofKey(key, this.lastQueue), value);
     }
 
     @Override
     public V putIfAbsent(K key, V value) {
+        if (key == null) {
+            return null;
+        }
         this.purgeStaleKeys();
         return this.raw.putIfAbsent(ofKey(key, this.lastQueue), value);
     }
@@ -107,12 +119,18 @@ public class ReferenceConcurrentMap<K, V> implements ConcurrentMap<K, V>, Iterab
 
     @Override
     public V replace(K key, V value) {
+        if (key == null) {
+            return null;
+        }
         this.purgeStaleKeys();
         return this.raw.replace(ofKey(key, this.lastQueue), value);
     }
 
     @Override
     public boolean replace(K key, V oldValue, V newValue) {
+        if (key == null) {
+            return false;
+        }
         this.purgeStaleKeys();
         return this.raw.replace(ofKey(key, this.lastQueue), oldValue, newValue);
     }
@@ -125,12 +143,18 @@ public class ReferenceConcurrentMap<K, V> implements ConcurrentMap<K, V>, Iterab
 
     @Override
     public V computeIfAbsent(K key, Function<? super K, ? extends V> mappingFunction) {
+        if (key == null) {
+            return null;
+        }
         this.purgeStaleKeys();
         return this.raw.computeIfAbsent(ofKey(key, this.lastQueue), kWeakKey -> mappingFunction.apply(key));
     }
 
     @Override
     public V computeIfPresent(K key, BiFunction<? super K, ? super V, ? extends V> remappingFunction) {
+        if (key == null) {
+            return null;
+        }
         this.purgeStaleKeys();
         return this.raw.computeIfPresent(ofKey(key, this.lastQueue), (kWeakKey, value) -> remappingFunction.apply(key, value));
     }
@@ -148,6 +172,9 @@ public class ReferenceConcurrentMap<K, V> implements ConcurrentMap<K, V>, Iterab
     @SuppressWarnings("unchecked")
     @Override
     public V remove(Object key) {
+        if (key == null) {
+            return null;
+        }
         this.purgeStaleKeys();
         return this.raw.remove(ofKey((K) key, null));
     }
@@ -155,6 +182,9 @@ public class ReferenceConcurrentMap<K, V> implements ConcurrentMap<K, V>, Iterab
     @SuppressWarnings("unchecked")
     @Override
     public boolean remove(Object key, Object value) {
+        if (key == null) {
+            return false;
+        }
         this.purgeStaleKeys();
         return this.raw.remove(ofKey((K) key, null), value);
     }
@@ -206,12 +236,18 @@ public class ReferenceConcurrentMap<K, V> implements ConcurrentMap<K, V>, Iterab
 
     @Override
     public V compute(K key, BiFunction<? super K, ? super V, ? extends V> remappingFunction) {
+        if (key == null) {
+            return null;
+        }
         this.purgeStaleKeys();
         return this.raw.compute(ofKey(key, this.lastQueue), (kWeakKey, value) -> remappingFunction.apply(key, value));
     }
 
     @Override
     public V merge(K key, V value, BiFunction<? super V, ? super V, ? extends V> remappingFunction) {
+        if (key == null) {
+            return null;
+        }
         this.purgeStaleKeys();
         return this.raw.merge(ofKey(key, this.lastQueue), value, remappingFunction);
     }

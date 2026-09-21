@@ -5,28 +5,36 @@ package com.github.relucent.base.common.web;
  */
 public enum DownloadMode {
 
-    /** 附件 */
-    ATTACHMENT("attachment"),
-    /** 内联 */
-    INLINE("inline");
+	/** 附件 */
+	ATTACHMENT("attachment"),
+	/** 内联 */
+	INLINE("inline");
 
-    /** 标识值 */
-    private String value;
+	/** 标识值 */
+	private String value;
 
-    /**
-     * 构造函数
-     * @param value 标识值
-     */
-    private DownloadMode(String value) {
-        this.value = value;
-    }
+	/**
+	 * 构造函数
+	 * @param value 标识值
+	 */
+	private DownloadMode(String value) {
+		this.value = value;
+	}
 
-    /**
-     * 获得请求头完整的 content-disposition 值
-     * @param filename 文件名称
-     * @return 完整的 content-disposition 值
-     */
-    public String getContentDisposition(String filename) {
-        return value + ";filename=\"" + filename + "\"";
-    }
+	/**
+	 * 内容配置文本值
+	 * @return 内容配置文本值
+	 */
+	public String getValue() {
+		return value;
+	}
+
+	/**
+	 * 获得请求头完整的 content-disposition 值
+	 * @param filename 文件名称
+	 * @return 完整的 content-disposition 值
+	 */
+	public String getContentDisposition(String filename) {
+		return value + ";filename=\"" + filename + "\"";
+	}
 }

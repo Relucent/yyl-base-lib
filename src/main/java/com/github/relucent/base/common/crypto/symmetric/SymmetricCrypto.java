@@ -5,8 +5,8 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
+import java.security.SecureRandom;
 import java.security.spec.AlgorithmParameterSpec;
-import java.util.concurrent.ThreadLocalRandom;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -29,6 +29,8 @@ import com.github.relucent.base.common.io.IoUtil;
 public class SymmetricCrypto {
 
     // =================================Fields================================================
+    /** PBE 算法默认迭代次数（现行安全下限，≥10000） */
+    private static final int PBE_ITERATION_COUNT = 10000;
     /** 算法名称 */
     private String algorithm;
     /** 秘密(对称)密钥 */
@@ -50,7 +52,7 @@ public class SymmetricCrypto {
     /**
      * 构造函数
      * @param algorithm 算法
-     * @param key 密钥数据
+     * @param key       密钥数据
      */
     public SymmetricCrypto(SymmetricAlgorithmEnum algorithm, byte[] key) {
         this(algorithm, SecretKeyUtil.generateSecretKey(algorithm.string(), key), null);
@@ -69,7 +71,7 @@ public class SymmetricCrypto {
      * 构造
      * @param algorithm 算法
      * @param secretKey 秘密(对称)密钥
-     * @param params 算法参数
+     * @param params    算法参数
      */
     public SymmetricCrypto(SymmetricAlgorithmEnum algorithm, SecretKey secretKey, AlgorithmParameterSpec params) {
         this(algorithm.string(), secretKey, params);
@@ -79,7 +81,7 @@ public class SymmetricCrypto {
      * 构造函数
      * @param algorithm 算法
      * @param secretKey 秘密(对称)密钥
-     * @param params 算法参数
+     * @param params    算法参数
      */
     protected SymmetricCrypto(String algorithm, SecretKey secretKey, AlgorithmParameterSpec params) {
         initialize(algorithm, secretKey, params);
@@ -90,18 +92,18 @@ public class SymmetricCrypto {
      * 初始化
      * @param algorithm 算法
      * @param secretKey 秘密(对称)密钥
-     * @param params 算法参数
+     * @param params    算法参数
      */
     protected void initialize(String algorithm, SecretKey secretKey, AlgorithmParameterSpec params) {
         // 如果密钥为null，那么生成一个随机密钥
         if (secretKey == null) {
             secretKey = generateKey(algorithm);
         }
-        // 对于PBE算法使用随机数加盐
+        // 对于PBE算法使用随机数加盐；盐须由 CSPRNG 生成，迭代次数按现行下限（≥10000）设置
         if (params == null && algorithm.startsWith("PBE")) {
             byte[] bytes = new byte[8];
-            ThreadLocalRandom.current().nextBytes(bytes);
-            params = new PBEParameterSpec(bytes, 100);
+            new SecureRandom().nextBytes(bytes);
+            params = new PBEParameterSpec(bytes, PBE_ITERATION_COUNT);
         }
         this.algorithm = algorithm;
         this.secretKey = secretKey;
@@ -144,7 +146,7 @@ public class SymmetricCrypto {
 
     /**
      * 加密数据
-     * @param input 被加密的字符串
+     * @param input   被加密的字符串
      * @param charset 字符串编码
      * @return 加密后的数据
      */
@@ -172,7 +174,7 @@ public class SymmetricCrypto {
 
     /**
      * 加密数据，返回十六进制字符串
-     * @param input 被加密的字符串
+     * @param input   被加密的字符串
      * @param charset 字符串编码
      * @return 加密后的十六进制字符串
      */
@@ -200,7 +202,7 @@ public class SymmetricCrypto {
 
     /**
      * 加密数据，返回Base64字符串
-     * @param input 被加密的字符串
+     * @param input   被加密的字符串
      * @param charset 字符串编码
      * @return 加密后的Base64字符串
      */
@@ -261,7 +263,7 @@ public class SymmetricCrypto {
 
     /**
      * 解密数据为字符串
-     * @param input 被解密的数据
+     * @param input   被解密的数据
      * @param charset 解密后的字符串编码
      * @return 解密后的字符串
      */
@@ -280,7 +282,7 @@ public class SymmetricCrypto {
 
     /**
      * 解密数据为字符串
-     * @param input 被解密的数据，格式为16进制字符串
+     * @param input   被解密的数据，格式为16进制字符串
      * @param charset 加密前的字符串编码
      * @return 解密后的数据
      */
@@ -299,7 +301,7 @@ public class SymmetricCrypto {
 
     /**
      * 解密数据为字符串
-     * @param input 被解密的数据，格式为Base64字符串
+     * @param input   被解密的数据，格式为Base64字符串
      * @param charset 加密前的字符串编码
      * @return 解密后的数据
      */

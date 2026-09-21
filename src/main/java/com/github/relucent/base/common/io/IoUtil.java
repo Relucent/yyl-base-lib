@@ -343,9 +343,12 @@ public class IoUtil {
 			while (-1 != reader.read(buffer)) {
 				// 显式以 Buffer 类型调用 flip：JDK 9+ 中子类 flip 的返回类型协变为具体类型，
 				// 直接链式调用会在 JDK 8 上触发 NoSuchMethodError
-				((Buffer) buffer).flip();
-				builder.append(buffer);
-			}
+			((Buffer) buffer).flip();
+			builder.append(buffer);
+			// 重置缓冲区以便下次读取：否则 buffer 满后 reader.read 返回 0（未满也未到 EOF），
+			// 循环永不因 -1 退出，导致非空输入死循环
+			((Buffer) buffer).clear();
+		}
 		} catch (IOException e) {
 			throw IoRuntimeException.wrap(e);
 		}

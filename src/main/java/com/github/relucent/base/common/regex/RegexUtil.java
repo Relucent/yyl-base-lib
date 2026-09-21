@@ -51,6 +51,9 @@ public class RegexUtil {
      * @return 替换后的字符串
      */
     public static String replaceAll(CharSequence text, Pattern pattern, Function<Matcher, String> replacement) {
+        if (text == null) {
+            return null;
+        }
         if (StringUtil.isEmpty(text)) {
             return text.toString();
         }
@@ -79,6 +82,9 @@ public class RegexUtil {
      */
 
     public static String replaceAll(final CharSequence text, final Pattern pattern, final String replacement) {
+        if (text == null) {
+            return null;
+        }
         if (StringUtil.isEmpty(text)) {
             return text.toString();
         }

@@ -34,10 +34,9 @@ public class MapConverterTest {
 
     @Test
     public void testConvertNull() {
-        // source 为 null 时返回空 Map(newMap 仍会创建实例)
+        // 脏数据约定：source 为 null 时返回 null
         Map<?, ?> result = MapConverter.INSTANCE.convert(null, Map.class);
-        Assert.assertNotNull(result);
-        Assert.assertTrue(result.isEmpty());
+        Assert.assertNull(result);
     }
 
     @Test

@@ -195,6 +195,9 @@ public class CollectionUtil {
      * @return 如果集合发生更改则返回true，否则返回false
      */
     public static <T> boolean addAll(Collection<? super T> collection, T[] elements) {
+        if (collection == null) {
+            return false;
+        }
         boolean result = false;
         if (ArrayUtil.isNotEmpty(elements)) {
             for (T element : elements) {
@@ -211,6 +214,9 @@ public class CollectionUtil {
      * @return 对象的索引
      */
     public static int indexOfType(List<?> collection, Class<?> typeToFind) {
+        if (collection == null || typeToFind == null) {
+            return -1;
+        }
         for (int i = 0; i < collection.size(); i++) {
             Object element = collection.get(i);
             if (typeToFind.isInstance(element)) {

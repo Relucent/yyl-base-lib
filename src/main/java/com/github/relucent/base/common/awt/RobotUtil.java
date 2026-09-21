@@ -25,7 +25,18 @@ public class RobotUtil {
      * @return {@link Robot}单例对象
      */
     public static synchronized Robot getRobot() {
+        if (RobotHolder.INSTANCE == null) {
+            throw new IllegalStateException("Robot 不可用：当前环境不支持图形界面（headless）或未安装 AWT");
+        }
         return RobotHolder.INSTANCE;
+    }
+
+    /**
+     * 当前环境是否支持 {@link Robot}（即非 headless 且 AWT 可用）
+     * @return 支持返回 {@code true}，否则 {@code false}
+     */
+    public static boolean isAvailable() {
+        return RobotHolder.INSTANCE != null;
     }
 
     /**

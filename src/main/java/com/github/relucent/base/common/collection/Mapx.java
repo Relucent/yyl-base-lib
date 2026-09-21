@@ -24,7 +24,10 @@ public class Mapx extends MapWrapper<String, Object> {
 	// ==============================Methods=============================================
 	@Override
 	public Mapx clone() throws CloneNotSupportedException {
-		return (Mapx) super.clone();
+		// 深拷贝底层集合，避免与原对象共享同一 raw（Object.clone() 仅浅拷贝引用）
+		final Mapx clone = new Mapx();
+		clone.putAll(this);
+		return clone;
 	}
 
 	// ==============================OverrideMethods=====================================

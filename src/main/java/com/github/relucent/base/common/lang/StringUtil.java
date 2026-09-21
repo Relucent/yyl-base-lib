@@ -1410,7 +1410,7 @@ public class StringUtil {
 	 * @return 处理后的字符串
 	 */
 	public static String removeAll(CharSequence str, char... chars) {
-		if (isEmpty(null) || ArrayUtil.isEmpty(chars)) {
+		if (isEmpty(str) || ArrayUtil.isEmpty(chars)) {
 			return string(str);
 		}
 		int length = str.length();
@@ -1709,7 +1709,7 @@ public class StringUtil {
 	 * 转义\： format("this is \\\\{} for {}", "a", "b") =》 this is \a for b<br>
 	 * @param template 字符串模板
 	 * @param args     参数列表
-	 * @return 结果
+	 * @return 结果；若 template 为 null 则返回字符串 "null"（{@code StringConstant.NULL}）
 	 */
 	public static String format(CharSequence template, Object... args) {
 		if (template == null) {
@@ -1792,11 +1792,11 @@ public class StringUtil {
 	 * @param template   文本模板，被替换的部分用 {key} 表示
 	 * @param map        参数值对
 	 * @param ignoreNull 是否忽略 {@code null} 值，忽略则 {@code null} 值对应的变量不被替换，否则替换为""
-	 * @return 格式化后的文本
+	 * @return 格式化后的文本；若 template 为 null 则返回字符串 "null"（{@code StringConstant.NULL}）
 	 */
-	public static String format(CharSequence template, Map<?, ?> map, boolean ignoreNull) {
+    public static String format(CharSequence template, Map<?, ?> map, boolean ignoreNull) {
 		if (template == null) {
-			return null;
+		    return StringConstant.NULL;
 		}
 		if (map == null || map.isEmpty()) {
 			return template.toString();

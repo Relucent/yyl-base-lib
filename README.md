@@ -36,7 +36,7 @@ Introduce the Maven dependency to your project.
 <dependency>
     <groupId>com.github.relucent</groupId>
     <artifactId>yyl-base-lib</artifactId>
-    <version>0.4.5</version>
+    <version>0.4.6</version>
 </dependency>
 ```
 
