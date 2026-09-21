@@ -14,117 +14,126 @@ import com.github.relucent.base.common.reflect.TypeReference;
 
 public class DefaultJsonHandler implements JsonHandler {
 
-	// =================================Fields=================================================
-	public static final DefaultJsonHandler INSTANCE = new DefaultJsonHandler();
-	private final JsonConfig config;
-	private final Logger logger = Logger.getLogger(getClass());
+    // =================================Fields=================================================
+    public static final DefaultJsonHandler INSTANCE = new DefaultJsonHandler();
+    private final JsonConfig config;
+    private final Logger logger = Logger.getLogger(getClass());
 
-	// =================================Constructors===========================================
-	/**
-	 * 构造函数(使用默认配置)
-	 */
-	public DefaultJsonHandler() {
-		this(new JsonConfig.Builder().build());
-	}
+    // =================================Constructors===========================================
+    /**
+     * 构造函数(使用默认配置)
+     */
+    public DefaultJsonHandler() {
+        this(new JsonConfig.Builder().build());
+    }
 
-	/**
-	 * 构造函数(使用指定配置)
-	 * @param config JSON配置
-	 */
-	public DefaultJsonHandler(JsonConfig config) {
-		this.config = config;
-	}
+    /**
+     * 构造函数(使用指定配置)
+     * @param config JSON配置
+     */
+    public DefaultJsonHandler(JsonConfig config) {
+        this.config = config;
+    }
 
-	// =================================Methods================================================
-	/**
-	 * 将Java对象转化为JSON字符串
-	 * @param object java对象
-	 * @return JSON字符串
-	 */
-	public String encode(Object object) {
-		StringWriter writer = new StringWriter();
-		new JsonWriter(writer, config).writeObject(object);
-		return writer.toString();
-	}
+    // =================================Methods================================================
+    /**
+     * 将Java对象转化为JSON字符串
+     * @param object java对象
+     * @return JSON字符串
+     */
+    public String encode(Object object) {
+        StringWriter writer = new StringWriter();
+        new JsonWriter(writer, config).writeObject(object);
+        return writer.toString();
+    }
 
-	/**
-	 * 将JSON字符串转化为Java对象
-	 * @param json JSON字符串
-	 * @param type 转化的对象类型
-	 * @return Java对象
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T> T decode(String json, Class<T> type) {
-		return (T) decode(json, (Type) type);
-	}
+    /**
+     * 将JSON字符串转化为Java对象
+     * @param json JSON字符串
+     * @param type 转化的对象类型
+     * @return Java对象
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> T decode(String json, Class<T> type) {
+        return (T) decode(json, (Type) type);
+    }
 
-	/**
-	 * 将JSON字符串，解码为JAVA对象
-	 * @param <T>   对象泛型
-	 * @param json  JSON字符串
-	 * @param token JAVA对象类型标记
-	 * @return JSON对应的JAVA对象，如果无法解析将返回NULL.
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T> T decode(String json, TypeReference<T> token) {
-		return (T) decode(json, (Type) token.getType());
-	}
+    /**
+     * 将JSON字符串，解码为JAVA对象
+     * @param <T>   对象泛型
+     * @param json  JSON字符串
+     * @param token JAVA对象类型标记
+     * @return JSON对应的JAVA对象，如果无法解析将返回NULL.
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> T decode(String json, TypeReference<T> token) {
+        return (T) decode(json, (Type) token.getType());
+    }
 
-	/**
-	 * 将JSON字符串，解码为JAVA对象
-	 * @param <T>  对象泛型
-	 * @param json JSON字符串
-	 * @param type JAVA对象类型
-	 * @return JSON对应的JAVA对象，如果无法解析将返回NULL.
-	 */
-	@SuppressWarnings("unchecked")
-	public <T> T decode(String json, Type type) {
-		return (T) ConvertUtil.convert(decode(json), type, null);
-	}
+    /**
+     * 将JSON字符串，解码为JAVA对象
+     * @param <T>  对象泛型
+     * @param json JSON字符串
+     * @param type JAVA对象类型
+     * @return JSON对应的JAVA对象，如果无法解析将返回NULL.
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T decode(String json, Type type) {
+        return (T) ConvertUtil.convert(decode(json), type, null);
+    }
 
-	/**
-	 * 将Java对象解析为JAVA对象
-	 * @param <T>  JAVA对象泛型
-	 * @param json JSON字符串
-	 * @return JAVA对象
-	 */
-	@SuppressWarnings("unchecked")
-	public <T> T decode(String json) {
-		try {
-			return (T) new JsonTokener(new StringReader(json)).nextValue();
-		} catch (Exception e) {
-			logger.warn("JSON decode failed", e);
-			return null;
-		}
-	}
+    /**
+     * 将Java对象解析为JAVA对象
+     * @param <T>  JAVA对象泛型
+     * @param json JSON字符串
+     * @return JAVA对象
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T decode(String json) {
+        try {
+            return (T) new JsonTokener(new StringReader(json)).nextValue();
+        } catch (Exception e) {
+            if (config.isIgnoreError()) {
+                logger.warn("JSON decode failed", e);
+                return null;
+            }
+            throw new RuntimeException("JSON decode failed", e);
+        }
+    }
 
-	/**
-	 * 将Java对象解析为MAP对象
-	 * @param json JSON字符串
-	 * @return MAP对象,如果解析失败返回null
-	 */
-	public Mapx decodeMap(String json) {
-		try {
-			return (Mapx) decode(json);
-		} catch (Exception e) {
-			logger.warn("JSON decode failed", e);
-			return null;
-		}
-	}
+    /**
+     * 将Java对象解析为MAP对象
+     * @param json JSON字符串
+     * @return MAP对象,如果解析失败返回null
+     */
+    public Mapx decodeMap(String json) {
+        try {
+            return (Mapx) decode(json);
+        } catch (Exception e) {
+            if (config.isIgnoreError()) {
+                logger.warn("JSON decode failed", e);
+                return null;
+            }
+            throw new RuntimeException("JSON decode failed", e);
+        }
+    }
 
-	/**
-	 * 将Java对象解析为LIST对象
-	 * @param json LIST字符串
-	 * @return LIST对象,如果解析失败返回null
-	 */
-	public Listx decodeList(String json) {
-		try {
-			return (Listx) decode(json);
-		} catch (Exception e) {
-			logger.warn("JSON decode failed", e);
-			return null;
-		}
-	}
+    /**
+     * 将Java对象解析为LIST对象
+     * @param json LIST字符串
+     * @return LIST对象,如果解析失败返回null
+     */
+    public Listx decodeList(String json) {
+        try {
+            return (Listx) decode(json);
+        } catch (Exception e) {
+            if (config.isIgnoreError()) {
+                logger.warn("JSON decode failed", e);
+                return null;
+            }
+            throw new RuntimeException("JSON decode failed", e);
+        }
+    }
 }

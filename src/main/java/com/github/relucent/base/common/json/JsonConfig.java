@@ -12,7 +12,7 @@ public class JsonConfig implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * 是否忽略转换过程中的异常
+	 * 是否忽略转换过程中的异常(默认true，与 DefaultJsonHandler 的容错行为一致)
 	 */
 	private final boolean ignoreError;
 	/**
@@ -115,8 +115,8 @@ public class JsonConfig implements Serializable {
 	 * 构建器
 	 */
 	public static class Builder {
-		/** 是否忽略转换过程中的异常 */
-		private boolean ignoreError;
+		/** 是否忽略转换过程中的异常(默认true：容错) */
+		private boolean ignoreError = true;
 		/** 日期是否会被转换为时间戳 */
 		private boolean writeDateAsTimestamps;
 		/** 是否忽略null值 */

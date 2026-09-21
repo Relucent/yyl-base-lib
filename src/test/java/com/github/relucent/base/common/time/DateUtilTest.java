@@ -12,7 +12,6 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,12 +46,6 @@ public class DateUtilTest {
             Date date = formater.parse(source);
             sample.put(source, date);
         }
-    }
-
-    @After
-    public void after() {
-        // DateUtil 依赖 ZoneUtil 的全局默认时区，测试后还原
-        ZoneUtil.resetDefaultZoneId();
     }
 
     @Test
@@ -111,13 +104,15 @@ public class DateUtilTest {
         // JSON.stringify 的零时区格式（24 字符）
         Date date = DateUtil.parseDate("2021-09-11T09:30:00.000Z", ZoneId.of("Asia/Shanghai"));
         Assert.assertNotNull(date);
-        Assert.assertEquals("2021-09-11T17:30:00", DateUtil.format(date, DateUtil.ISO8601_FORMAT, ZoneId.of("Asia/Shanghai")));
+        Assert.assertEquals("2021-09-11T17:30:00",
+                DateUtil.format(date, DateUtil.ISO8601_FORMAT, ZoneId.of("Asia/Shanghai")));
     }
 
     @Test
     public void testFormatWithZoneId() {
         Date date = new Date(1631352600000L);// 2021-09-11T09:30:00Z
-        Assert.assertEquals("2021-09-11 17:30:00", DateUtil.format(date, DateUtil.DATETIME_FORMAT, ZoneId.of("Asia/Shanghai")));
+        Assert.assertEquals("2021-09-11 17:30:00",
+                DateUtil.format(date, DateUtil.DATETIME_FORMAT, ZoneId.of("Asia/Shanghai")));
         Assert.assertEquals("2021-09-11 09:30:00", DateUtil.format(date, DateUtil.DATETIME_FORMAT, ZoneId.of("UTC")));
     }
 

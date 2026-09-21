@@ -49,6 +49,11 @@ class LdapEncoder {
         int length = value.length();
         for (int i = 0; i < length; i++) {
             char c = value.charAt(i);
+            // RFC 4515: 断言值首字符为 '#' 时必须转义，否则会被解析为 BER 二进制值
+            if (i == 0 && c == '#') {
+                encodedValue.append("\\23");
+                continue;
+            }
             if (c < filterEscapeTable.length) {
                 encodedValue.append(filterEscapeTable[c]);
             } else {
@@ -116,8 +121,11 @@ class LdapEncoder {
                     }
 
                     String hexString = "" + nextChar + value.charAt(i + 2);
-
-                    decoded.append((char) Integer.parseInt(hexString, 16));
+                    try {
+                        decoded.append((char) Integer.parseInt(hexString, 16));
+                    } catch (NumberFormatException e) {
+                        throw new NamingException("BadLdapGrammar: Invalid hex escape: \\" + hexString);
+                    }
 
                     i += 3;
                 }

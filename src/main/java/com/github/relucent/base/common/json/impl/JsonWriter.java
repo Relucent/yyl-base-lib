@@ -476,10 +476,13 @@ public class JsonWriter {
                 }
                 proxy.put(name, value);
             }
-        } catch (Exception e) {
-            writeEmpty();
-            return;
-        }
+		} catch (Exception e) {
+			if (config.isIgnoreError()) {
+				writeEmpty();
+				return;
+			}
+			throw IoRuntimeException.wrap(e);
+		}
         writeObject(proxy, visited);
     }
 

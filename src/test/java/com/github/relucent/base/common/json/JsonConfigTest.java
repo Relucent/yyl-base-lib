@@ -11,7 +11,7 @@ public class JsonConfigTest {
 	@Test
 	public void testDefaultConfig() {
 		JsonConfig config = new JsonConfig.Builder().build();
-		Assert.assertFalse(config.isIgnoreError());
+		Assert.assertTrue(config.isIgnoreError());
 		Assert.assertFalse(config.isWriteDateAsTimestamps());
 		Assert.assertTrue(config.isIgnoreNullValue());
 		Assert.assertTrue(config.isTransientSupport());

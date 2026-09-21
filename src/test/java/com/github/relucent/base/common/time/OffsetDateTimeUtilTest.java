@@ -4,19 +4,12 @@ import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
 
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 
 import com.github.relucent.base.common.constant.ZoneIdConstant;
 
 public class OffsetDateTimeUtilTest {
-
-    @After
-    public void after() {
-        // 默认时区是全局静态状态，测试后还原，避免污染其他测试
-        ZoneUtil.resetDefaultZoneId();
-    }
 
     @Test
     public void testParse() {

@@ -5,7 +5,6 @@ import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
 import java.util.Date;
@@ -49,11 +48,17 @@ public class OffsetDateTimeUtil {
     /**
      * 解析日期格式字符串<br>
      * 会通过尝试各种不同时间格式的解析器来解析时间字符串，如果最终依旧无法解析则返回{@code null}<br>
-     * 解析结果的处理规则（与 {@link ZonedDateTimeUtil#parse(String)} 保持一致）：
+     * 解析结果的处理规则：
      * <ul>
      * <li>文本自带偏移量（如 {@code 2026-09-11T17:11:12+08:00}）时保留原始偏移量</li>
      * <li>文本只带时区名（如 {@code 2026-09-11T17:11:12[Asia/Shanghai]}）时转换为对应的偏移量</li>
      * <li>文本不带任何时区信息（如 {@code 2026-09-11 17:11:12}）时，按 {@link ZoneUtil#getDefaultZoneId()} 默认时区补齐偏移量</li>
+     * </ul>
+     * <b>缺失项补全说明</b>
+     * <ul>
+     * <li>文本只含时间（如 {@code 17:00:00}）时，缺失的日期会被静默补全为 {@code 1970-01-01}（Unix Epoch）再按默认时区补齐偏移量。</li>
+     * <li>文本只含日期（如 {@code 2025-11-14}）时，缺失的时间会被补全为 {@code 00:00:00}。</li>
+     * <li>补齐所用的时区为 {@link ZoneUtil#getDefaultZoneId()}，该时区可被全局设置， 调用方不应假设其等于 {@code ZoneId.systemDefault()}。</li>
      * </ul>
      * @param text 时间文本
      * @return 带偏移的日期时间{@code OffsetDateTime}，无法解析时返回{@code null}
@@ -63,16 +68,10 @@ public class OffsetDateTimeUtil {
         if (temporal == null) {
             return null;
         }
-        if (temporal instanceof OffsetDateTime) {
-            return (OffsetDateTime) temporal;
-        }
-        if (temporal instanceof ZonedDateTime) {
-            return ((ZonedDateTime) temporal).toOffsetDateTime();
-        }
         try {
             return OffsetDateTime.from(temporal);
         } catch (DateTimeException e) {
-            // ignore
+            // 文本缺失偏移量/日期/时间等字段，交由 toInstant 按默认规则补全
         }
         Instant instant = TemporalAccessorUtil.toInstant(temporal);
         return toOffsetDateTime(instant, ZoneUtil.getDefaultZoneId());

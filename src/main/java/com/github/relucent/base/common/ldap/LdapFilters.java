@@ -80,6 +80,66 @@ public class LdapFilters {
     }
 
     /**
+     * 小于等于 &lt;=(数值)
+     * @param attribute LDAP属性
+     * @param value 匹配的数值
+     * @return 条件对象
+     */
+    public static LdapLeFilter le(String attribute, int value) {
+        return new LdapLeFilter(attribute, value);
+    }
+
+    /**
+     * 等于 =(数值)
+     * @param attribute LDAP属性
+     * @param value 匹配的数值
+     * @return 条件对象
+     */
+    public static LdapEqFilter eq(String attribute, int value) {
+        return new LdapEqFilter(attribute, value);
+    }
+
+    /**
+     * 不等于 !=(数值)
+     * @param attribute LDAP属性
+     * @param value 匹配的数值
+     * @return 条件对象
+     */
+    public static LdapNeFilter ne(String attribute, int value) {
+        return new LdapNeFilter(attribute, value);
+    }
+
+    /**
+     * 大于 &gt;(数值)
+     * @param attribute LDAP属性
+     * @param value 匹配的数值
+     * @return 条件对象
+     */
+    public static LdapGtFilter gt(String attribute, int value) {
+        return new LdapGtFilter(attribute, value);
+    }
+
+    /**
+     * 大于等于 &gt;=(数值)
+     * @param attribute LDAP属性
+     * @param value 匹配的数值
+     * @return 条件对象
+     */
+    public static LdapGeFilter ge(String attribute, int value) {
+        return new LdapGeFilter(attribute, value);
+    }
+
+    /**
+     * 小于 &lt;(数值)
+     * @param attribute LDAP属性
+     * @param value 匹配的数值
+     * @return 条件对象
+     */
+    public static LdapLtFilter lt(String attribute, int value) {
+        return new LdapLtFilter(attribute, value);
+    }
+
+    /**
      * 相似匹配 LIKE
      * @param attribute LDAP属性
      * @param value 匹配的值
@@ -414,7 +474,8 @@ public class LdapFilters {
             if (value == null) {
                 return "";
             }
-            String[] substrings = value.split("\\*", -2);
+            // 按 '*' 切分，-1 保留末尾空串，使 "a*b*" 也能正确还原为 "a*b*"
+            String[] substrings = value.split("\\*", -1);
             if (substrings.length == 1) {
                 return LdapEncoder.filterEncode(substrings[0]);
             }
@@ -423,8 +484,7 @@ public class LdapFilters {
                 buff.append(LdapEncoder.filterEncode(substrings[i]));
                 if (i < substrings.length - 1) {
                     buff.append("*");
-                } else if (!substrings[i].equals(""))
-                    ;
+                }
             }
             return buff.toString();
         }

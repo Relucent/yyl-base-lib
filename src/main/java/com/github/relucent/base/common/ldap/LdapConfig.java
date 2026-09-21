@@ -20,6 +20,8 @@ public class LdapConfig {
     private String initialContextFactory = "com.sun.jndi.ldap.LdapCtxFactory";
     /** 访问安全级别：none、simple、strong */
     private String securityAuthentication = "simple";
+    /** 是否使用 SSL/TLS 安全连接(ldaps://)，默认 false(使用 ldap://) */
+    private boolean secure = false;
 
     // ==============================Methods==========================================
     public String getHostname() {
@@ -68,5 +70,13 @@ public class LdapConfig {
 
     public void setSecurityAuthentication(String securityAuthentication) {
         this.securityAuthentication = securityAuthentication;
+    }
+
+    public boolean isSecure() {
+        return secure;
+    }
+
+    public void setSecure(boolean secure) {
+        this.secure = secure;
     }
 }

@@ -18,7 +18,7 @@ import java.util.function.Function;
 import com.github.relucent.base.common.tree.TreeBuildRule.NodeFilter;
 
 /**
- * Tree类型工具类
+ * Tree工具类
  * @see TreeUtil
  * @author YYL
  */

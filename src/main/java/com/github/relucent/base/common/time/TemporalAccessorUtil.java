@@ -18,8 +18,10 @@ import java.time.temporal.ChronoField;
 import java.time.temporal.TemporalAccessor;
 import java.time.temporal.TemporalField;
 import java.time.temporal.UnsupportedTemporalTypeException;
+import java.util.Locale;
 
 import com.github.relucent.base.common.lang.StringUtil;
+import com.github.relucent.base.common.logging.Logger;
 
 /**
  * {@link TemporalAccessor} 工具类
@@ -27,6 +29,9 @@ import com.github.relucent.base.common.lang.StringUtil;
 public class TemporalAccessorUtil {
 
     // =================================Fields=================================================
+    /** 日志器 */
+    private static final Logger LOGGER = Logger.getLogger(TemporalAccessorUtil.class);
+
     /** 默认初始日期（Unix Epoch 时间零点） */
     private static final LocalDate DEFAULT_EPOCH_DATE = LocalDate.of(1970, 1, 1);
 
@@ -47,16 +52,21 @@ public class TemporalAccessorUtil {
             DateTimeFormatter.RFC_1123_DATE_TIME, // Fri, 14 Nov 2025 17:00:00 GMT
 
             // 2. 自定义常用格式（用户输入）
-            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"), // 含毫秒
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"), // 含毫秒(点分隔)
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"), // 含时分秒
             DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"), // 斜杠分隔
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"), // 少秒
             DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm"), //
             DateTimeFormatter.ofPattern("yyyy-MM-dd"), // 只有日期
-            DateTimeFormatter.ofPattern("yyyy/MM/dd"),
+            DateTimeFormatter.ofPattern("yyyy/MM/dd"), // 斜杠日期
+            DateTimeFormatter.ofPattern("MM/dd/yyyy"), // 美式 月/日/年
+            DateTimeFormatter.ofPattern("yyyy'年'MM'月'dd'日'"), // 中文日期
+            DateTimeFormatter.ofPattern("HH:mm:ss,SSS"), // 逗号分隔小数秒
+            DateTimeFormatter.ofPattern("hh:mm a", Locale.ENGLISH), // 12 小时制带 AM/PM(英文)
 
             // 3. 紧凑数字型日期时间
             DateTimeFormatter.ofPattern("yyyyMMddHHmmss"), // 紧凑型日期时间
+            DateTimeFormatter.ofPattern("yyyy-MM"), // 仅年月
             DateTimeFormatter.BASIC_ISO_DATE // yyyyMMdd
     };
 
@@ -331,20 +341,54 @@ public class TemporalAccessorUtil {
 
     /**
      * 解析日期格式字符串<br>
-     * 会通过尝试各种不同时间格式的解析器来解析时间字符串，如果最终依旧无法解析则返回{@code null}
+     * 会通过尝试各种不同时间格式的解析器来解析时间字符串，如果最终依旧无法解析则返回{@code null}<br>
+     * 支持的输入类型：
+     * <ul>
+     * <li>首尾空白会自动去除（如 {@code " 2025-11-14 "}）</li>
+     * <li>ISO 系列与常见自定义格式（见 {@link #DATE_TIME_FORMATTERS}）</li>
+     * <li>Unix 时间戳字符串：13 位视为毫秒、10 位视为秒（启发式，见下方说明）</li>
+     * </ul>
+     * <b>注意：</b>本方法只负责“尽可能解析出 {@link TemporalAccessor}”，并不补全缺失的日期/时间/时区。 缺失项的补全（裸时间补为 1970-01-01、无时区文本按
+     * {@link ZoneUtil#getDefaultZoneId()} 默认时区补全等） 发生在 {@link OffsetDateTimeUtil#parse(String)} /
+     * {@link ZonedDateTimeUtil#parse(String)} 中。
      * @param text 时间文本
-     * @return 时间对象{@code TemporalAccessor}
+     * @return 时间对象{@code TemporalAccessor}，无法解析时返回{@code null}
      */
     public static TemporalAccessor parse(String text) {
         if (StringUtil.isBlank(text)) {
             return null;
         }
+        // 去除首尾空白，避免 " 2025-11-14 " 这类带空格的输入解析失败
+        text = text.trim();
+
+        // 支持 Unix 时间戳字符串（毫秒 13 位 / 秒 10 位）
+        // 仅当字符串为“典型时间戳长度”（10 位秒 或 13 位毫秒，可带符号）时才当作时间戳，
+        // 以免误吞其他纯数字日期（如 8 位 yyyyMMdd、14 位 yyyyMMddHHmmss），
+        // 后者应交由下方格式化器解析。
+        // 注意：10 位与 13 位之间无法严格区分“秒”与“毫秒”，这里采用启发式判断
+        // （绝对值 < 1e12 视为秒并×1000，否则视为毫秒），可能不是完全准确的。
+        if (text.matches("-?\\d{10}") || text.matches("-?\\d{13}")) {
+            try {
+                long value = Long.parseLong(text);
+                long millis = (Math.abs(value) < 1_000_000_000_000L) ? value * 1000L : value;
+                return Instant.ofEpochMilli(millis);
+            } catch (NumberFormatException | DateTimeException e) {
+                // 不是合法的数字时间戳，继续走格式解析
+            }
+        }
+
+        Exception lastException = null;
         for (DateTimeFormatter formatter : DATE_TIME_FORMATTERS) {
             try {
                 return formatter.parse(text);
             } catch (Exception e) {
-                // ignore
+                // 逐个格式化器尝试，匹配失败则继续下一个
+                lastException = e;
             }
+        }
+        // 所有格式化器均无法解析：记录一条警告日志便于问题溯源（仅针对非空文本）
+        if (LOGGER.isWarnEnabled()) {
+            LOGGER.warn("Unable to parse time string:" + text, lastException);
         }
         return null;
     }

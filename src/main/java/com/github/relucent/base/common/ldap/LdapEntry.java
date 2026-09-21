@@ -43,10 +43,11 @@ public class LdapEntry {
      * @param value 属性值
      */
     public void put(String key, Object value) {
-        if (value != null) {
+        String k = convertKey(key);
+        if (k != null && !k.isEmpty() && value != null) {
             List<Object> values = new ArrayList<Object>();
             values.add(value);
-            attributes.put(convertKey(key), values);
+            attributes.put(k, values);
         }
     }
 
@@ -57,7 +58,8 @@ public class LdapEntry {
      */
     public void put(String key, Number value) {
         if (value != null) {
-            put(key, value.toString());
+            // 保留原始数值类型，与 put(String,Object) 保持一致，避免数值型属性被错误地当成字符串
+            put(key, (Object) value);
         }
     }
 
@@ -67,7 +69,10 @@ public class LdapEntry {
      * @param values 属性值
      */
     public void putAll(String key, List<Object> values) {
-        attributes.put(convertKey(key), values);
+        String k = convertKey(key);
+        if (k != null && !k.isEmpty() && values != null) {
+            attributes.put(k, values);
+        }
     }
 
     /**
@@ -78,6 +83,16 @@ public class LdapEntry {
     public Object get(String key) {
         List<Object> values = getAll(key);
         return values == null || values.isEmpty() ? null : values.get(0);
+    }
+
+    /**
+     * 获得单条属性的字符串表示
+     * @param key 属性键
+     * @return 属性值的字符串表示，不存在时返回 null
+     */
+    public String getString(String key) {
+        Object value = get(key);
+        return value == null ? null : value.toString();
     }
 
     /**
@@ -128,6 +143,11 @@ public class LdapEntry {
 
     @Override
     public String toString() {
-        return "dn:" + dn;
+        StringBuilder sb = new StringBuilder();
+        sb.append("dn:").append(dn);
+        for (Map.Entry<String, List<Object>> entry : attributes.entrySet()) {
+            sb.append("\n  ").append(entry.getKey()).append("=").append(entry.getValue());
+        }
+        return sb.toString();
     }
 }
