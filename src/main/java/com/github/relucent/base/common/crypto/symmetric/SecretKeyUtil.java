@@ -47,6 +47,45 @@ public class SecretKeyUtil {
     };
 
     // =================================Methods================================================
+
+    /**
+     * 根据字节数组生成AES密钥对象
+     * @param key 密钥原始字节数组，支持16(AES128)/24(AES192)/32(AES256)字节
+     * @return AES算法对应的SecretKeySpec密钥实例
+     * @throws IllegalArgumentException key为null或者长度不是AES合法长度时抛出
+     */
+    public static SecretKeySpec getAesSecretKey(byte[] key) {
+        if (key == null) {
+            throw new IllegalArgumentException("AES key byte array must not be null");
+        }
+        // AES合法密钥长度：16、24、32字节
+        if (key.length != 16 && key.length != 24 && key.length != 32) {
+            throw new IllegalArgumentException(String.format(//
+                    "Invalid AES key length: %d bytes. Valid lengths: 16,24,32", //
+                    key.length//
+            ));
+        }
+        return new SecretKeySpec(key, "AES");
+    }
+
+    /**
+     * 根据原始密钥字节数组创建SM4密钥对象 SM4仅支持固定16字节(128位)密钥，依赖BouncyCastle安全提供者
+     * @param key SM4原始密钥字节数组
+     * @return SM4算法对应的SecretKeySpec实例
+     * @throws IllegalArgumentException 如果密钥为null或者密钥长度不符合SM4规范
+     */
+    public static SecretKeySpec getSm4SecretKey(byte[] key) {
+        if (key == null) {
+            throw new IllegalArgumentException("SM4 key byte array must not be null");
+        }
+        if (key.length != 16) {
+            throw new IllegalArgumentException(String.format(//
+                    "Invalid SM4 key length: %d bytes. Valid length: 16", key.length//
+            ));
+        }
+        return new SecretKeySpec(key, "SM4");
+    }
+
     /**
      * 获取秘密（对称）密钥生成器{@link KeyGenerator}
      * @param algorithm 对称加密算法
@@ -90,7 +129,7 @@ public class SecretKeyUtil {
     /**
      * 生成秘密（对称）密钥{@link SecretKey}
      * @param algorithm 对称加密算法
-     * @param keySpec 密钥内容规范 {@link KeySpec}
+     * @param keySpec   密钥内容规范 {@link KeySpec}
      * @return 秘密（对称）密钥
      */
     public static SecretKey generateSecretKey(String algorithm, KeySpec keySpec) {
@@ -105,7 +144,7 @@ public class SecretKeyUtil {
     /**
      * 生成PBE(密码的加密法)密钥 {@link SecretKey}
      * @param algorithm PBE算法，包括：PBEWithMD5AndDES、PBEWithSHA1AndDESede、PBEWithSHA1AndRC2_40等
-     * @param password 密码，如果为{@code null}则使用随机密码
+     * @param password  密码，如果为{@code null}则使用随机密码
      * @return 秘密（对称）密钥
      */
     public static SecretKey generatePBEKey(String algorithm, char[] password) {
@@ -124,7 +163,7 @@ public class SecretKeyUtil {
     /**
      * 生成 DES(数据加密标准Data Encryption Standard)密钥 ，使用 key中的前 8 个字节作为 DES密钥的密钥内容。
      * @param algorithm DES算法，包括DES、DESede等
-     * @param key 具有DES密钥内容的缓冲区
+     * @param key       具有DES密钥内容的缓冲区
      * @return 秘密（对称）密钥
      */
     public static SecretKey generateDESKey(String algorithm, byte[] key) {
@@ -160,7 +199,7 @@ public class SecretKeyUtil {
     /**
      * 生成随机秘钥 {@link SecretKey}
      * @param algorithm 对称加密算法
-     * @param keySize 密钥长度，-1表示不指定
+     * @param keySize   密钥长度，-1表示不指定
      * @return 秘密（对称）密钥
      */
     public static SecretKey generateSecretKey(String algorithm, int keySize) {
@@ -177,7 +216,7 @@ public class SecretKeyUtil {
     /**
      * 生成对称加密的秘钥 {@link SecretKey}
      * @param algorithm 对称加密算法
-     * @param key 密钥内容
+     * @param key       密钥内容
      * @return 秘密（对称）密钥
      */
     public static SecretKey generateSecretKey(String algorithm, byte[] key) {
