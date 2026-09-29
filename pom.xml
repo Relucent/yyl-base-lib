@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.relucent</groupId>
 	<artifactId>yyl-base-lib</artifactId>
-	<version>0.4.7</version>
+	<version>0.4.8-SNAPSHOT</version>
 	<name>Common Base Library</name>
 	<description>Common Base Library</description>
 	<url>https://github.com/Relucent/yyl-base-lib</url>
@@ -30,12 +30,12 @@
 		<!-- BasicProperties -->
 		<java.version>1.8</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
+		<maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
 		<maven-source-plugin.version>3.0.1</maven-source-plugin.version>
 		<maven-javadoc-plugin.version>3.0.1</maven-javadoc-plugin.version>
 		<maven-gpg-plugin.version>1.5</maven-gpg-plugin.version>
 		<!-- DependencyVersions -->
-		<bouncycastle.version>1.84</bouncycastle.version>
+		<bouncycastle.version>1.86</bouncycastle.version>
 		<commons-logging.version>1.2</commons-logging.version>
 		<jackson.version>2.22.2</jackson.version>
 		<javax.servlet.version>3.0.1</javax.servlet.version>
@@ -242,6 +242,15 @@
 					</url>
 				</repository>
 			</distributionManagement>
+		</profile>
+		<profile>
+			<id>java8-api-check</id>
+			<activation>
+				<jdk>[9,)</jdk>
+			</activation>
+			<properties>
+				<maven.compiler.release>8</maven.compiler.release>
+			</properties>
 		</profile>
 	</profiles>
 </project>

@@ -1,6 +1,5 @@
 package com.github.relucent.base.common.awt;
 
-import java.awt.AWTException;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.Robot;
@@ -8,11 +7,15 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 
+import com.github.relucent.base.common.logging.Logger;
+
 /**
  * {@link Robot} 工具类<br>
  * {@link Robot} 用于生成本地系统输入事件，以用于测试自动化、自运行演示以及需要控制鼠标和键盘的其他应用程序。 <br>
  */
 public class RobotUtil {
+
+    private static final Logger LOGGER = Logger.getLogger(RobotUtil.class);
 
     /**
      * 工具类方法，实例不应在标准编程中构造。
@@ -24,9 +27,11 @@ public class RobotUtil {
      * 获取 Robot 单例实例
      * @return {@link Robot}单例对象
      */
-    public static synchronized Robot getRobot() {
+    public static Robot getRobot() {
         if (RobotHolder.INSTANCE == null) {
-            throw new IllegalStateException("Robot 不可用：当前环境不支持图形界面（headless）或未安装 AWT");
+            throw new IllegalStateException(//
+                    "Robot is not available: The current environment does not support a graphical interface (headless) or AWT is not installed"//
+            );
         }
         return RobotHolder.INSTANCE;
     }
@@ -55,8 +60,8 @@ public class RobotUtil {
      */
     public static void click() {
         Robot robot = getRobot();
-        robot.mousePress(InputEvent.BUTTON1_MASK);
-        robot.mouseRelease(InputEvent.BUTTON1_MASK);
+        robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+        robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
     }
 
     /**
@@ -65,8 +70,8 @@ public class RobotUtil {
      */
     public static void rightClick() {
         Robot robot = getRobot();
-        robot.mousePress(InputEvent.BUTTON3_MASK);
-        robot.mouseRelease(InputEvent.BUTTON3_MASK);
+        robot.mousePress(InputEvent.BUTTON3_DOWN_MASK);
+        robot.mouseRelease(InputEvent.BUTTON3_DOWN_MASK);
     }
 
     /**
@@ -150,7 +155,9 @@ public class RobotUtil {
             Robot robot = null;
             try {
                 robot = new Robot();
-            } catch (AWTException e) {
+            } catch (Throwable e) {
+                // 当前环境不支持图形界面（headless）或没有 AWT 权限时优雅降级
+                LOGGER.warn("Robot is not available!", e);
             }
             INSTANCE = robot;
         }

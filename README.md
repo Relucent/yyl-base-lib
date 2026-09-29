@@ -160,8 +160,6 @@ ConverterManager.register(new MyDateConverter(), LocalDate.class);
 LocalDate localDate = ConvertUtil.convert("2024-01-01", LocalDate.class);
 ```
 
-> **陷阱**：`ConvertUtil` 内部委托给 `BasicConverter`，对 `source == null` **直接返回 null**，**不会**走到默认值逻辑——默认值兜底仅在类型无法转换时触发。
-
 ### 编解码（codec）
 
 ```java
