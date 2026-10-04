@@ -37,7 +37,7 @@
 		<!-- DependencyVersions -->
 		<bouncycastle.version>1.86</bouncycastle.version>
 		<commons-logging.version>1.2</commons-logging.version>
-		<jackson.version>2.22.2</jackson.version>
+		<jackson.version>2.22.3</jackson.version>
 		<javax.servlet.version>3.0.1</javax.servlet.version>
 		<jedis.version>6.2.0</jedis.version>
 		<jsqlparser.version>3.1</jsqlparser.version>
