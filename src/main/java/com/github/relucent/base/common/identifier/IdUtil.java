@@ -19,14 +19,6 @@ public class IdUtil {
     }
 
     /**
-     * 获得20位时序ID
-     * @return 时序ID
-     */
-    public static String timeId() {
-        return TimeId.nextId();
-    }
-
-    /**
      * 生成21位 NanoId
      * @return NanoId
      */
