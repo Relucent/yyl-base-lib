@@ -16,21 +16,25 @@ public class LookAndFeelUtil {
      * 初始化外观（使用系统外观）
      */
     public static void useSystemLookAndFeelClassName() {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
-            LOGGER.error("initLookAndFeel Error!", e);
-        }
+        setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
     }
 
     /**
      * 初始化外观（使用默认的跨平台外观）
      */
     public static void useCrossPlatformLookAndFeelClassName() {
+        setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+    }
+
+    /**
+     * 初始化外观（指定外观实现类名）
+     * @param className 外观实现类名，如 {@link UIManager#getSystemLookAndFeelClassName()}
+     */
+    public static void setLookAndFeel(String className) {
         try {
-            UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+            UIManager.setLookAndFeel(className);
         } catch (Exception e) {
-            LOGGER.error("initLookAndFeel Error!", e);
+            LOGGER.error("initLookAndFeel Error! className=" + className, e);
         }
     }
 

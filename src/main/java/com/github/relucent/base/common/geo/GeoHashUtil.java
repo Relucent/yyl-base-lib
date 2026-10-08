@@ -60,8 +60,14 @@ public class GeoHashUtil {
      */
     public static Coordinate decode(String geohash) {
         StringBuilder buffer = new StringBuilder();
-        for (char c : geohash.toCharArray()) {
-            int i = LOOKUP.get(c) + 32;
+        for (char raw : geohash.toCharArray()) {
+            // GEOHASH 标准字母表排除 a/i/l/o，且约定小写；此处兼容大写输入并拒绝非法字符，避免 LOOKUP.get 返回 null 触发 NPE
+            char c = Character.toLowerCase(raw);
+            Integer index = LOOKUP.get(c);
+            if (index == null) {
+                throw new IllegalArgumentException("Illegal geohash character: '" + raw + "'");
+            }
+            int i = index + 32;
             buffer.append(Integer.toString(i, 2).substring(1));
         }
 
@@ -104,7 +110,7 @@ public class GeoHashUtil {
      */
     private static double decode(BitSet bs, double floor, double ceiling) {
         double mid = 0;
-        for (int i = 0; i < bs.length(); i++) {
+        for (int i = 0; i < NUMBITS; i++) {
             mid = (floor + ceiling) / 2;
             if (bs.get(i)) {
                 floor = mid;

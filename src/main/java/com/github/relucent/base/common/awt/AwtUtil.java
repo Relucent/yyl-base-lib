@@ -16,19 +16,22 @@ public class AwtUtil {
 
     /**
      * 遍历父组件及其所有子组件，并执行自定义的操作
-     * @param parent 父组件
-     * @param function 执行的操作，如果该方法返回false，则不在继续遍历该组件的子组件
+     * @param parent   父组件
+     * @param action 执行的操作，如果该方法返回false，则不在继续遍历该组件的子组件
      */
-    public static void traverseComponents(Component parent, Function<Component, Boolean> function) {
+    public static void traverseComponents(Component parent, Function<Component, Boolean> action) {
+        if (parent == null || action == null) {
+            throw new IllegalArgumentException("Component(parent) and action are not allowed to be null");
+        }
 
-        if (Boolean.FALSE.equals(function.apply(parent))) {
+        if (Boolean.FALSE.equals(action.apply(parent))) {
             return;
         }
 
         if (parent instanceof Container) {
             Container container = (Container) parent;
             for (Component child : container.getComponents()) {
-                traverseComponents(child, function);
+                traverseComponents(child, action);
             }
         }
     }

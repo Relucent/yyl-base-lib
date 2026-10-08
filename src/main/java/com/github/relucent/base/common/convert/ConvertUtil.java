@@ -44,7 +44,7 @@ public class ConvertUtil {
 
     /**
      * 将对象转换为布尔类型
-     * @param value 待转换对象
+     * @param value        待转换对象
      * @param defaultValue 默认值
      * @return 转换类型后的对象
      */
@@ -63,7 +63,7 @@ public class ConvertUtil {
 
     /**
      * 将对象转换为整形类型
-     * @param value 待转换对象
+     * @param value        待转换对象
      * @param defaultValue 默认值
      * @return 转换类型后的对象
      */
@@ -82,7 +82,7 @@ public class ConvertUtil {
 
     /**
      * 将对象转换为长整形类型
-     * @param value 待转换对象
+     * @param value        待转换对象
      * @param defaultValue 默认值
      * @return 转换类型后的对象
      */
@@ -101,7 +101,7 @@ public class ConvertUtil {
 
     /**
      * 将对象转换为浮点类型
-     * @param value 待转换对象
+     * @param value        待转换对象
      * @param defaultValue 默认值
      * @return 转换类型后的对象
      */
@@ -120,7 +120,7 @@ public class ConvertUtil {
 
     /**
      * 将对象转换为双字节类型
-     * @param value 待转换对象
+     * @param value        待转换对象
      * @param defaultValue 默认值
      * @return 转换类型后的对象
      */
@@ -139,7 +139,7 @@ public class ConvertUtil {
 
     /**
      * 将对象转换为字符串类型
-     * @param value 待转换对象
+     * @param value        待转换对象
      * @param defaultValue 默认值
      * @return 转换类型后的对象
      */
@@ -158,7 +158,7 @@ public class ConvertUtil {
 
     /**
      * 将对象转换为日期类型
-     * @param value 待转换对象
+     * @param value        待转换对象
      * @param defaultValue 默认值
      * @return 转换类型后的对象
      */
@@ -168,9 +168,9 @@ public class ConvertUtil {
 
     /**
      * 将对象转换为枚举类型
-     * @param <T> 枚举类型泛型
+     * @param <T>      枚举类型泛型
      * @param enumType 枚举类型
-     * @param value 待转换对象
+     * @param value    待转换对象
      * @return 转换类型后的对象
      */
     public static <T extends Enum<T>> T toEnum(Object value, Class<T> enumType) {
@@ -179,9 +179,9 @@ public class ConvertUtil {
 
     /**
      * 将对象转换为枚举类型
-     * @param <T> 枚举类型泛型
-     * @param enumType 枚举类型
-     * @param value 待转换对象
+     * @param <T>          枚举类型泛型
+     * @param enumType     枚举类型
+     * @param value        待转换对象
      * @param defaultValue 默认值
      * @return 转换类型后的对象
      */
@@ -200,7 +200,7 @@ public class ConvertUtil {
 
     /**
      * 将对象转换为大整型类型
-     * @param value 待转换对象
+     * @param value        待转换对象
      * @param defaultValue 默认值
      * @return 转换类型后的对象
      */
@@ -219,7 +219,7 @@ public class ConvertUtil {
 
     /**
      * 将对象转换为大数字类型
-     * @param value 待转换对象
+     * @param value        待转换对象
      * @param defaultValue 默认值
      * @return 转换类型后的对象
      */
@@ -238,7 +238,7 @@ public class ConvertUtil {
 
     /**
      * 将对象转换为Map类型
-     * @param value 待转换对象
+     * @param value        待转换对象
      * @param defaultValue 默认值
      * @return 转换类型后的对象
      */
@@ -257,7 +257,7 @@ public class ConvertUtil {
 
     /**
      * 将对象转换为List类型
-     * @param value 待转换对象
+     * @param value        待转换对象
      * @param defaultValue 默认值
      * @return 转换类型后的对象
      */
@@ -267,8 +267,8 @@ public class ConvertUtil {
 
     /**
      * 将对象转换为指定的类型
-     * @param <T> 转换类型泛型
-     * @param obj 对象转换
+     * @param <T>    转换类型泛型
+     * @param obj    对象转换
      * @param toType 转换的目标类型
      * @return 转换类型后的对象，无法正确转换类型则返回 {@code null}
      */
@@ -278,9 +278,9 @@ public class ConvertUtil {
 
     /**
      * 将对象转换为指定的类型
-     * @param <T> 转换类型泛型
-     * @param source 要转换的对象
-     * @param toType 转换的目标类型
+     * @param <T>          转换类型泛型
+     * @param source       要转换的对象
+     * @param toType       转换的目标类型
      * @param defaultValue 默认值
      * @return 转换类型后的对象(无法正确转换类型则返回默认值)
      */
@@ -290,9 +290,9 @@ public class ConvertUtil {
 
     /**
      * 将对象转换为指定的类型
-     * @param <T> 转换类型泛型
-     * @param source 要转换的对象
-     * @param toType 转换的目标类型
+     * @param <T>          转换类型泛型
+     * @param source       要转换的对象
+     * @param toType       转换的目标类型
      * @param defaultValue 默认值
      * @return 转换类型后的对象(无法正确转换类型则返回默认值)
      */
@@ -363,9 +363,8 @@ public class ConvertUtil {
 
     /**
      * 判断类型是否是简单类型<br>
-     * 简单类型指可直接作为值处理的类型，包括：基本类型、{@link String}、{@link Boolean}、{@link Character}、
-     * {@link Number} 及其子类（如各包装类、AtomicInteger/AtomicLong/BigDecimal/BigInteger 等）、
-     * {@link Date} 及其子类、枚举类型
+     * 简单类型指可直接作为值处理的类型，包括：基本类型、{@link String}、{@link Boolean}、{@link Character}、 {@link Number}
+     * 及其子类（如各包装类、AtomicInteger/AtomicLong/BigDecimal/BigInteger 等）、 {@link Date} 及其子类、枚举类型
      * @param clazz 对象类型
      * @return 如果参数是简单类型返回 {@code true}，否则返回 {@code false}
      */
@@ -400,16 +399,5 @@ public class ConvertUtil {
             return true;
         }
         return false;
-    }
-
-    /**
-     * 判断类型是否是标准类型
-     * @param clazz 对象类型
-     * @return 如果参数是标准类型返回TRUE，否则返回FALSE
-     * @deprecated 方法命名存在歧义，使用 {@link #isSimpleType(Class)} 替代
-     */
-    @Deprecated
-    public static boolean isStandardType(Class<?> clazz) {
-        return isSimpleType(clazz);
     }
 }
