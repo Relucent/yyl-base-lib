@@ -9,7 +9,7 @@ import org.junit.Test;
 public class SnowflakeIdWorkerTest {
     @Test
     public void uniqueTest() {
-        SnowflakeIdWorker snowflake = SnowflakeIdWorker.DEFAULT;
+        SnowflakeIdWorker snowflake = SnowflakeIdWorker.getDefault();
         int count = 10000;
         final Set<Long> idSet = new HashSet<>(count);
         for (int i = 0; i < count; i++) {

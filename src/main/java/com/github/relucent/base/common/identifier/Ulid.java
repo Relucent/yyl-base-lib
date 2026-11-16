@@ -204,6 +204,8 @@ public final class Ulid implements Serializable, Comparable<Ulid> {
      * 生成一个ULID。<br>
      * 在生成多个 ULIDs 时，它可以确保即便在同一毫秒内生成多个 ULIDs，它们依然有序。<br>
      * 内部维护一个“上次生成时间 + 随机种子”组合，当同一毫秒内生成多个 ULID 时，它保证第二个比第一个大（通过递增随机部分）<br>
+     * <b>时钟回拨：</b>回拨幅度在 10000 毫秒（{@code CLOCK_DRIFT_TOLERANCE}）以内时，沿用上次的时间部分并递增随机部分以维持单调；<br>
+     * 回拨超过该容限时，会放弃单调性，直接以回拨后的时间生成新 ULID。
      * @return ULID对象
      */
     public static Ulid create() {
@@ -227,29 +229,36 @@ public final class Ulid implements Serializable, Comparable<Ulid> {
     }
 
     /**
-     * 回指定时间的最小ULID。<br>
+     * 返回指定时间的最小ULID。<br>
      * 时间部分48位填充指定时间，随机部分80位全为0。<br>
      * 用于查询某个时间点之前或之后所有记录非常有用。<br>
      * @param time the number of milliseconds since 1970-01-01
      * @return ULID对象
+     * @throws IllegalArgumentException 如果时间为负或超过2^48-1
      */
     public static Ulid min(long time) {
-        return new Ulid((time << 16) | 0x0000L, 0x0000000000000000L);
+        return new Ulid(time, new byte[RANDOM_BYTES]);
     }
 
     /**
-     * 回指定时间的最大ULID。<br>
+     * 返回指定时间的最大ULID。<br>
      * 时间部分48位填充指定时间，随机部分80位全为1。<br>
      * 用于查询某个时间点之前或之后所有记录（无created_at字段）非常有用。<br>
      * @param time the number of milliseconds since 1970-01-01
      * @return ULID
+     * @throws IllegalArgumentException 如果时间为负或超过2^48-1
      */
     public static Ulid max(long time) {
-        return new Ulid((time << 16) | 0xffffL, 0xffffffffffffffffL);
+        final byte[] random = new byte[RANDOM_BYTES];
+        Arrays.fill(random, (byte) 0xff);
+        return new Ulid(time, random);
     }
 
     /**
-     * 将 UUID 转换为 ULID。
+     * 将 UUID 转换为 ULID。<br>
+     * 该转换只是把 UUID 的 128 位原样重新解释为 ULID，没有任何时间语义：<br>
+     * 生成结果的<b>时间部分是随机的</b>，既不代表创建时间，也不具备按时间排序的能力。<br>
+     * 因此不能用于 {@link #min(long)} / {@link #max(long)} 之类的范围查询。
      * @param uuid UUID
      * @return ULID对象
      */
@@ -435,8 +444,8 @@ public final class Ulid implements Serializable, Comparable<Ulid> {
     }
 
     /**
-     * 获得时间部分字符串代表的时间点。<br>
-     * @param string 时间部分字符串
+     * 获得 ULID 字符串时间部分代表的时间点。<br>
+     * @param string 完整的 ULID 字符串（26 个字符，不是只截取前 10 个字符的时间部分）
      * @return {@link Instant} 实例
      * @throws IllegalArgumentException 如果输入字符串无效
      */
@@ -454,9 +463,10 @@ public final class Ulid implements Serializable, Comparable<Ulid> {
     }
 
     /**
-     * 获得时间部分字符串代表的字节数组。<br>
-     * 时间部分为 0 到 2^48-1 之间的数字，等价于自 1970-01-01（Unix 纪元）以来的毫秒数。
-     * @param string 时间部分字符串
+     * 从 ULID 字符串中提取时间部分的毫秒数。<br>
+     * 时间部分为 0 到 2^48-1 之间的数字，等价于自 1970-01-01（Unix 纪元）以来的毫秒数。<br>
+     * 注意：入参必须是完整的 ULID 字符串，不是只截取前 10 个字符的时间部分。
+     * @param string 完整的 ULID 字符串
      * @return 毫秒数
      * @throws IllegalArgumentException 如果输入字符串无效
      */
@@ -505,9 +515,10 @@ public final class Ulid implements Serializable, Comparable<Ulid> {
     }
 
     /**
-     * 获得随机部分字符串代表的字节数组。<br>
+     * 从 ULID 字符串中提取随机部分的字节数组。<br>
      * 随机部分是 10 字节（80 位）数组。<br>
-     * @param string 随机部分字符串
+     * 注意：入参必须是完整的 ULID 字符串，不是只截取后 16 个字符的随机部分。
+     * @param string 完整的 ULID 字符串
      * @return 字节数组
      * @throws IllegalArgumentException 如果输入字符串无效
      */
@@ -578,7 +589,9 @@ public final class Ulid implements Serializable, Comparable<Ulid> {
      * <li>(2) 假设每毫秒生成 10 亿个 ULID，也能有 99.999999999999992% 的概率保证单调递增。
      * </ul>
      * <p>
-     * 因此不会抛出规范建议的错误。当 80 位随机数溢出时，将简单地将时间部分加一以保持单调性。
+     * 因此不会抛出规范建议的错误。递增是对整个 128 位按无符号整数加一：<br>
+     * 先加到随机部分的低 64 位，低 64 位溢出后进位到 msb（先影响随机部分的高 16 位），<br>
+     * 只有随机部分整体 80 位全部溢出时，才会把时间部分加一，从而始终保持单调性。
      * @return 一个新的 ULID
      */
     public Ulid increment() {

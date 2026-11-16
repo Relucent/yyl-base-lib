@@ -15,15 +15,7 @@ public class IdUtil {
      * @return 雪花ID
      */
     public static Long snowflakeId() {
-        return SnowflakeIdWorker.DEFAULT.nextId();
-    }
-
-    /**
-     * 获得20位时序ID
-     * @return 时序ID
-     */
-    public static String timeId() {
-        return TimeId.nextId();
+        return SnowflakeIdWorker.getDefault().nextId();
     }
 
     /**

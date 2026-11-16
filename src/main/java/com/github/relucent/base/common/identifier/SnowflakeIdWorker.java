@@ -1,5 +1,7 @@
 package com.github.relucent.base.common.identifier;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 import com.github.relucent.base.common.jvm.JvmUtil;
 import com.github.relucent.base.common.net.NetworkUtil;
 
@@ -17,7 +19,7 @@ import com.github.relucent.base.common.net.NetworkUtil;
 public class SnowflakeIdWorker {
     // ==============================Fields===========================================
     /** 默认实例 */
-    public static final SnowflakeIdWorker DEFAULT = new SnowflakeIdWorker();
+    private static final AtomicReference<SnowflakeIdWorker> DEFAULT = new AtomicReference<>(new SnowflakeIdWorker());
 
     /** 开始时间戳 (2010-11-04 09:42:54.657) */
     private final long twepoch = 1288834974657L;
@@ -88,6 +90,22 @@ public class SnowflakeIdWorker {
         this.workerId = workerId;
         this.datacenterId = datacenterId;
     }
+    
+    /**
+     * 获得默认的雪花ID生成器
+     * @return 雪花ID生成器
+     */
+    public static SnowflakeIdWorker getDefault() {
+        return DEFAULT.get();
+    }
+    
+    /**
+     * 设置默认的雪花ID生成器
+     * @param idWorker 雪花ID生成器
+     */
+    public static void setDefault(SnowflakeIdWorker idWorker) {
+        DEFAULT.set(idWorker);
+    }
 
     // ==============================Methods==========================================
     /**
@@ -139,7 +157,7 @@ public class SnowflakeIdWorker {
      * @param lastTimestamp 上次生成ID的时间戳
      * @return 当前时间戳
      */
-    protected long tilNextMillis(long lastTimestamp) {
+    private long tilNextMillis(long lastTimestamp) {
         long timestamp = timeGen();
         while (timestamp <= lastTimestamp) {
             timestamp = timeGen();
@@ -151,7 +169,7 @@ public class SnowflakeIdWorker {
      * 返回以毫秒为单位的当前时间
      * @return 当前时间(毫秒)
      */
-    protected long timeGen() {
+    private long timeGen() {
         return System.currentTimeMillis();
     }
 
@@ -160,7 +178,7 @@ public class SnowflakeIdWorker {
      * @param maxDatacenterId 最大支持的数据中心ID
      * @return 数据中心ID
      */
-    protected static long getDatacenterId(long maxDatacenterId) {
+    private static long getDatacenterId(long maxDatacenterId) {
         long id = 0L;
         try {
             byte[] mac = NetworkUtil.getHardwareAddress();
@@ -181,7 +199,7 @@ public class SnowflakeIdWorker {
      * @param maxWorkerId 最大工作ID
      * @return 工作ID
      */
-    protected static long getMaxWorkerId(long datacenterId, long maxWorkerId) {
+    private static long getMaxWorkerId(long datacenterId, long maxWorkerId) {
         StringBuilder mpid = new StringBuilder().append(datacenterId).append(JvmUtil.getPid());
         return (mpid.toString().hashCode() & 0xffff) % (maxWorkerId + 1);
     }
