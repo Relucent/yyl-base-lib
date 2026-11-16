@@ -18,9 +18,17 @@ import com.github.relucent.base.common.crypto.ProviderFactory;
 
 /**
  * SM4-GCM 加密算法<br>
- * SM4（国密分组密码算法 GM/T 0002-2012）是 128 位分组、128 位固定密钥的对称算法，<br>
+ * SM4（国密分组密码算法 GM/T 0002-2012）是 128 位分组、128 位固定密钥的对称算法.<br>
  * 其 GCM 模式与 AES-GCM 完全同构（IV 推荐 12 字节、Tag 默认 128 位）。<br>
- * 注意：SM4 并非 JDK 原生算法，必须依赖 BouncyCastle 安全提供者（库已将其作为可选依赖引入）。
+ * 注意：SM4 并非 JDK 原生算法，必须依赖 BouncyCastle 安全提供者（库已将其作为可选依赖引入）。<br>
+ * SM4加密算法是中华人民共和国政府采用的一种分组密码标准，由国家密码管理局于2012年发布。<br>
+ * 与DES和AES算法相似，国密SM4算法是一种分组加密算法。SM4分组密码算法是一种迭代分组密码算法，由加解密算法和密钥扩展算法组成。<br>
+ * SM4是一种Feistel结构的分组密码算法，其分组长度和密钥长度均为128位（16字节）。加密算法和密钥扩展算法迭代轮数均为32轮。<br>
+ * SM4加解密过程的算法相同但是轮密钥的使用顺序相反。<br>
+ * 标准号：GB/T 32907-2016 <br>
+ * 中文标准名称：信息安全技术 SM4分组密码算法 <br>
+ * 英文标准名称：Information security technology—SM4 block cipher algorthm <br>
+ * @see <a href="https://openstd.samr.gov.cn/bzgk/gb/newGbInfo?hcno=7803DE42D3BC5E80B0C3E5D8E873D56A">GB/T32907-2016</a>
  */
 public class Sm4Gcm {
 
